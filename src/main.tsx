@@ -11,11 +11,11 @@
 
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from './components';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedApp } from './components/ProtectedApp';
 import './styles/index.css';
 
 // SECTION: Root Element
-// Lines 16-25: Get root DOM node
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
@@ -23,12 +23,13 @@ if (!rootElement) {
 }
 
 // SECTION: Render
-// Lines 28-40: Mount React app
 const root = createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <ProtectedApp />
+    </AuthProvider>
   </React.StrictMode>
 );
 

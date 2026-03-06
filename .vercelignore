@@ -1,23 +1,19 @@
 # Dependencies
 node_modules/
 
-# Build output
+# Build output (Vercel builds this itself)
 dist/
 
-# Environment files (contains secrets)
+# Tauri build artifacts
+src-tauri/target/
+
+# Environment files
 .env
 .env.local
-.env.*.local
 
 # IDE
 .idea/
 .vscode/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
 
 # Logs
 *.log
@@ -25,9 +21,6 @@ npm-debug.log*
 
 # Test coverage
 coverage/
-
-# Tauri
-src-tauri/target/
 
 # Screenshots and test artifacts
 *.png
@@ -43,4 +36,9 @@ dev.log
 # Temporary files
 *.tmp
 *.temp
-.vercel
+
+# Documentation (not needed for deploy)
+docs/
+_sealed_baseline/
+fixes-project/
+*.md

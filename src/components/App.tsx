@@ -18,12 +18,17 @@ import { useActorStore } from '../stores/actorStore';
 import { useTrajectoryStore } from '../stores/trajectoryStore';
 import { useLimitStore } from '../stores/limitStore';
 import { Task } from '../types/task';
+import { useAuth } from '../contexts/AuthContext';
+import type { UserType } from '../types/auth';
 
 export type ViewMode = 'input' | 'plan';
 
-export interface AppProps {}
+export interface AppProps {
+  userType: UserType | null;
+}
 
-export function App(_props: AppProps): JSX.Element {
+export function App({ userType }: AppProps): JSX.Element {
+  const { logout } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('input');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -89,41 +94,78 @@ export function App(_props: AppProps): JSX.Element {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen"
-      style={{ 
+      style={{
         backgroundColor: 'var(--color-bg-base)',
         color: 'var(--color-text-primary)'
       }}
     >
       {/* Trajectory Header */}
-      <header 
+      <header
         className="p-4 border-b"
-        style={{ 
+        style={{
           backgroundColor: 'var(--color-bg-surface)',
           borderColor: 'var(--color-border-subtle)'
         }}
       >
-        <button
-          onClick={handleTrajectoryClick}
-          className="w-full text-center group cursor-pointer"
-          aria-label={trajectory ? 'Edit trajectory' : 'Set trajectory'}
-        >
-          <h1 
-            className="text-xl font-semibold transition-colors"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            <span 
-              className="group-hover:text-[var(--color-accent-400)] transition-colors"
+        <div className="flex items-center justify-between">
+          {/* User Type Indicator */}
+          <div className="flex items-center gap-2">
+            <span
+              className="px-2 py-1 text-xs font-medium rounded"
+              style={{
+                backgroundColor: userType === 'personal' ? 'var(--color-mint-700)' : 'var(--color-accent-700)',
+                color: 'var(--color-bg-base)'
+              }}
             >
-              {trajectory?.text || (
-                <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                  No trajectory set — Click to edit
-                </span>
-              )}
+              {userType === 'personal' ? 'Personal' : 'Showcase'}
             </span>
-          </h1>
-        </button>
+          </div>
+
+          {/* Trajectory Text */}
+          <button
+            onClick={handleTrajectoryClick}
+            className="flex-1 text-center group cursor-pointer mx-4"
+            aria-label={trajectory ? 'Edit trajectory' : 'Set trajectory'}
+          >
+            <h1
+              className="text-xl font-semibold transition-colors"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              <span
+                className="group-hover:text-[var(--color-accent-400)] transition-colors"
+              >
+                {trajectory?.text || (
+                  <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
+                    No trajectory set — Click to edit
+                  </span>
+                )}
+              </span>
+            </h1>
+          </button>
+
+          {/* Logout Button */}
+          <button
+            onClick={logout}
+            className="px-3 py-1.5 text-sm rounded font-medium transition-all"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-secondary)',
+              border: '1px solid var(--color-border-subtle)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-error-text)';
+              e.currentTarget.style.borderColor = 'var(--color-error-border)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-text-secondary)';
+              e.currentTarget.style.borderColor = 'var(--color-border-subtle)';
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       {/* Actor Table */}
