@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Tauri
+src-tauri/target/
+
+# Screenshots and test artifacts
+*.png
+test-*.png
+test-*.html
+console-logs.txt
+server.log
+dev.log
+
+# Vite cache
+.vite/
+
+# Temporary files
+*.tmp
+*.temp
