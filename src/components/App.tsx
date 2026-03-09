@@ -34,8 +34,8 @@ export function App({ userType }: AppProps): JSX.Element {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
 
-  const { tasks, loadFromStorage, updateTask, markTaskSent } = useTaskStore();
-  
+  const { tasks, loadFromStorage, updateTask, markTaskSent, setUserType } = useTaskStore();
+
   const agenticTasks = tasks.filter(t => t.type === 'agentic');
   const nonAgenticTasks = tasks.filter(t => t.type === 'non-agentic');
   const hybridTasks = tasks.filter(t => t.type === 'hybrid');
@@ -44,11 +44,14 @@ export function App({ userType }: AppProps): JSX.Element {
   const { loadFromStorage: loadLimit } = useLimitStore();
 
   useEffect(() => {
-    loadFromStorage();
+    if (userType) {
+      setUserType(userType);
+      loadFromStorage();
+    }
     loadActors();
     loadTrajectory();
     loadLimit();
-  }, []);
+  }, [userType]);
 
   const handleTaskCreated = () => setViewMode('plan');
 

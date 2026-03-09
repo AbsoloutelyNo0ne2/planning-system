@@ -43,11 +43,17 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://rstjrsnwmajdm
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdGpyc253bWFqZG1oaG1id21tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1OTU1NDgsImV4cCI6MjA4NzE3MTU0OH0.zL0hZhcAhteAkwynZcScYITzvTYiIMc5JNb-mFicHSc';
 
-// REASONING: Hardcoded user ID for now (no auth UI yet)
-// > Why hardcode? Phase 6.2 doesn't include auth UI
-// > Why 'default'? Consistent ID for single-user scenario
-// > Future: Replace with actual user ID from Supabase Auth
-const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000001';
+// REASONING: UUID constants for each user type (task isolation)
+// > Why two UUIDs? Separates tasks between personal and showcase accounts
+// > Why hardcode? No auth UI, simple passphrase-based system
+// > Personal: tasks created in personal account
+// > Showcase: tasks created in showcase account
+export const USER_IDS = {
+  personal: '00000000-0000-0000-0000-000000000001',
+  showcase: '00000000-0000-0000-0000-000000000002',
+} as const;
+
+export type UserType = keyof typeof USER_IDS;
 
 // REASONING: LocalStorage keys for offline cache
 // > Why namespace? Avoid collisions with other app data
@@ -157,11 +163,12 @@ function clearCache(): void {
  * > Why .select()? Returns the inserted row with server-generated ID
  * > Why single()? Expects exactly one row
  */
-async function createTaskInDb(task: Omit<Task, 'id' | 'creationTime'>): Promise<SupabaseResult<Task>> {
+async function createTaskInDb(task: Omit<Task, 'id' | 'creationTime'>, userType: UserType): Promise<SupabaseResult<Task>> {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   try {
-    const insertData: SupabaseTaskInsert = toSupabaseInsert(task, DEFAULT_USER_ID);
+    const insertData: SupabaseTaskInsert = toSupabaseInsert(task, userId);
     console.log('[SupabaseService] Creating task:', insertData);
 
     const { data, error } = await supabase
@@ -201,15 +208,16 @@ async function createTaskInDb(task: Omit<Task, 'id' | 'creationTime'>): Promise<
  * > Why .eq()? RLS requires filtering by user_id
  * > Why order? Consistent ordering by creation time
  */
-async function getTasksFromDb(): Promise<SupabaseResult<Task[]>> {
+async function getTasksFromDb(userType: UserType): Promise<SupabaseResult<Task[]>> {
   const supabase = getSupabase();
-  console.log('[SupabaseService] Fetching tasks for user:', DEFAULT_USER_ID);
+  const userId = USER_IDS[userType];
+  console.log('[SupabaseService] Fetching tasks for user:', userId);
 
   try {
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
-      .eq('user_id', DEFAULT_USER_ID)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -252,9 +260,11 @@ async function getTasksFromDb(): Promise<SupabaseResult<Task[]>> {
  */
 async function updateTaskInDb(
   id: TaskId,
-  updates: Partial<Task>
+  updates: Partial<Task>,
+  userType: UserType
 ): Promise<SupabaseResult<Task>> {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   try {
     const updateData = toSupabaseUpdate(updates);
@@ -263,7 +273,7 @@ async function updateTaskInDb(
       .from('tasks')
       .update(updateData)
       .eq('id', id)
-      .eq('user_id', DEFAULT_USER_ID)
+      .eq('user_id', userId)
       .select()
       .single<SupabaseTaskRow>();
 
@@ -296,15 +306,16 @@ async function updateTaskInDb(
  * REASONING: Remove task by ID
  * > Why no select? DELETE doesn't return the row
  */
-async function deleteTaskFromDb(id: TaskId): Promise<SupabaseResult<void>> {
+async function deleteTaskFromDb(id: TaskId, userType: UserType): Promise<SupabaseResult<void>> {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   try {
     const { error } = await supabase
       .from('tasks')
       .delete()
       .eq('id', id)
-      .eq('user_id', DEFAULT_USER_ID);
+      .eq('user_id', userId);
 
     if (error) {
       return { success: false, error: error.message };
@@ -333,10 +344,12 @@ async function deleteTaskFromDb(id: TaskId): Promise<SupabaseResult<void>> {
  * > Why '*:*'? Listen to all events (INSERT, UPDATE, DELETE)
  *
  * @param callback - Called whenever tasks change with new task list
+ * @param userType - Filter subscription to specific user type
  * @returns Unsubscribe function to clean up subscription
  */
-function subscribeToTasks(callback: (tasks: Task[]) => void): () => void {
+function subscribeToTasks(callback: (tasks: Task[]) => void, userType: UserType): () => void {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   // REASONING: Create a channel for this subscription
   // > Why 'tasks'? Channel name, can be anything but descriptive is better
@@ -348,13 +361,13 @@ function subscribeToTasks(callback: (tasks: Task[]) => void): () => void {
         event: '*', // Listen to INSERT, UPDATE, DELETE
         schema: 'public',
         table: 'tasks',
-        filter: `user_id=eq.${DEFAULT_USER_ID}`,
+        filter: `user_id=eq.${userId}`,
       },
       async () => {
         // REASONING: Fetch fresh data on any change
         // > Why not use payload directly? Simpler to re-fetch and ensure consistency
         // > Trade-off: Extra API call vs data consistency
-        const result = await getTasksFromDb();
+        const result = await getTasksFromDb(userType);
         if (result.success) {
           callback(result.data);
         }
@@ -403,14 +416,14 @@ async function isOnline(): Promise<boolean> {
  * REASONING: Manual sync trigger for offline scenarios
  * > Why? User might want to trigger sync when back online
  */
-async function syncCache(): Promise<SupabaseResult<Task[]>> {
+async function syncCache(userType: UserType): Promise<SupabaseResult<Task[]>> {
   const online = await isOnline();
   if (!online) {
     return { success: false, error: 'Offline - cannot sync' };
   }
 
   // REASONING: Simple re-fetch clears cache and gets fresh data
-  const result = await getTasksFromDb();
+  const result = await getTasksFromDb(userType);
   return result;
 }
 
@@ -433,8 +446,8 @@ export const supabaseService = {
    * REASONING: > What if offline? Returns error - implement queue if needed
    * # Currently requires online, future: offline queue
    */
-  async createTask(task: Omit<Task, 'id' | 'creationTime'>): Promise<SupabaseResult<Task>> {
-    return createTaskInDb(task);
+  async createTask(task: Omit<Task, 'id' | 'creationTime'>, userType: UserType): Promise<SupabaseResult<Task>> {
+    return createTaskInDb(task, userType);
   },
 
   /**
@@ -442,8 +455,8 @@ export const supabaseService = {
    * REASONING: > What if offline? Returns cached data with success
    * # Cache provides offline fallback automatically
    */
-  async getTasks(): Promise<SupabaseResult<Task[]>> {
-    return getTasksFromDb();
+  async getTasks(userType: UserType): Promise<SupabaseResult<Task[]>> {
+    return getTasksFromDb(userType);
   },
 
   /**
@@ -460,8 +473,8 @@ export const supabaseService = {
    * REASONING: > What fields can update? Any partial Task fields
    * # Only changed fields sent to server
    */
-  async updateTask(id: TaskId, updates: Partial<Task>): Promise<SupabaseResult<Task>> {
-    return updateTaskInDb(id, updates);
+  async updateTask(id: TaskId, updates: Partial<Task>, userType: UserType): Promise<SupabaseResult<Task>> {
+    return updateTaskInDb(id, updates, userType);
   },
 
   /**
@@ -469,8 +482,8 @@ export const supabaseService = {
    * REASONING: > Is this permanent? Yes, immediate deletion
    * # No soft delete currently, can add if needed
    */
-  async deleteTask(id: TaskId): Promise<SupabaseResult<void>> {
-    return deleteTaskFromDb(id);
+  async deleteTask(id: TaskId, userType: UserType): Promise<SupabaseResult<void>> {
+    return deleteTaskFromDb(id, userType);
   },
 
   /**
@@ -504,6 +517,12 @@ export const supabaseService = {
    * REASONING: > Use case? Display cached data while loading
    */
   getCachedTasks: loadFromCache,
+
+  /**
+   * Get user ID for a user type
+   * REASONING: > Use case? External components need user ID for queries
+   */
+  getUserId: (userType: UserType) => USER_IDS[userType],
 };
 
 // SECTION: Legacy Compatibility
@@ -516,9 +535,9 @@ export const supabaseService = {
 /**
  * @deprecated Use supabaseService instead
  */
-export async function loadTasks(): Promise<SupabaseResult<Task[]>> {
+export async function loadTasks(userType: UserType): Promise<SupabaseResult<Task[]>> {
   console.warn('loadTasks is deprecated, use supabaseService.getTasks()');
-  return supabaseService.getTasks();
+  return supabaseService.getTasks(userType);
 }
 
 /**

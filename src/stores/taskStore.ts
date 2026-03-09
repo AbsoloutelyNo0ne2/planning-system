@@ -30,7 +30,7 @@ import { create } from 'zustand';
 import { useStore } from 'zustand';
 import { Task, TaskId, TaskType } from '../types/task';
 import { sortTasks } from '../services/sortService';
-import { supabaseService } from '../services/supabaseService';
+import { supabaseService, UserType } from '../services/supabaseService';
 import { limitStoreInstance } from './limitStore';
 
 // SECTION: Completed Task Types
@@ -54,6 +54,7 @@ export interface TaskStoreState {
   // Core data
   tasks: Task[];
   completedTasks: CompletedTask[];
+  userType: UserType | null;
 
   // Loading and error states
   isLoading: boolean;
@@ -74,6 +75,7 @@ export interface TaskStoreActions {
 
   // Batch operations
   setTasks: (tasks: Task[]) => void;
+  setUserType: (userType: UserType) => void;
   clearError: () => void;
 
   // Persistence
@@ -108,10 +110,13 @@ export function createTaskStore(): StoreApi<TaskStore> {
   // Why subscription in factory?
   // Store should auto-sync when created, keeps subscription logic centralized.
 
+  let unsubscribeRealtime: (() => void) | null = null;
+
   const store = create<TaskStore>((set, get) => ({
     // SECTION: Initial State
     tasks: [],
     completedTasks: [],
+    userType: null,
     isLoading: false,
     isSyncing: false,
     error: null,
@@ -148,198 +153,267 @@ export function createTaskStore(): StoreApi<TaskStore> {
       return filtered;
     },
 
-    // SECTION: CRUD Actions
+  // SECTION: CRUD Actions
 
-    addTask: async (task: Task) => {
-      // REASONING: Create task in Supabase, update local state
-      // > Why set loading? UI can show spinner
-      // > Why optimistic update? Show task immediately while saving
-      set({ isLoading: true, error: null });
+  addTask: async (task: Task) => {
+    // REASONING: Create task in Supabase, update local state
+    // > Why set loading? UI can show spinner
+    // > Why optimistic update? Show task immediately while saving
+    const { userType } = get();
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
 
-      try {
-        const result = await supabaseService.createTask(task);
+    set({ isLoading: true, error: null });
 
-        if (!result.success) {
-          set({ error: result.error, isLoading: false });
-          return;
-        }
+    try {
+      const result = await supabaseService.createTask(task, userType);
 
-        // REASONING: Add new task to local state
-        // > Why ...result.data? Use server-generated ID and timestamps
-        set((state) => ({
-          tasks: [result.data, ...state.tasks],
-          isLoading: false,
-        }));
-      } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to add task',
-          isLoading: false,
-        });
-      }
-    },
-
-    updateTask: async (id: string, updates: Partial<Task>) => {
-      // REASONING: Update task in Supabase, sync local state
-      set({ isLoading: true, error: null });
-
-      try {
-        const result = await supabaseService.updateTask(id, updates);
-
-        if (!result.success) {
-          set({ error: result.error, isLoading: false });
-          return;
-        }
-
-        // REASONING: Replace updated task in local state
-        set((state) => ({
-          tasks: state.tasks.map(t =>
-            t.id === id ? result.data : t
-          ),
-          isLoading: false,
-        }));
-      } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to update task',
-          isLoading: false,
-        });
-      }
-    },
-
-    removeTask: async (id: string) => {
-      // REASONING: Delete from Supabase and both local arrays
-      set({ isLoading: true, error: null });
-
-      try {
-        const result = await supabaseService.deleteTask(id);
-
-        if (!result.success) {
-          set({ error: result.error, isLoading: false });
-          return;
-        }
-
-        // REASONING: Remove from both tasks and completedTasks
-        set((state) => ({
-          tasks: state.tasks.filter(t => t.id !== id),
-          completedTasks: state.completedTasks.filter(t => t.id !== id),
-          isLoading: false,
-        }));
-      } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to remove task',
-          isLoading: false,
-        });
-      }
-    },
-
-    markTaskSent: async (id: string) => {
-      // REASONING: Complete task - move to completedTasks archive
-      // > Why separate archive? Completed tasks are immutable history
-      set({ isLoading: true, error: null });
-
-      const { tasks, completedTasks } = get();
-      const task = tasks.find(t => t.id === id);
-
-      if (!task) {
-        set({ error: `Task ${id} not found`, isLoading: false });
+      if (!result.success) {
+        set({ error: result.error, isLoading: false });
         return;
       }
 
-      try {
-        // REASONING: Update task as completed
-        const updateResult = await supabaseService.updateTask(id, {
-          completed: true,
-          completedTime: Date.now(),
-        });
+      // REASONING: Add new task to local state
+      // > Why ...result.data? Use server-generated ID and timestamps
+      set((state) => ({
+        tasks: [result.data, ...state.tasks],
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to add task',
+        isLoading: false,
+      });
+    }
+  },
 
-        if (!updateResult.success) {
-          set({ error: updateResult.error, isLoading: false });
-          return;
-        }
+  updateTask: async (id: string, updates: Partial<Task>) => {
+    // REASONING: Update task in Supabase, sync local state
+    const { userType } = get();
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
 
-        const completedTask: CompletedTask = {
-          id: task.id,
-          originalTask: task,
-          sentTime: Date.now(),
-        };
+    set({ isLoading: true, error: null });
 
-        // REASONING: Increment per-type completed count
-        await limitStoreInstance.getState().incrementCompletedCount(task.type);
+    try {
+      const result = await supabaseService.updateTask(id, updates, userType);
 
-        // REASONING: Move from tasks to completedTasks
-        set({
-          tasks: tasks.filter(t => t.id !== id),
-          completedTasks: [...completedTasks, completedTask],
-          isLoading: false,
-        });
-      } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to mark task as sent',
-          isLoading: false,
-        });
-      }
-    },
-
-    toggleTaskComplete: async (id: string) => {
-      // REASONING: Toggle completion status
-      // > Why separate action? Simpler UI for checkbox
-      set({ isLoading: true, error: null });
-
-      const { tasks } = get();
-      const task = tasks.find(t => t.id === id);
-
-      if (!task) {
-        set({ error: `Task ${id} not found`, isLoading: false });
+      if (!result.success) {
+        set({ error: result.error, isLoading: false });
         return;
       }
 
-      const newCompleted = !task.completed;
+      // REASONING: Replace updated task in local state
+      set((state) => ({
+        tasks: state.tasks.map(t =>
+          t.id === id ? result.data : t
+        ),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to update task',
+        isLoading: false,
+      });
+    }
+  },
 
-      try {
-        const result = await supabaseService.updateTask(id, {
-          completed: newCompleted,
-          completedTime: newCompleted ? Date.now() : undefined,
-        });
+  removeTask: async (id: string) => {
+    // REASONING: Delete from Supabase and both local arrays
+    const { userType } = get();
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
 
-        if (!result.success) {
-          set({ error: result.error, isLoading: false });
-          return;
-        }
+    set({ isLoading: true, error: null });
 
-        // REASONING: Update local state
-        set((state) => ({
-          tasks: state.tasks.map(t =>
-            t.id === id ? { ...t, completed: newCompleted } : t
-          ),
-          isLoading: false,
-        }));
-      } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to toggle task',
-          isLoading: false,
-        });
+    try {
+      const result = await supabaseService.deleteTask(id, userType);
+
+      if (!result.success) {
+        set({ error: result.error, isLoading: false });
+        return;
       }
-    },
 
-    // SECTION: Batch Actions
+      // REASONING: Remove from both tasks and completedTasks
+      set((state) => ({
+        tasks: state.tasks.filter(t => t.id !== id),
+        completedTasks: state.completedTasks.filter(t => t.id !== id),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to remove task',
+        isLoading: false,
+      });
+    }
+  },
 
-    setTasks: (tasks: Task[]) => {
-      // REASONING: Replace entire tasks array
-      // > Use case: Initial load or bulk import
-      set({ tasks });
-    },
+  markTaskSent: async (id: string) => {
+    // REASONING: Complete task - move to completedTasks archive
+    // > Why separate archive? Completed tasks are immutable history
+    const { userType } = get();
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
 
-    clearError: () => {
-      // REASONING: Reset error state
-      set({ error: null });
-    },
+    set({ isLoading: true, error: null });
 
-    // SECTION: Persistence Actions
+    const { tasks, completedTasks } = get();
+    const task = tasks.find(t => t.id === id);
 
-    loadFromStorage: async () => {
-      // REASONING: Initial load from Supabase
-      // > Why separate action? Called once on app startup
-      // > Why loading state? UI shows spinner
-      set({ isLoading: true, error: null });
+    if (!task) {
+      set({ error: `Task ${id} not found`, isLoading: false });
+      return;
+    }
+
+    try {
+      // REASONING: Update task as completed
+      const updateResult = await supabaseService.updateTask(id, {
+        completed: true,
+        completedTime: Date.now(),
+      }, userType);
+
+      if (!updateResult.success) {
+        set({ error: updateResult.error, isLoading: false });
+        return;
+      }
+
+      const completedTask: CompletedTask = {
+        id: task.id,
+        originalTask: task,
+        sentTime: Date.now(),
+      };
+
+      // REASONING: Increment per-type completed count
+      await limitStoreInstance.getState().incrementCompletedCount(task.type);
+
+      // REASONING: Move from tasks to completedTasks
+      set({
+        tasks: tasks.filter(t => t.id !== id),
+        completedTasks: [...completedTasks, completedTask],
+        isLoading: false,
+      });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to mark task as sent',
+        isLoading: false,
+      });
+    }
+  },
+
+  toggleTaskComplete: async (id: string) => {
+    // REASONING: Toggle completion status
+    // > Why separate action? Simpler UI for checkbox
+    const { userType } = get();
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
+
+    set({ isLoading: true, error: null });
+
+    const { tasks } = get();
+    const task = tasks.find(t => t.id === id);
+
+    if (!task) {
+      set({ error: `Task ${id} not found`, isLoading: false });
+      return;
+    }
+
+    const newCompleted = !task.completed;
+
+    try {
+      const result = await supabaseService.updateTask(id, {
+        completed: newCompleted,
+        completedTime: newCompleted ? Date.now() : undefined,
+      }, userType);
+
+      if (!result.success) {
+        set({ error: result.error, isLoading: false });
+        return;
+      }
+
+      // REASONING: Update local state
+      set((state) => ({
+        tasks: state.tasks.map(t =>
+          t.id === id ? { ...t, completed: newCompleted } : t
+        ),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to toggle task',
+        isLoading: false,
+      });
+    }
+  },
+
+  // SECTION: Batch Actions
+
+  setTasks: (tasks: Task[]) => {
+    // REASONING: Replace entire tasks array
+    // > Use case: Initial load or bulk import
+    set({ tasks });
+  },
+
+  setUserType: (userType: UserType) => {
+    // REASONING: Set user type and re-subscribe to realtime
+    // > Why re-subscribe? Filter needs to match new user type
+    const currentType = get().userType;
+    if (currentType === userType) return;
+
+    // REASONING: Unsubscribe from old subscription
+    if (unsubscribeRealtime) {
+      unsubscribeRealtime();
+      unsubscribeRealtime = null;
+    }
+
+    // REASONING: Clear tasks when switching user type
+    set({ userType, tasks: [], completedTasks: [] });
+
+    // REASONING: Subscribe to new user type's tasks
+    unsubscribeRealtime = supabaseService.subscribeToTasks((tasks) => {
+      const newActiveTasks = tasks.filter(t => !t.completed);
+      const completedTasksList = tasks
+        .filter(t => t.completed)
+        .map((t): CompletedTask => ({
+          id: t.id,
+          originalTask: t,
+          sentTime: t.completedTime || Date.now(),
+        }));
+
+      store.setState({
+        tasks: newActiveTasks,
+        completedTasks: completedTasksList,
+      });
+    }, userType);
+  },
+
+  clearError: () => {
+    // REASONING: Reset error state
+    set({ error: null });
+  },
+
+  // SECTION: Persistence Actions
+
+  loadFromStorage: async () => {
+    // REASONING: Initial load from Supabase
+    // > Why separate action? Called once on app startup
+    // > Why loading state? UI shows spinner
+    const { userType } = get();
+    if (!userType) {
+      // REASONING: No user type set yet, will load when setUserType is called
+      return;
+    }
+
+    set({ isLoading: true, error: null });
 
     try {
       // REASONING: Try cache first for fast initial render
@@ -350,7 +424,7 @@ export function createTaskStore(): StoreApi<TaskStore> {
       }
 
       // REASONING: Fetch fresh data from Supabase
-      const result = await supabaseService.getTasks();
+      const result = await supabaseService.getTasks(userType);
 
       if (!result.success) {
         set({ error: result.error, isLoading: false });
@@ -374,80 +448,57 @@ export function createTaskStore(): StoreApi<TaskStore> {
         isLoading: false,
       });
     } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to load tasks',
-          isLoading: false,
-        });
+      set({
+        error: error instanceof Error ? error.message : 'Failed to load tasks',
+        isLoading: false,
+      });
+    }
+  },
+
+  syncWithServer: async () => {
+    // REASONING: Manual sync trigger
+    // > Use case: User-initiated sync or reconnect
+    const { userType } = get();
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
+
+    set({ isSyncing: true, error: null });
+
+    try {
+      const result = await supabaseService.syncCache(userType);
+
+      if (!result.success) {
+        set({ error: result.error, isSyncing: false });
+        return;
       }
-    },
 
-    syncWithServer: async () => {
-      // REASONING: Manual sync trigger
-      // > Use case: User-initiated sync or reconnect
-      set({ isSyncing: true, error: null });
+      // REASONING: Update state with synced data
+      const activeTasks = result.data.filter(t => !t.completed);
+      const completedTasksList = result.data
+        .filter(t => t.completed)
+        .map((t): CompletedTask => ({
+          id: t.id,
+          originalTask: t,
+          sentTime: t.completedTime || Date.now(),
+        }));
 
-      try {
-        const result = await supabaseService.syncCache();
+      set({
+        tasks: activeTasks,
+        completedTasks: completedTasksList,
+        isSyncing: false,
+      });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to sync',
+        isSyncing: false,
+      });
+    }
+  },
+}));
 
-        if (!result.success) {
-          set({ error: result.error, isSyncing: false });
-          return;
-        }
-
-        // REASONING: Update state with synced data
-        const activeTasks = result.data.filter(t => !t.completed);
-        const completedTasksList = result.data
-          .filter(t => t.completed)
-          .map((t): CompletedTask => ({
-            id: t.id,
-            originalTask: t,
-            sentTime: t.completedTime || Date.now(),
-          }));
-
-        set({
-          tasks: activeTasks,
-          completedTasks: completedTasksList,
-          isSyncing: false,
-        });
-      } catch (error) {
-        set({
-          error: error instanceof Error ? error.message : 'Failed to sync',
-          isSyncing: false,
-        });
-      }
-    },
-  }));
-
-  // SECTION: Real-time Subscription Setup
-  // Lines 580-650: Auto-subscribe to Supabase changes
-
-  // REASONING: Subscribe to Supabase realtime on store creation
-  // > Why here? Centralized subscription, auto-cleanup on store destruction
-  // > Why immediate? Start receiving updates right away
-  const unsubscribe = supabaseService.subscribeToTasks((tasks) => {
-    // REASONING: Update store when external changes occur
-    // > Why? Another user/agent might modify tasks
-    // > Note: Always update state with fresh data from Supabase to ensure UI sync
-    const newActiveTasks = tasks.filter(t => !t.completed);
-    const completedTasksList = tasks
-      .filter(t => t.completed)
-      .map((t): CompletedTask => ({
-        id: t.id,
-        originalTask: t,
-        sentTime: t.completedTime || Date.now(),
-      }));
-
-    store.setState({
-      tasks: newActiveTasks,
-      completedTasks: completedTasksList,
-    });
-  });
-
-  // REASONING: Attach cleanup to store for proper resource management
-  // > Why? Prevents memory leaks
-  (store as unknown as { unsubscribe: () => void }).unsubscribe = unsubscribe;
-
-  return store;
+return store;
 }
 
 // SECTION: Store Instance
