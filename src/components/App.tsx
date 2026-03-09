@@ -40,12 +40,13 @@ export function App({ userType }: AppProps): JSX.Element {
   const nonAgenticTasks = tasks.filter(t => t.type === 'non-agentic');
   const hybridTasks = tasks.filter(t => t.type === 'hybrid');
   const { actors, addActor, removeActor, loadFromStorage: loadActors } = useActorStore();
-  const { trajectory, setTrajectory, updateTrajectory, loadFromStorage: loadTrajectory } = useTrajectoryStore();
+  const { trajectory, setTrajectory, updateTrajectory, loadFromStorage: loadTrajectory, setUserType: setTrajectoryUserType } = useTrajectoryStore();
   const { loadFromStorage: loadLimit } = useLimitStore();
 
   useEffect(() => {
     if (userType) {
       setUserType(userType);
+      setTrajectoryUserType(userType);
       loadFromStorage();
     }
     loadActors();

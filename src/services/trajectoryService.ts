@@ -19,7 +19,15 @@ import { Trajectory } from '../types/trajectory';
 // SECTION: Configuration
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://rstjrsnwmajdmhhmbwmm.supabase.co';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000001';
+
+// REASONING: UUID constants for each user type (trajectory isolation)
+// > Same pattern as supabaseService.ts for consistency
+export const USER_IDS = {
+  personal: '00000000-0000-0000-0000-000000000001',
+  showcase: '00000000-0000-0000-0000-000000000002',
+} as const;
+
+export type UserType = keyof typeof USER_IDS;
 
 // SECTION: Supabase Client
 let supabaseInstance: SupabaseClient | null = null;
@@ -54,14 +62,15 @@ interface TrajectoryRow {
  * Get the current trajectory for the user
  * REASONING: Fetch single trajectory row, convert to Trajectory type
  */
-async function getTrajectory(): Promise<TrajectoryResult<Trajectory | null>> {
+async function getTrajectory(userType: UserType): Promise<TrajectoryResult<Trajectory | null>> {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   try {
     const { data, error } = await supabase
       .from('trajectories')
       .select('*')
-      .eq('user_id', DEFAULT_USER_ID)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(1)
       .single<TrajectoryRow>();
@@ -98,21 +107,22 @@ async function getTrajectory(): Promise<TrajectoryResult<Trajectory | null>> {
  * Set a new trajectory
  * REASONING: Insert new trajectory row
  */
-async function setTrajectory(content: string): Promise<TrajectoryResult<Trajectory>> {
+async function setTrajectory(content: string, userType: UserType): Promise<TrajectoryResult<Trajectory>> {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   try {
     // First delete any existing trajectory for this user
     await supabase
       .from('trajectories')
       .delete()
-      .eq('user_id', DEFAULT_USER_ID);
+      .eq('user_id', userId);
 
     // Insert new trajectory
     const { data, error } = await supabase
       .from('trajectories')
       .insert({
-        user_id: DEFAULT_USER_ID,
+        user_id: userId,
         content: content
       })
       .select()
@@ -146,22 +156,23 @@ async function setTrajectory(content: string): Promise<TrajectoryResult<Trajecto
  * Update existing trajectory
  * REASONING: Update the most recent trajectory row
  */
-async function updateTrajectory(content: string): Promise<TrajectoryResult<Trajectory>> {
+async function updateTrajectory(content: string, userType: UserType): Promise<TrajectoryResult<Trajectory>> {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   try {
     // Get the most recent trajectory
     const { data: existing, error: fetchError } = await supabase
       .from('trajectories')
       .select('id')
-      .eq('user_id', DEFAULT_USER_ID)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(1)
       .single<{ id: string }>();
 
     if (fetchError || !existing) {
       // No existing trajectory, create one
-      return setTrajectory(content);
+      return setTrajectory(content, userType);
     }
 
     // Update existing
@@ -200,8 +211,9 @@ async function updateTrajectory(content: string): Promise<TrajectoryResult<Traje
  * Subscribe to trajectory changes
  * REASONING: Real-time sync for trajectory updates
  */
-function subscribeToTrajectory(callback: (trajectory: Trajectory | null) => void): () => void {
+function subscribeToTrajectory(callback: (trajectory: Trajectory | null) => void, userType: UserType): () => void {
   const supabase = getSupabase();
+  const userId = USER_IDS[userType];
 
   const channel = supabase
     .channel('trajectory-changes')
@@ -211,11 +223,11 @@ function subscribeToTrajectory(callback: (trajectory: Trajectory | null) => void
         event: '*',
         schema: 'public',
         table: 'trajectories',
-        filter: `user_id=eq.${DEFAULT_USER_ID}`
+        filter: `user_id=eq.${userId}`
       },
       async () => {
         // Fetch fresh data on any change
-        const result = await getTrajectory();
+        const result = await getTrajectory(userType);
         if (result.success) {
           callback(result.data);
         }

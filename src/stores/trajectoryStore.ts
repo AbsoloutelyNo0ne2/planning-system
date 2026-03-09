@@ -9,12 +9,13 @@
 
 import { create } from 'zustand';
 import { Trajectory, createTrajectory } from '../types/trajectory';
-import { trajectoryService } from '../services/trajectoryService';
+import { trajectoryService, UserType } from '../services/trajectoryService';
 
 // SECTION: State
 // Lines 15-30: Trajectory data
 export interface TrajectoryStoreState {
   trajectory: Trajectory | null;
+  userType: UserType | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -25,6 +26,7 @@ export interface TrajectoryStoreActions {
   setTrajectory: (text: string) => Promise<void>;
   updateTrajectory: (text: string) => Promise<void>;
   clearError: () => void;
+  setUserType: (userType: UserType) => void;
 
   // Persistence
   loadFromStorage: () => Promise<void>;
@@ -35,16 +37,20 @@ export interface TrajectoryStoreActions {
 // Lines 58-65: Full store
 export type TrajectoryStore = TrajectoryStoreState & TrajectoryStoreActions;
 
+// REASONING: Track realtime subscription for cleanup
+let unsubscribeRealtime: (() => void) | null = null;
+
 // REASONING: We need a Zustand store to manage trajectory state
 // > What state do we need? Trajectory data, loading status, error messages
 // > What actions? CRUD operations and persistence
 // > How to persist? Use fileService to load/save trajectory
 // > Therefore: Create store with create() from zustand, implement all actions
 export const useTrajectoryStore = create<TrajectoryStore>((set, get) => ({
-  // Initial state
-  trajectory: null,
-  isLoading: false,
-  error: null,
+// Initial state
+trajectory: null,
+userType: null,
+isLoading: false,
+error: null,
 
   // REASONING: We need to set a new trajectory
   // > What does that mean? Create a completely new trajectory with fresh ID
@@ -82,6 +88,27 @@ export const useTrajectoryStore = create<TrajectoryStore>((set, get) => ({
   // > Therefore: Simple state update to null
   clearError: () => set({ error: null }),
 
+  // REASONING: Set user type and re-subscribe to realtime
+  // > Why re-subscribe? Filter needs to match new user type
+  setUserType: (userType: UserType) => {
+    const currentType = get().userType;
+    if (currentType === userType) return;
+
+    // REASONING: Unsubscribe from old subscription
+    if (unsubscribeRealtime) {
+      unsubscribeRealtime();
+      unsubscribeRealtime = null;
+    }
+
+    // REASONING: Clear trajectory when switching user type
+    set({ userType, trajectory: null });
+
+    // REASONING: Subscribe to new user type's trajectory
+    unsubscribeRealtime = trajectoryService.subscribeToTrajectory((trajectory) => {
+      useTrajectoryStore.setState({ trajectory });
+    }, userType);
+  },
+
   // REASONING: App needs to load trajectory on startup
   // > What state during load? Set isLoading true to show spinner/block UI
   // > What if success? Set trajectory data, clear loading
@@ -89,9 +116,15 @@ export const useTrajectoryStore = create<TrajectoryStore>((set, get) => ({
   // > Async? Yes, use Promise to handle async file operation
   // > Therefore: Set loading, await fileService, handle result with error boundary
   loadFromStorage: async () => {
+    const { userType } = get();
+    if (!userType) {
+      // REASONING: No user type set yet, will load when setUserType is called
+      return;
+    }
+
     set({ isLoading: true, error: null });
     try {
-      const result = await trajectoryService.getTrajectory();
+      const result = await trajectoryService.getTrajectory(userType);
       if (result.success) {
         set({ trajectory: result.data, isLoading: false });
       } else {
@@ -113,11 +146,15 @@ export const useTrajectoryStore = create<TrajectoryStore>((set, get) => ({
   // > Async? Yes, file operations are async
   // > Therefore: Get current trajectory, check existence, await save, handle errors
   saveToStorage: async () => {
-    const { trajectory } = get();
+    const { trajectory, userType } = get();
     if (!trajectory) return;
+    if (!userType) {
+      set({ error: 'No user type set' });
+      return;
+    }
 
     try {
-      const result = await trajectoryService.updateTrajectory(trajectory.text);
+      const result = await trajectoryService.updateTrajectory(trajectory.text, userType);
       if (!result.success) {
         set({ error: result.error });
       }
@@ -128,14 +165,6 @@ export const useTrajectoryStore = create<TrajectoryStore>((set, get) => ({
     }
   }
 }));
-
-// Setup real-time subscription to sync trajectory from Supabase
-const unsubscribe = trajectoryService.subscribeToTrajectory((trajectory) => {
-  useTrajectoryStore.setState({ trajectory });
-});
-
-// Attach cleanup method to store
-(useTrajectoryStore as unknown as { unsubscribe: () => void }).unsubscribe = unsubscribe;
 
 // SECTION MAP:
 // Lines 1-14: File header and imports
