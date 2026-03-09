@@ -1,7 +1,6 @@
-import { 
-  verifyToken, 
-  extractTokenFromCookie,
-  type UserType 
+import {
+  verifyToken,
+  extractTokenFromCookie
 } from '../_utils/auth';
 
 export const config = {

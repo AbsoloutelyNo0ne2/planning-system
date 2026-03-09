@@ -76,7 +76,10 @@ export async function createToken(userType: UserType): Promise<string> {
 export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload as TokenPayload;
+    if (payload && typeof payload.userType === 'string') {
+      return { userType: payload.userType as UserType };
+    }
+    return null;
   } catch {
     return null;
   }

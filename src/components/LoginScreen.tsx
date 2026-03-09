@@ -68,7 +68,6 @@ export function LoginScreen(): JSX.Element {
                 id="passphrase"
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
-                type={showPassphrase ? 'text' : 'password'}
                 placeholder="Enter your passphrase..."
                 rows={4}
                 className="w-full px-4 py-3 rounded-lg resize-none transition-all duration-200"
@@ -77,6 +76,7 @@ export function LoginScreen(): JSX.Element {
                   color: 'var(--text-primary)',
                   border: '1px solid var(--border-primary)',
                   outline: 'none',
+                  ...(showPassphrase ? {} : { WebkitTextSecurity: 'disc' }),
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'var(--accent-primary)';

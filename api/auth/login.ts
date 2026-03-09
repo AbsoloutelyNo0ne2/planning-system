@@ -1,9 +1,8 @@
-import { 
-  validatePassphrase, 
-  createToken, 
+import {
+  validatePassphrase,
+  createToken,
   createAuthCookie,
-  checkRateLimit,
-  type UserType 
+  checkRateLimit
 } from '../_utils/auth';
 
 export const config = {
