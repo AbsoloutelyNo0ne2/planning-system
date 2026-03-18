@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+
+const MIN_SWIPE_DISTANCE = 50;
 
 export function LoginScreen(): JSX.Element {
   const [passphrase, setPassphrase] = useState('');
   const [showPassphrase, setShowPassphrase] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [swipeFeedback, setSwipeFeedback] = useState<'submit' | 'clear' | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const touchStartX = useRef<number | null>(null);
   const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window);
+  }, []);
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
 
     if (!passphrase.trim()) {
       setError('Please enter a passphrase');
@@ -28,6 +37,35 @@ export function LoginScreen(): JSX.Element {
     setIsLoading(false);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaX = touchEndX - touchStartX.current;
+    touchStartX.current = null;
+
+    if (Math.abs(deltaX) < MIN_SWIPE_DISTANCE) return;
+
+    if (deltaX < 0 && passphrase.trim()) {
+      setSwipeFeedback('submit');
+      setTimeout(() => {
+        setSwipeFeedback(null);
+        handleSubmit();
+      }, 150);
+    } else if (deltaX > 0) {
+      setSwipeFeedback('clear');
+      setTimeout(() => {
+        setSwipeFeedback(null);
+        setPassphrase('');
+        setError(null);
+      }, 150);
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center p-6"
@@ -42,6 +80,8 @@ export function LoginScreen(): JSX.Element {
         backgroundSize: '100% 100%',
         backgroundRepeat: 'no-repeat'
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="w-full max-w-md">
         {/* Header */}
@@ -71,21 +111,30 @@ export function LoginScreen(): JSX.Element {
               Passphrase
             </label>
 
-            <div className="relative">
-              <input
-                id="passphrase"
-                type={showPassphrase ? 'text' : 'password'}
-                value={passphrase}
-                onChange={(e) => setPassphrase(e.target.value)}
-                placeholder="Enter your passphrase..."
-                className="w-full px-4 py-3 rounded-lg transition-all duration-200"
-                style={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border-primary)',
-                  outline: 'none',
-                  boxShadow: '0 0 0 0 transparent'
-                }}
+        <div className="relative">
+          <input
+            id="passphrase"
+            type={showPassphrase ? 'text' : 'password'}
+            value={passphrase}
+            onChange={(e) => setPassphrase(e.target.value)}
+            placeholder="Enter your passphrase..."
+            className="w-full px-4 py-3 rounded-lg transition-all duration-200"
+            style={{
+              backgroundColor: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
+              border: swipeFeedback
+                ? swipeFeedback === 'submit'
+                  ? '2px solid oklch(70% 0.15 195)'
+                  : '2px solid oklch(70% 0.15 45)'
+                : '1px solid var(--border-primary)',
+              outline: 'none',
+              boxShadow: swipeFeedback
+                ? swipeFeedback === 'submit'
+                  ? '0 0 30px oklch(60% 0.15 195)'
+                  : '0 0 30px oklch(60% 0.15 45)'
+                : '0 0 0 0 transparent',
+              transition: 'border-color 0.15s, box-shadow 0.15s'
+            }}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'var(--accent-primary)';
                   e.target.style.boxShadow = '0 0 20px oklch(60% 0.15 195), 0 0 40px oklch(50% 0.1 195)';
@@ -135,13 +184,21 @@ export function LoginScreen(): JSX.Element {
               </button>
             </div>
 
-            {/* Helper Text */}
-            <p
-              className="mt-2 text-sm"
-              style={{ color: 'var(--text-tertiary)' }}
-            >
-              This is a password-free system. Your passphrase is your identity.
-            </p>
+        {/* Helper Text */}
+        <p
+          className="mt-2 text-sm"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
+          This is a password-free system. Your passphrase is your identity.
+        </p>
+        {isTouchDevice && (
+          <p
+            className="mt-1 text-xs"
+            style={{ color: 'var(--text-tertiary)', opacity: 0.7 }}
+          >
+            Swipe left to enter, right to clear
+          </p>
+        )}
           </div>
 
           {/* Error Message */}
