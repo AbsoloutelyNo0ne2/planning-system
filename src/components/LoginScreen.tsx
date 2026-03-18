@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 const MIN_SWIPE_DISTANCE = 50;
@@ -9,13 +9,8 @@ export function LoginScreen(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [swipeFeedback, setSwipeFeedback] = useState<'submit' | 'clear' | null>(null);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const { login } = useAuth();
-
-  useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window);
-  }, []);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -191,14 +186,7 @@ export function LoginScreen(): JSX.Element {
         >
           This is a password-free system. Your passphrase is your identity.
         </p>
-        {isTouchDevice && (
-          <p
-            className="mt-1 text-xs"
-            style={{ color: 'var(--text-tertiary)', opacity: 0.7 }}
-          >
-            Swipe left to enter, right to clear
-          </p>
-        )}
+
           </div>
 
           {/* Error Message */}
@@ -216,60 +204,130 @@ export function LoginScreen(): JSX.Element {
             </div>
           )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading || !passphrase.trim()}
-            className="w-full py-4 px-6 rounded-lg font-medium text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={isLoading || !passphrase.trim()}
+        className="w-full py-4 px-6 rounded-lg font-medium text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden hidden sm:block"
+        style={{
+          background: 'linear-gradient(135deg, oklch(55% 0.15 195), oklch(55% 0.15 165))',
+          color: 'var(--bg-primary)',
+          boxShadow: '0 0 30px oklch(50% 0.12 195)'
+        }}
+        onMouseEnter={(e) => {
+          if (!isLoading) {
+            e.currentTarget.style.background = 'linear-gradient(135deg, oklch(60% 0.18 195), oklch(60% 0.18 165))';
+            e.currentTarget.style.boxShadow = '0 0 40px oklch(55% 0.15 195), 0 0 60px oklch(50% 0.1 195)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'linear-gradient(135deg, oklch(55% 0.15 195), oklch(55% 0.15 165))';
+          e.currentTarget.style.boxShadow = '0 0 30px oklch(50% 0.12 195)';
+        }}
+      >
+        {/* Animated background shimmer */}
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+            animation: 'shimmer 2s infinite'
+          }}
+        />
+
+        {isLoading ? (
+          <span className="flex items-center justify-center gap-2 relative z-10">
+            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            Verifying...
+          </span>
+        ) : (
+          <span className="relative z-10">Enter</span>
+        )}
+      </button>
+
+      {/* Mobile Touch-Friendly Buttons */}
+      <div className="flex gap-4 sm:hidden">
+        <button
+          type="button"
+          onClick={() => setPassphrase('')}
+          className="flex-1 py-4 px-6 rounded-lg font-medium text-lg transition-all duration-300"
+          style={{
+            backgroundColor: 'transparent',
+            color: 'var(--text-secondary)',
+            border: '2px solid var(--border-primary)',
+            minHeight: '48px'
+          }}
+          onTouchStart={(e) => {
+            e.currentTarget.style.borderColor = 'oklch(70% 0.15 45)';
+            e.currentTarget.style.color = 'oklch(70% 0.15 45)';
+            e.currentTarget.style.boxShadow = '0 0 20px oklch(50% 0.1 45)';
+          }}
+          onTouchEnd={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border-primary)';
+            e.currentTarget.style.color = 'var(--text-secondary)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          Clear
+        </button>
+        <button
+          type="submit"
+          disabled={isLoading || !passphrase.trim()}
+          className="flex-1 py-4 px-6 rounded-lg font-medium text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, oklch(55% 0.15 195), oklch(55% 0.15 165))',
+            color: 'var(--bg-primary)',
+            boxShadow: '0 0 30px oklch(50% 0.12 195)',
+            minHeight: '48px'
+          }}
+        >
+          {/* Animated background shimmer */}
+          <div
+            className="absolute inset-0 opacity-30"
             style={{
-              background: 'linear-gradient(135deg, oklch(55% 0.15 195), oklch(55% 0.15 165))',
-              color: 'var(--bg-primary)',
-              boxShadow: '0 0 30px oklch(50% 0.12 195)'
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+              animation: 'shimmer 2s infinite'
             }}
-            onMouseEnter={(e) => {
-              if (!isLoading) {
-                e.currentTarget.style.background = 'linear-gradient(135deg, oklch(60% 0.18 195), oklch(60% 0.18 165))';
-                e.currentTarget.style.boxShadow = '0 0 40px oklch(55% 0.15 195), 0 0 60px oklch(50% 0.1 195)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, oklch(55% 0.15 195), oklch(55% 0.15 165))';
-              e.currentTarget.style.boxShadow = '0 0 30px oklch(50% 0.12 195)';
-            }}
-          >
-            {/* Animated background shimmer */}
-            <div
-              className="absolute inset-0 opacity-30"
-              style={{
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                animation: 'shimmer 2s infinite'
-              }}
-            />
-            
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2 relative z-10">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Verifying...
-              </span>
-            ) : (
-              <span className="relative z-10">Enter</span>
-            )}
-          </button>
+          />
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2 relative z-10">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Verifying...
+            </span>
+          ) : (
+            <span className="relative z-10">Enter</span>
+          )}
+        </button>
+      </div>
         </form>
 
         {/* Footer */}
