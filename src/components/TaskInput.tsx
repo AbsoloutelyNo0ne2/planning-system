@@ -102,20 +102,25 @@ const currentActorIndexRef = useRef(formData.currentActorIndex);
 // BUG FIX: Track completion state in ref to avoid stale closure in advanceStep
 const isCompleteRef = useRef(isComplete);
 
-// Navigation index for keyboard-controlled selectors
-const [selectedIndex, setSelectedIndex] = useState(0);
+  // Navigation index for keyboard-controlled selectors
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Touch/swipe gesture state for mobile
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const [swipeFeedback, setSwipeFeedback] = useState<'none' | 'left' | 'right'>('none');
 
 // Sync ref with state to prevent stale closure issues
 useEffect(() => {
   currentActorIndexRef.current = formData.currentActorIndex;
 }, [formData.currentActorIndex]);
 
-// Sync isComplete ref with state
-useEffect(() => {
-  isCompleteRef.current = isComplete;
-}, [isComplete]);
+  // Sync isComplete ref with state
+  useEffect(() => {
+    isCompleteRef.current = isComplete;
+  }, [isComplete]);
 
-// Store access - Use typed selectors to get proper types
+  // Store access - Use typed selectors to get proper types
 const addTask = useTaskStore((state) => state.addTask);
 const { actors } = useActorStore();
 
@@ -384,9 +389,47 @@ completionGuard.current = false;
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [goToPreviousStep]);
+
+  // Touch handlers for swipe gestures on mobile
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    // Reset refs
+    touchStartX.current = null;
+    touchStartY.current = null;
+
+    // Minimum swipe distance threshold
+    const minSwipeDistance = 50;
+
+    // Check if horizontal swipe is dominant (not a vertical scroll)
+    if (Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+    // Right-to-left swipe (negative deltaX) = Enter (proceed)
+    if (deltaX < -minSwipeDistance) {
+      setSwipeFeedback('left');
+      setTimeout(() => setSwipeFeedback('none'), 300);
+      advanceStep();
+    }
+    // Left-to-right swipe (positive deltaX) = Esc (go back)
+    else if (deltaX > minSwipeDistance) {
+      setSwipeFeedback('right');
+      setTimeout(() => setSwipeFeedback('none'), 300);
+      goToPreviousStep();
+    }
+  }, [advanceStep, goToPreviousStep]);
 
   // REASONING:
   // We need to render the appropriate step component
@@ -498,12 +541,20 @@ completionGuard.current = false;
   const progressPercent = ((currentStepIndex + 1) / stepOrder.length) * 100;
 
   return (
-    <div 
-      className="w-full max-w-2xl mx-auto p-6 rounded-lg"
-      style={{ 
+    <div
+      className="w-full max-w-2xl mx-auto p-6 rounded-lg touch-pan-y"
+      style={{
         backgroundColor: 'var(--color-bg-surface)',
-        border: '1px solid var(--color-border-subtle)'
+        border: '1px solid var(--color-border-subtle)',
+        transition: 'box-shadow 0.2s ease',
+        boxShadow: swipeFeedback === 'left'
+          ? '0 0 20px oklch(70% 0.25 195 / 0.5), inset 0 0 30px oklch(70% 0.25 195 / 0.1)'
+          : swipeFeedback === 'right'
+          ? '0 0 20px oklch(65% 0.2 25 / 0.5), inset 0 0 30px oklch(65% 0.2 25 / 0.1)'
+          : 'none'
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Progress Header */}
       <div className="mb-6">
@@ -533,15 +584,17 @@ completionGuard.current = false;
       <div className="min-h-[200px]">{renderStep()}</div>
 
       {/* Keyboard Help */}
-      <div 
+      <div
         className="mt-6 pt-4 flex justify-between text-xs"
-        style={{ 
+        style={{
           borderTop: '1px solid var(--color-border-subtle)',
           color: 'var(--color-text-muted)'
         }}
       >
-        <span>Press Enter to continue</span>
-        <span>Esc to go back</span>
+        <span className="hidden sm:inline">Press Enter to continue</span>
+        <span className="hidden sm:inline">Esc to go back</span>
+        <span className="sm:hidden">← Swipe right to go back</span>
+        <span className="sm:hidden">Swipe left to continue →</span>
       </div>
     </div>
   );
