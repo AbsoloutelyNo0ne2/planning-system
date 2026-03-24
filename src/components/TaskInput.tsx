@@ -542,16 +542,21 @@ completionGuard.current = false;
 
   return (
     <div
-      className="w-full max-w-2xl mx-auto p-6 rounded-lg touch-pan-y"
+      className="w-full max-w-2xl mx-auto p-6 touch-pan-y"
       style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        border: '1px solid var(--color-border-subtle)',
-        transition: 'box-shadow 0.2s ease',
-        boxShadow: swipeFeedback === 'left'
-          ? '0 0 20px oklch(70% 0.25 195 / 0.5), inset 0 0 30px oklch(70% 0.25 195 / 0.1)'
+        backgroundColor: swipeFeedback === 'left'
+          ? 'var(--color-accent-600)'
           : swipeFeedback === 'right'
-          ? '0 0 20px oklch(65% 0.2 25 / 0.5), inset 0 0 30px oklch(65% 0.2 25 / 0.1)'
-          : 'none'
+          ? 'var(--color-error-border)'
+          : 'var(--color-bg-surface)',
+        border: '1px solid var(--color-border-subtle)',
+        borderRadius: '4px',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease',
+        borderColor: swipeFeedback === 'left'
+          ? 'var(--color-accent-600)'
+          : swipeFeedback === 'right'
+          ? 'var(--color-error-border)'
+          : 'var(--color-border-subtle)'
       }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -570,13 +575,13 @@ completionGuard.current = false;
           className="w-full rounded-full h-1"
           style={{ backgroundColor: 'var(--color-bg-elevated)' }}
         >
-          <div
-            className="h-1 rounded-full transition-all duration-300"
-            style={{
-              width: `${progressPercent}%`,
-              background: 'linear-gradient(90deg, oklch(70% 0.25 195), oklch(72% 0.22 145))'
-            }}
-          />
+		<div
+				className="h-1 rounded-full transition-all duration-300"
+				style={{
+					width: `${progressPercent}%`,
+					background: 'linear-gradient(90deg, var(--color-accent-500), var(--color-secondary-500))'
+				}}
+			/>
         </div>
       </div>
 
@@ -634,32 +639,31 @@ export function DescriptionInput(props: DescriptionInputProps): JSX.Element {
   return (
     <div className="space-y-4">
       <div className="relative">
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Describe the task in detail..."
-          className="w-full h-40 px-4 py-3 rounded-lg resize-none outline-none transition-all"
-          style={{
-            backgroundColor: 'var(--color-bg-input)',
-            border: '1px solid var(--color-border-default)',
-            color: 'var(--color-text-primary)'
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-            e.currentTarget.style.boxShadow = '0 0 0 3px oklch(45% 0.15 195 / 0.2)';
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-border-default)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-          autoFocus
-        />
+	<textarea
+				value={value}
+				onChange={(e) => onChange(e.target.value)}
+				onKeyDown={handleKeyDown}
+				placeholder="Describe the task in detail..."
+				className="w-full h-40 px-4 py-3 resize-none outline-none transition-all"
+				style={{
+					backgroundColor: 'var(--color-bg-input)',
+					border: '1px solid var(--color-border-default)',
+					borderRadius: '3px',
+					color: 'var(--color-text-primary)'
+				}}
+				onFocus={(e) => {
+					e.currentTarget.style.borderColor = 'var(--color-accent-500)';
+				}}
+				onBlur={(e) => {
+					e.currentTarget.style.borderColor = 'var(--color-border-default)';
+				}}
+				autoFocus
+			/>
       </div>
 
       <div className="flex justify-between items-center text-sm">
         <div className="flex items-center gap-2">
-          <span style={{ fontWeight: 500, color: wordCount >= 250 ? 'var(--color-mint-400)' : 'var(--color-text-muted)' }}>
+		<span style={{ fontWeight: 500, color: wordCount >= 250 ? 'var(--color-success-text)' : 'var(--color-text-muted)' }}>
             {wordCount} words
           </span>
           {showDigSuggestion && (
@@ -748,25 +752,27 @@ export function ValueClassSelector(props: ValueClassSelectorProps): JSX.Element 
         const isSelected = selected === option.value;
         const isHighlighted = selectedIndex === index;
         return (
-          <button
-            key={option.value}
-            onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
-            onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
-            className="w-full text-left px-4 py-3 rounded-lg border transition-all duration-150"
-            style={{
-              backgroundColor: isSelected
-                ? 'oklch(45% 0.15 195 / 0.2)'
-                : isHighlighted
-                  ? 'var(--color-bg-hover)'
-                  : 'var(--color-bg-elevated)',
-              borderColor: isSelected
-                ? 'var(--color-accent-700)'
-                : isHighlighted
-                  ? 'var(--color-border-focus)'
-                  : 'var(--color-border-subtle)',
-              boxShadow: isSelected ? '0 0 0 2px oklch(45% 0.15 195 / 0.35)' : 'none'
-            }}
-          >
+	<button
+				key={option.value}
+				onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
+				onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
+				className="w-full text-left px-4 py-3 border transition-all duration-150"
+				style={{
+					borderRadius: '3px',
+					backgroundColor: isSelected
+						? 'oklch(30% 0.05 173 / 0.3)'
+						: isHighlighted
+						? 'var(--color-bg-hover)'
+						: 'var(--color-bg-elevated)',
+					borderColor: isSelected
+						? 'var(--color-accent-500)'
+						: isHighlighted
+						? 'var(--color-border-focus)'
+						: 'var(--color-border-subtle)',
+					borderWidth: '1px',
+					borderStyle: 'solid'
+				}}
+			>
             <div className="flex items-center justify-between">
               <div>
                 <div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{option.label}</div>
@@ -853,29 +859,31 @@ export function TypeSelector(props: TypeSelectorProps): JSX.Element {
       {typeOptions.map((option, index) => {
         const isSelected = selected === option.value;
         const isHighlighted = selectedIndex === index;
-        const accentColor = option.value === TaskType.AGENTIC ? 'var(--color-mint-500)' : 
-                           option.value === TaskType.HYBRID ? 'var(--color-accent-500)' :
-                           'var(--color-text-muted)';
+		const accentColor = option.value === TaskType.AGENTIC ? 'var(--color-secondary-400)' :
+				option.value === TaskType.HYBRID ? 'var(--color-accent-500)' :
+				'var(--color-text-muted)';
         return (
-          <button
-            key={option.value}
-            onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
-            onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
-            className="w-full text-left px-4 py-3 rounded-lg border transition-all duration-150"
-            style={{
-              backgroundColor: isSelected 
-                ? `${accentColor}26`
-                : isHighlighted 
-                  ? 'var(--color-bg-hover)' 
-                  : 'var(--color-bg-elevated)',
-              borderColor: isSelected 
-                ? accentColor
-                : isHighlighted 
-                  ? 'var(--color-border-focus)' 
-                  : 'var(--color-border-subtle)',
-              boxShadow: isSelected ? `0 0 0 2px ${accentColor}4D` : 'none'
-            }}
-          >
+	<button
+				key={option.value}
+				onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
+				onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
+				className="w-full text-left px-4 py-3 border transition-all duration-150"
+				style={{
+					borderRadius: '3px',
+					backgroundColor: isSelected
+						? `${accentColor}20`
+						: isHighlighted
+						? 'var(--color-bg-hover)'
+						: 'var(--color-bg-elevated)',
+					borderColor: isSelected
+						? accentColor
+						: isHighlighted
+						? 'var(--color-border-focus)'
+						: 'var(--color-border-subtle)',
+					borderWidth: '1px',
+					borderStyle: 'solid'
+				}}
+			>
             <div className="flex items-center justify-between">
               <div>
                 <div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{option.label}</div>

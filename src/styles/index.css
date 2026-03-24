@@ -1,106 +1,106 @@
 /**
- * @fileoverview Global Styles - Neon Blue/Green Theme
- *
- * PURPOSE:
- * Neon blue/green dark theme using OKLCH color space.
- * High-chroma cyan and green accents on deep navy backgrounds.
- *
- * DESIGN SYSTEM:
- * - 60% Neutrals: Deep navy backgrounds (hue 260)
- * - 30% Primary: Neon cyan accents (hue 195, high chroma 0.20-0.25)
- * - 10% Secondary: Neon green highlights (hue 145, high chroma 0.20-0.22)
- *
- * COLOR SPACE: OKLCH (perceptually uniform)
- * - L: Lightness (0-100%)
- * - C: Chroma (saturation)
- * - H: Hue (angle)
+* @fileoverview Global Styles - Technical Precision Theme
+*
+* PURPOSE:
+* Refined dark theme using muted teal accents on slate backgrounds.
+* Professional, focused aesthetic with sharp corners.
+*
+* DESIGN SYSTEM:
+* - 60% Neutrals: Slate dark backgrounds
+* - 30% Primary: Muted teal accents (hue 173)
+* - 10% Secondary: Neutral grays
+*
+* COLOR SPACE: OKLCH (perceptually uniform) + Hex fallbacks
  */
+
+/* Import Inter font for Technical Precision personality */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* SECTION: Tailwind Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* SECTION: Neon OKLCH Color Tokens */
+/* SECTION: Color Tokens */
 :root {
-  /*
-   * NEUTRAL SCALE (60% of UI)
-   * Deep navy backgrounds, cool-tinted for premium dark feel
-   */
-  --color-bg-base: oklch(8% 0.02 260);
-  --color-bg-surface: oklch(15% 0.03 260);
-  --color-bg-elevated: oklch(22% 0.04 260);
-  --color-bg-input: oklch(12% 0.025 260);
-  --color-bg-hover: oklch(28% 0.045 260);
-  --color-bg-active: oklch(32% 0.05 260);
+/*
+* NEUTRAL SCALE (60% of UI)
+* Slate dark backgrounds using standard CSS hex colors
+*/
+--color-bg-base: #0f172a;
+--color-bg-surface: #1e293b;
+--color-bg-elevated: #334155;
+--color-bg-input: #1e293b;
+--color-bg-hover: #475569;
+--color-bg-active: #64748b;
 
-  /* Border colors - subtle separators */
-  --color-border-subtle: oklch(25% 0.03 260);
-  --color-border-default: oklch(32% 0.035 260);
-  --color-border-focus: oklch(40% 0.04 260);
+/* Border colors - subtle separators */
+--color-border-subtle: #334155;
+--color-border-default: #475569;
+--color-border-focus: #64748b;
 
-  /*
-   * TEXT HIERARCHY
-   * Primary: High contrast for readability
-   * Secondary: Supporting content
-   * Muted: Captions, metadata
-   */
-  --color-text-primary: oklch(98% 0.01 260);
-  --color-text-secondary: oklch(75% 0.02 260);
-  --color-text-muted: oklch(55% 0.015 260);
-  --color-text-disabled: oklch(40% 0.01 260);
+/*
+* TEXT HIERARCHY
+* Primary: High contrast for readability
+* Secondary: Supporting content
+* Muted: Captions, metadata
+*/
+--color-text-primary: #f1f5f9;
+--color-text-secondary: #94a3b8;
+--color-text-muted: #64748b;
+--color-text-disabled: #475569;
 
-  /*
-   * ACCENT: NEON CYAN (30% of UI)
-   * High-chroma cyan for primary interactions
-   * Hue ~195° (cyan/teal), chroma 0.20-0.25 for neon intensity
-   */
-  --color-accent-50: oklch(95% 0.05 195);
-  --color-accent-100: oklch(90% 0.10 195);
-  --color-accent-200: oklch(85% 0.15 195);
-  --color-accent-300: oklch(80% 0.20 195);
-  --color-accent-400: oklch(75% 0.23 195);
-  --color-accent-500: oklch(70% 0.25 195);
-  --color-accent-600: oklch(62% 0.24 195);
-  --color-accent-700: oklch(54% 0.22 195);
-  --color-accent-800: oklch(45% 0.20 195);
-  --color-accent-900: oklch(35% 0.18 195);
+/*
+* ACCENT: MUTED TEAL (30% of UI)
+* Lower chroma teal for primary interactions
+* Hue 173° (teal), chroma 0.08-0.15 for muted, professional appearance
+*/
+--color-accent-50: oklch(97% 0.01 173);
+--color-accent-100: oklch(94% 0.03 173);
+--color-accent-200: oklch(88% 0.06 173);
+--color-accent-300: oklch(80% 0.10 173);
+--color-accent-400: oklch(70% 0.13 173);
+--color-accent-500: oklch(60% 0.15 173);
+--color-accent-600: oklch(52% 0.14 173);
+--color-accent-700: oklch(44% 0.12 173);
+--color-accent-800: oklch(36% 0.10 173);
+--color-accent-900: oklch(28% 0.08 173);
 
-  /*
-   * SECONDARY: NEON GREEN (10% of UI)
-   * High-chroma green for secondary accents
-   * Hue ~145° (green), chroma 0.20-0.22 for neon intensity
-   */
-  --color-mint-50: oklch(95% 0.05 145);
-  --color-mint-100: oklch(88% 0.10 145);
-  --color-mint-200: oklch(82% 0.15 145);
-  --color-mint-300: oklch(76% 0.18 145);
-  --color-mint-400: oklch(72% 0.20 145);
-  --color-mint-500: oklch(68% 0.22 145);
-  --color-mint-600: oklch(60% 0.21 145);
-  --color-mint-700: oklch(52% 0.20 145);
-  --color-mint-800: oklch(45% 0.18 145);
-  --color-mint-900: oklch(38% 0.16 145);
+/*
+* SECONDARY: NEUTRAL GRAY (10% of UI)
+* Neutral gray for secondary accents
+* Hue 260° (neutral), low chroma for subtle appearance
+*/
+--color-secondary-50: oklch(97% 0.01 260);
+--color-secondary-100: oklch(94% 0.02 260);
+--color-secondary-200: oklch(88% 0.03 260);
+--color-secondary-300: oklch(80% 0.04 260);
+--color-secondary-400: oklch(70% 0.05 260);
+--color-secondary-500: oklch(60% 0.05 260);
+--color-secondary-600: oklch(52% 0.04 260);
+--color-secondary-700: oklch(44% 0.04 260);
+--color-secondary-800: oklch(36% 0.03 260);
+--color-secondary-900: oklch(28% 0.02 260);
 
-  /*
-   * SEMANTIC COLORS
-   * For status indicators, badges, alerts
-   */
-  --color-success-bg: oklch(18% 0.04 145);
-  --color-success-text: oklch(72% 0.18 145);
-  --color-success-border: oklch(32% 0.08 145);
+/*
+* SEMANTIC COLORS
+* For status indicators, badges, alerts
+*/
+--color-success-bg: oklch(18% 0.03 145);
+--color-success-text: oklch(70% 0.14 145);
+--color-success-border: oklch(30% 0.06 145);
 
-  --color-warning-bg: oklch(18% 0.04 85);
-  --color-warning-text: oklch(78% 0.14 85);
-  --color-warning-border: oklch(32% 0.06 85);
+--color-warning-bg: oklch(18% 0.03 85);
+--color-warning-text: oklch(75% 0.12 85);
+--color-warning-border: oklch(30% 0.05 85);
 
-  --color-error-bg: oklch(15% 0.05 25);
-  --color-error-text: oklch(65% 0.18 25);
-  --color-error-border: oklch(28% 0.08 25);
+--color-error-bg: oklch(15% 0.04 25);
+--color-error-text: oklch(62% 0.16 25);
+--color-error-border: oklch(28% 0.07 25);
 
-  --color-info-bg: oklch(15% 0.04 220);
-  --color-info-text: oklch(70% 0.12 220);
-  --color-info-border: oklch(28% 0.06 220);
+--color-info-bg: oklch(15% 0.03 220);
+--color-info-text: oklch(68% 0.10 220);
+--color-info-border: oklch(28% 0.05 220);
 
   /*
    * SPACING - 8-Point Grid
@@ -119,7 +119,7 @@
   /*
    * TYPOGRAPHY
    */
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
 
   /*
@@ -158,6 +158,7 @@
     font-family: var(--font-sans);
     background-color: var(--color-bg-base);
     color: var(--color-text-primary);
+    font-display: swap;
   }
 
   body {
@@ -168,17 +169,17 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Selection styling - neon cyan accent */
-  ::selection {
-    background-color: var(--color-accent-700);
-    color: var(--color-bg-base);
-  }
+/* Selection styling - muted teal accent */
+::selection {
+  background-color: var(--color-accent-700);
+  color: var(--color-bg-base);
+}
 
-  /* Focus outline - neon cyan accent */
-  :focus-visible {
-    outline: 2px solid var(--color-accent-500);
-    outline-offset: 2px;
-  }
+/* Focus outline - muted teal accent */
+:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
 
   /* Scrollbar styling - required for dark themes */
   * {
@@ -212,13 +213,13 @@
   }
 }
 
-/* SECTION: Neon Component Classes */
+/* SECTION: Component Classes */
 @layer components {
   /* Card/Panel styling */
   .vesper-card {
     background-color: var(--color-bg-surface);
     border: 1px solid var(--color-border-subtle);
-    border-radius: 8px;
+    border-radius: 4px;
     transition: border-color var(--duration-normal) var(--easing-default);
   }
 
@@ -230,22 +231,23 @@
   .vesper-input {
     background-color: var(--color-bg-input);
     border: 1px solid var(--color-border-default);
-    border-radius: 6px;
+    border-radius: 3px;
     color: var(--color-text-primary);
     padding: var(--space-3) var(--space-4);
     transition: border-color var(--duration-fast) var(--easing-default),
-                box-shadow var(--duration-fast) var(--easing-default);
+      box-shadow var(--duration-fast) var(--easing-default);
   }
 
   .vesper-input:hover {
     border-color: var(--color-border-focus);
   }
 
-  .vesper-input:focus {
-    border-color: var(--color-accent-500);
-    box-shadow: 0 0 0 3px oklch(70% 0.25 195 / 0.15);
-    outline: none;
-  }
+/* Input focus - Technical Precision (no glow) */
+.vesper-input:focus {
+  border-color: var(--color-accent-500);
+  outline: none;
+  /* Removed glow effect - Technical Precision */
+}
 
   .vesper-input::placeholder {
     color: var(--color-text-muted);
@@ -254,7 +256,7 @@
   /* Button variants */
   .vesper-btn {
     padding: var(--space-3) var(--space-4);
-    border-radius: 6px;
+    border-radius: 2px;
     font-weight: 500;
     transition: all var(--duration-fast) var(--easing-default);
     cursor: pointer;
@@ -285,14 +287,14 @@
     border-color: var(--color-border-focus);
   }
 
-  .vesper-btn-mint {
-    background-color: var(--color-mint-700);
-    color: var(--color-bg-base);
-  }
+.vesper-btn-secondary-btn {
+  background-color: var(--color-secondary-700);
+  color: var(--color-bg-base);
+}
 
-  .vesper-btn-mint:hover {
-    background-color: var(--color-mint-600);
-  }
+.vesper-btn-secondary-btn:hover {
+  background-color: var(--color-secondary-600);
+}
 
   .vesper-btn-ghost {
     background-color: transparent;
@@ -319,15 +321,15 @@
     font-weight: 500;
   }
 
-  .vesper-badge-accent {
-    background-color: oklch(70% 0.25 195 / 0.15);
-    color: var(--color-accent-400);
-  }
+.vesper-badge-accent {
+  background-color: oklch(60% 0.15 173 / 0.15);
+  color: var(--color-accent-400);
+}
 
-  .vesper-badge-mint {
-    background-color: oklch(72% 0.20 145 / 0.15);
-    color: var(--color-mint-300);
-  }
+.vesper-badge-secondary {
+  background-color: oklch(70% 0.05 260 / 0.15);
+  color: var(--color-secondary-300);
+}
 
   .vesper-badge-success {
     background-color: var(--color-success-bg);
@@ -355,9 +357,9 @@
     letter-spacing: 0.05em;
   }
 
-  .vesper-section-header-agentic {
-    color: var(--color-mint-400);
-  }
+.vesper-section-header-agentic {
+  color: var(--color-secondary-400);
+}
 
   .vesper-section-header-hybrid {
     color: var(--color-accent-400);
@@ -367,33 +369,32 @@
     color: var(--color-text-secondary);
   }
 
-  /* Progress bar - cyan to green neon gradient */
-  .vesper-progress {
-    background-color: var(--color-bg-elevated);
-    border-radius: 9999px;
-    height: 4px;
-    overflow: hidden;
-  }
+/* Progress bar - teal to neutral gradient */
+.vesper-progress {
+  background-color: var(--color-bg-elevated);
+  border-radius: 9999px;
+  height: 4px;
+  overflow: hidden;
+}
 
-  .vesper-progress-bar {
-    background: linear-gradient(90deg, var(--color-accent-600), var(--color-mint-500));
-    height: 100%;
-    border-radius: 9999px;
-    transition: width var(--duration-moderate) var(--easing-out);
-    box-shadow: 0 0 8px oklch(70% 0.22 170 / 0.5);
-  }
+.vesper-progress-bar {
+  background: linear-gradient(90deg, var(--color-accent-600), var(--color-secondary-500));
+  height: 100%;
+  border-radius: 9999px;
+  transition: width var(--duration-moderate) var(--easing-out);
+  /* Removed glow effect - Technical Precision */
+}
 
-  /* Modal overlay */
+  /* Modal overlay - Technical Precision (no blur) */
   .vesper-modal-overlay {
-    background-color: oklch(8% 0.02 260 / 0.85);
-    backdrop-filter: blur(4px);
+    background-color: #0f172aeb;
   }
 
   /* Task item styling */
   .vesper-task-item {
     background-color: var(--color-bg-surface);
     border: 1px solid var(--color-border-subtle);
-    border-radius: 8px;
+    border-radius: 4px;
     transition: all var(--duration-fast) var(--easing-default);
   }
 
@@ -408,7 +409,7 @@
   }
 }
 
-/* SECTION: Neon Slider Styles */
+/* SECTION: Slider Styles */
 @layer components {
   /* Base slider container */
   .vesper-slider-container {
@@ -423,7 +424,7 @@
     appearance: none;
     width: 100%;
     height: 8px;
-    border-radius: 4px;
+    border-radius: 2px;
     outline: none;
     cursor: pointer;
     background: transparent;
@@ -432,91 +433,85 @@
   /* Webkit track (Chrome, Safari, Edge) */
   .vesper-slider::-webkit-slider-runnable-track {
     height: 8px;
-    border-radius: 4px;
-    background: oklch(18% 0.03 260);
+    border-radius: 2px;
+    background: #1e293b;
     border: none;
   }
 
-  /* Webkit thumb - neon cyan */
-  .vesper-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: oklch(98% 0.01 260);
-    border: 2px solid oklch(70% 0.25 195);
-    margin-top: -6px;
-    box-shadow: 0 2px 4px oklch(8% 0.02 260 / 0.4), 0 0 10px oklch(70% 0.25 195 / 0.5);
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: grab;
-  }
+/* Webkit thumb - muted teal (no glow) */
+.vesper-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: oklch(98% 0.01 260);
+  border: 2px solid var(--color-accent-500);
+  margin-top: -6px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: grab;
+}
 
-  .vesper-slider::-webkit-slider-thumb:hover {
-    box-shadow: 0 0 15px oklch(70% 0.25 195 / 0.7), 0 2px 4px oklch(8% 0.02 260 / 0.4);
-    transform: scale(1.05);
-  }
+.vesper-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.05);
+}
 
-  .vesper-slider::-webkit-slider-thumb:active {
-    cursor: grabbing;
-    transform: scale(0.95);
-    box-shadow: 0 0 20px oklch(70% 0.25 195 / 0.9), 0 2px 4px oklch(8% 0.02 260 / 0.4);
-  }
+.vesper-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
 
   /* Firefox track */
   .vesper-slider::-moz-range-track {
     height: 8px;
-    border-radius: 4px;
-    background: oklch(18% 0.03 260);
+    border-radius: 2px;
+    background: #1e293b;
     border: none;
   }
 
-  /* Firefox thumb - neon cyan */
-  .vesper-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: oklch(98% 0.01 260);
-    border: 2px solid oklch(70% 0.25 195);
-    box-shadow: 0 2px 4px oklch(8% 0.02 260 / 0.4), 0 0 10px oklch(70% 0.25 195 / 0.5);
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: grab;
-  }
+/* Firefox thumb - muted teal (no glow) */
+.vesper-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: oklch(98% 0.01 260);
+  border: 2px solid var(--color-accent-500);
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: grab;
+}
 
-  .vesper-slider::-moz-range-thumb:hover {
-    box-shadow: 0 0 15px oklch(70% 0.25 195 / 0.7), 0 2px 4px oklch(8% 0.02 260 / 0.4);
-    transform: scale(1.05);
-  }
+.vesper-slider::-moz-range-thumb:hover {
+  transform: scale(1.05);
+}
 
-  .vesper-slider::-moz-range-thumb:active {
-    cursor: grabbing;
-    transform: scale(0.95);
-    box-shadow: 0 0 20px oklch(70% 0.25 195 / 0.9), 0 2px 4px oklch(8% 0.02 260 / 0.4);
-  }
+.vesper-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
 
-  /* Progress fill - Firefox only (WebKit uses inline background gradient) - cyan to green */
-  .vesper-slider::-moz-range-progress {
-    height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, oklch(70% 0.25 195), oklch(72% 0.22 145));
-  }
+/* Progress fill - Firefox only (WebKit uses inline background gradient) */
+.vesper-slider::-moz-range-progress {
+  height: 8px;
+  border-radius: 2px;
+  background: var(--color-accent-500);
+}
 
-  /* Slider value display */
-  .vesper-slider-value {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: oklch(98% 0.01 260);
-    font-weight: 500;
-  }
+/* Slider value display */
+.vesper-slider-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: #f1f5f9;
+  font-weight: 500;
+}
 
-  /* Slider labels */
-  .vesper-slider-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: oklch(55% 0.015 260);
-    margin-top: var(--space-2);
-  }
+/* Slider labels */
+.vesper-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: var(--space-2);
+}
 
   /* Large value display (for percentage) */
   .vesper-slider-display {
@@ -524,27 +519,27 @@
     margin-bottom: var(--space-4);
   }
 
-  .vesper-slider-display-value {
-    font-size: 48px;
-    font-weight: 700;
-    color: oklch(75% 0.25 195);
-    font-family: var(--font-mono);
-    line-height: 1;
-    text-shadow: 0 0 20px oklch(70% 0.25 195 / 0.5);
-  }
+.vesper-slider-display-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-accent-400);
+  font-family: var(--font-mono);
+  line-height: 1;
+  /* Removed text-shadow - Technical Precision */
+}
 
-  .vesper-slider-display-label {
-    font-size: 14px;
-    color: oklch(55% 0.015 260);
-    margin-top: var(--space-2);
-  }
+.vesper-slider-display-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: var(--space-2);
+}
 
-  .vesper-slider-display-sublabel {
-    font-size: 12px;
-    color: oklch(72% 0.22 145);
-    font-weight: 500;
-    margin-top: var(--space-1);
-  }
+.vesper-slider-display-sublabel {
+  font-size: 12px;
+  color: var(--color-secondary-500);
+  font-weight: 500;
+  margin-top: var(--space-1);
+}
 }
 
 /* SECTION: Legacy Classes (for backward compatibility) */
@@ -565,16 +560,92 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Notification styles */
+/* Notification styles - Technical Precision */
 .notification-container {
   position: fixed;
   bottom: var(--space-4);
   right: var(--space-4);
   z-index: var(--z-notification);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Centered variant for limit notifications */
+.notification-container--center {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
 }
 
 .notification-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 280px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 4px;
+  border: 1px solid transparent;
   animation: slideIn var(--duration-moderate) var(--easing-out);
+}
+
+.notification-toast__message {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+}
+
+.notification-toast__dismiss {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--duration-fast) var(--easing-default);
+  padding: 0;
+}
+
+.notification-toast__dismiss:hover {
+  opacity: 1;
+}
+
+.notification-toast__dismiss:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Type variants - using semantic color tokens */
+.notification-toast--info {
+  background-color: var(--color-info-bg);
+  color: var(--color-info-text);
+  border-color: var(--color-info-border);
+}
+
+.notification-toast--info .notification-toast__dismiss {
+  color: var(--color-info-text);
+}
+
+.notification-toast--warning {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border-color: var(--color-warning-border);
+}
+
+.notification-toast--warning .notification-toast__dismiss {
+  color: var(--color-warning-text);
+}
+
+.notification-toast--error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  border-color: var(--color-error-border);
+}
+
+.notification-toast--error .notification-toast__dismiss {
+  color: var(--color-error-text);
 }
 
 @keyframes slideIn {
@@ -605,14 +676,15 @@ button:disabled {
 }
 
 /* SECTION MAP:
- * Lines 1-20: Header documentation
- * Lines 23-25: Tailwind directives
- * Lines 28-142: OKLCH color tokens (Neon palette)
- * Lines 145-160: Spacing tokens
- * Lines 163-168: Typography tokens
- * Lines 171-179: Motion tokens
- * Lines 182-189: Z-index scale
- * Lines 192-243: Base styles (html, body, scrollbars)
- * Lines 246-365: Component classes
- * Lines 368-415: Legacy and utility classes
- */
+* Lines 1-15: Header documentation
+* Lines 16-20: Tailwind directives
+* Lines 21-150: Color tokens (Technical Precision palette)
+* Lines 102-115: Spacing tokens
+* Lines 116-120: Typography tokens
+* Lines 122-133: Motion tokens
+* Lines 135-149: Z-index scale
+* Lines 152-210: Base styles (html, body, scrollbars)
+* Lines 212-406: Component classes
+* Lines 408-545: Slider styles
+* Lines 547-602: Legacy and utility classes
+*/

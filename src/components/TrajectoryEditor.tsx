@@ -1,9 +1,9 @@
 /**
- * @fileoverview TrajectoryEditor Component - Vesper Theme
- *
- * PURPOSE:
- * Modal component for editing trajectory with Vesper "peppermint & orange" styling.
- */
+* @fileoverview TrajectoryEditor Component - Technical Precision Theme
+*
+* PURPOSE:
+* Modal component for editing trajectory with slate dark backgrounds and muted teal accents.
+*/
 
 import { useState, useEffect } from 'react';
 
@@ -61,17 +61,18 @@ export function TrajectoryEditor({
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50"
-      style={{ backgroundColor: 'oklch(8% 0.02 260 / 0.85)' }}
+      style={{ backgroundColor: 'var(--color-bg-base)' }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="trajectory-editor-title"
     >
       <div
-        className="rounded-lg p-6 w-full max-w-lg mx-4"
-        style={{ 
+        className="p-6 w-full max-w-lg mx-4"
+        style={{
           backgroundColor: 'var(--color-bg-surface)',
-          border: '1px solid var(--color-border-default)'
+          border: '1px solid var(--color-border-default)',
+          borderRadius: '4px'
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -89,13 +90,14 @@ export function TrajectoryEditor({
         >
           Define your long-term goal. Use &gt; to chain steps:
           <br />
-          <code 
-            className="px-2 py-1 rounded text-xs"
-            style={{ 
-              backgroundColor: 'var(--color-bg-elevated)',
-              color: 'var(--color-mint-400)'
-            }}
-          >
+        <code
+          className="px-2 py-1 text-xs"
+          style={{
+            backgroundColor: 'var(--color-bg-elevated)',
+            color: 'var(--color-accent-400)',
+            borderRadius: '3px'
+          }}
+        >
             Make X &gt; Use X to make Y &gt; Deliver Z
           </code>
         </p>
@@ -108,19 +110,18 @@ export function TrajectoryEditor({
           }}
           onKeyDown={handleKeyDown}
           placeholder="Enter your trajectory..."
-          className="w-full h-32 p-3 rounded resize-none outline-none transition-all"
+          className="w-full h-32 p-3 resize-none outline-none transition-colors"
           style={{
             backgroundColor: 'var(--color-bg-input)',
             border: '1px solid var(--color-border-default)',
-            color: 'var(--color-text-primary)'
+            color: 'var(--color-text-primary)',
+            borderRadius: '3px'
           }}
           onFocus={(e) => {
             e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-            e.currentTarget.style.boxShadow = '0 0 0 3px oklch(70% 0.25 195 / 0.15)';
           }}
           onBlur={(e) => {
             e.currentTarget.style.borderColor = 'var(--color-border-default)';
-            e.currentTarget.style.boxShadow = 'none';
           }}
           aria-label="Trajectory text"
         />
@@ -136,49 +137,51 @@ export function TrajectoryEditor({
         )}
 
         <div className="flex justify-end gap-2 mt-4">
-          <button
-            onClick={onClose}
-            disabled={isSaving}
-            className="px-4 py-2 rounded transition-colors font-medium"
-            style={{ 
-              color: 'var(--color-text-secondary)',
-              backgroundColor: 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
-              e.currentTarget.style.color = 'var(--color-text-primary)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--color-text-secondary)';
-            }}
-            type="button"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="px-4 py-2 rounded transition-colors font-medium"
-            style={{
-              backgroundColor: isSaving ? 'var(--color-bg-elevated)' : 'var(--color-accent-600)',
-              color: isSaving ? 'var(--color-text-disabled)' : 'var(--color-bg-base)',
-              cursor: isSaving ? 'not-allowed' : 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              if (!isSaving) {
-                e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isSaving) {
-                e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-              }
-            }}
-            type="button"
-          >
-            {isSaving ? 'On it' : 'Save'}
-          </button>
+        <button
+          onClick={onClose}
+          disabled={isSaving}
+          className="px-4 py-2 transition-colors font-medium"
+          style={{
+            color: 'var(--color-text-secondary)',
+            backgroundColor: 'transparent',
+            borderRadius: '2px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
+            e.currentTarget.style.color = 'var(--color-text-primary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'var(--color-text-secondary)';
+          }}
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="px-4 py-2 transition-colors font-medium"
+          style={{
+            backgroundColor: isSaving ? 'var(--color-bg-elevated)' : 'var(--color-accent-600)',
+            color: isSaving ? 'var(--color-text-disabled)' : 'var(--color-bg-base)',
+            cursor: isSaving ? 'not-allowed' : 'pointer',
+            borderRadius: '2px'
+          }}
+          onMouseEnter={(e) => {
+            if (!isSaving) {
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isSaving) {
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+            }
+          }}
+          type="button"
+        >
+          {isSaving ? 'On it' : 'Save'}
+        </button>
         </div>
       </div>
     </div>

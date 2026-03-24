@@ -57,16 +57,17 @@ export interface NotificationProps {
 // REASONING: We need a container to position notifications fixed on screen
 // Using fixed positioning ensures notifications appear above all content
 // Position bottom-center is least intrusive while being visible
+// Using CSS class for Technical Precision styling (no glows, solid backgrounds)
 export function NotificationContainer(props: NotificationProps): JSX.Element {
-  const { notifications, onDismiss } = props;
+const { notifications, onDismiss } = props;
 
-  return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-col gap-2 z-50">
-      {notifications.map(n => (
-        <NotificationToast key={n.id} data={n} onDismiss={() => onDismiss(n.id)} />
-      ))}
-    </div>
-  );
+return (
+<div className="notification-container notification-container--center">
+{notifications.map(n => (
+<NotificationToast key={n.id} data={n} onDismiss={() => onDismiss(n.id)} />
+))}
+</div>
+);
 }
 
 // SECTION: Single Notification
@@ -89,43 +90,34 @@ export function NotificationToast({
     }
   }, []);
 
-  // REASONING: Color coding by type helps user understand severity quickly
-  // Warning = yellow/amber for limit notifications (not blocking but important)
-  // Error = red for actual errors
-  // Info = blue for general updates
-  const typeStyles = {
-    info: 'bg-blue-500',
-    warning: 'bg-amber-500',
-    error: 'bg-red-500'
-  };
+// REASONING: Color coding by type helps user understand severity quickly
+// Using CSS variables from Technical Precision design system
+// Warning = muted amber for limit notifications (not blocking but important)
+// Error = muted red for actual errors
+// Info = muted blue for general updates
+// Sharp corners (4px) and no glows per Technical Precision spec
+const typeStyles = {
+info: 'notification-toast--info',
+warning: 'notification-toast--warning',
+error: 'notification-toast--error'
+};
 
-  return (
-    <div
-      className={`
-        ${typeStyles[data.type]}
-        text-white
-        px-4 py-2
-        rounded-lg
-        shadow-lg
-        flex
-        items-center
-        gap-3
-        min-w-[280px]
-        animate-in
-        fade-in
-        slide-in-from-bottom-2
-      `}
-    >
-      <span className="flex-1 text-sm font-medium">{data.message}</span>
-      <button
-        onClick={onDismiss}
-        className="text-white/80 hover:text-white text-lg leading-none"
-        aria-label="Dismiss notification"
-      >
-        ×
-      </button>
-    </div>
-  );
+return (
+<div
+className={`notification-toast ${typeStyles[data.type]}`}
+role="alert"
+>
+<span className="notification-toast__message">{data.message}</span>
+<button
+onClick={onDismiss}
+className="notification-toast__dismiss"
+aria-label="Dismiss notification"
+type="button"
+>
+×
+</button>
+</div>
+);
 }
 
 // SECTION: Preset Notifications

@@ -1,13 +1,18 @@
 /**
- * @fileoverview Task Edit Modal Component
- *
- * PURPOSE:
- * Modal dialog for editing existing tasks. Opens when user clicks on a task.
- * Provides form fields for all editable task properties.
- *
- * LAYER STATUS: Layer 4 Complete
- * NEXT: Layer 5 - Section maps and polish
- */
+* @fileoverview Task Edit Modal Component
+*
+* PURPOSE:
+* Modal dialog for editing existing tasks. Opens when user clicks on a task.
+* Provides form fields for all editable task properties.
+*
+* LAYER STATUS: Layer 4 Complete
+* NEXT: Layer 5 - Section maps and polish
+*
+* DESIGN: Technical Precision Theme
+* - Sharp corners (2-4px border-radius)
+* - No glow effects
+* - CSS variables for colors
+*/
 
 import * as React from 'react';
 import { Task, ValueClass, TaskType } from '../types/task';
@@ -26,36 +31,36 @@ export interface TaskEditModalProps {
 // SECTION: Component
 // Lines 38-280: TaskEditModal component
 /**
- * TaskEditModal - Edit existing tasks
- *
- * LAYOUT:
- * ┌─────────────────────────────────────────────┐
- * │ Edit Task                           [X]     │
- * ├─────────────────────────────────────────────┤
- * │ Description: [textarea]                     │
- * │ Value Class: [dropdown]                     │
- * │ Type: [Agentic/Non-Agentic radio]           │
- * │ Trajectory Match: [0-100 slider]            │
- * │ Creation Time: [locked display]             │
- * │                                             │
- * │ Actor Notes:                                │
- * │ [Actor 1]: [input]                          │
- * │ [Actor 2]: [input]                          │
- * ├─────────────────────────────────────────────┤
- * │ [Cancel]              [Save Changes]        │
- * └─────────────────────────────────────────────┘
- *
- * EDITABLE FIELDS:
- * - description: Task description text
- * - valueClass: Priority classification
- * - type: Agentic or non-agentic
- * - trajectoryMatch: 0-100 alignment percentage
- * - actorNotes: Per-actor progress notes
- *
- * LOCKED FIELDS:
- * - creationTime: Immutable task creation timestamp
- * - id: Immutable unique identifier
- */
+* TaskEditModal - Edit existing tasks
+*
+* LAYOUT:
+* ┌─────────────────────────────────────────────┐
+* │ Edit Task [X]                               │
+* ├─────────────────────────────────────────────┤
+* │ Description: [textarea]                     │
+* │ Value Class: [dropdown]                     │
+* │ Type: [Agentic/Non-Agentic radio]           │
+* │ Trajectory Match: [0-100 slider]            │
+* │ Creation Time: [locked display]             │
+* │                                             │
+* │ Actor Notes:                                │
+* │ [Actor 1]: [input]                          │
+* │ [Actor 2]: [input]                          │
+* ├─────────────────────────────────────────────┤
+* │ [Cancel] [Save Changes]                     │
+* └─────────────────────────────────────────────┘
+*
+* EDITABLE FIELDS:
+* - description: Task description text
+* - valueClass: Priority classification
+* - type: Agentic or non-agentic
+* - trajectoryMatch: 0-100 alignment percentage
+* - actorNotes: Per-actor progress notes
+*
+* LOCKED FIELDS:
+* - creationTime: Immutable task creation timestamp
+* - id: Immutable unique identifier
+*/
 export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
   const { task, isOpen, onClose, onSave } = props;
   const { actors } = useActorStore();
@@ -120,24 +125,48 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 flex items-center justify-center z-[var(--z-modal)]"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="edit-task-title"
+      style={{
+        backgroundColor: '#0f172aeb',
+      }}
     >
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+      <div
+        className="w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+        style={{
+          backgroundColor: 'var(--color-bg-surface)',
+          border: '1px solid var(--color-border-subtle)',
+          borderRadius: '4px',
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <div
+          className="flex items-center justify-between p-4"
+          style={{
+            borderBottom: '1px solid var(--color-border-subtle)',
+          }}
+        >
           <h2
             id="edit-task-title"
-            className="text-lg font-semibold text-gray-900 dark:text-gray-100"
+            className="text-lg font-semibold"
+            style={{ color: 'var(--color-text-primary)' }}
           >
             Edit Task
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="transition-colors"
+            style={{
+              color: 'var(--color-text-muted)',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}
             aria-label="Close modal"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -156,7 +185,8 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm font-medium mb-1"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
               Description
             </label>
@@ -165,7 +195,14 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              className="vesper-input w-full"
+              style={{
+                backgroundColor: 'var(--color-bg-input)',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '3px',
+                color: 'var(--color-text-primary)',
+                padding: 'var(--space-3) var(--space-4)',
+              }}
             />
           </div>
 
@@ -173,7 +210,8 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
           <div>
             <label
               htmlFor="valueClass"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm font-medium mb-1"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
               Value Class
             </label>
@@ -181,20 +219,30 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
               id="valueClass"
               value={valueClass}
               onChange={(e) => setValueClass(Number(e.target.value) as ValueClass)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              className="vesper-input w-full"
+              style={{
+                backgroundColor: 'var(--color-bg-input)',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '3px',
+                color: 'var(--color-text-primary)',
+                padding: 'var(--space-3) var(--space-4)',
+              }}
             >
-              <option value={ValueClass.FUN_USEFUL}>Fun & Useful (1)</option>
+              <option value={ValueClass.FUN_USEFUL}>Fun &amp; Useful (1)</option>
               <option value={ValueClass.USEFUL}>Useful (2)</option>
               <option value={ValueClass.HAS_TO_BE_DONE}>Has to be done (3)</option>
               <option value={ValueClass.HAS_TO_BE_DONE_BORING}>Has to be done (Boring) (4)</option>
               <option value={ValueClass.FUN_USELESS}>Fun but Useless (5)</option>
-              <option value={ValueClass.BORING_USELESS}>Boring & Useless (6)</option>
+              <option value={ValueClass.BORING_USELESS}>Boring &amp; Useless (6)</option>
             </select>
           </div>
 
           {/* Type Radio */}
           <div>
-            <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <span
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
               Type
             </span>
             <div className="flex gap-4">
@@ -205,9 +253,17 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
                   value={TaskType.AGENTIC}
                   checked={type === TaskType.AGENTIC}
                   onChange={() => setType(TaskType.AGENTIC)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  className="h-4 w-4"
+                  style={{
+                    accentColor: 'var(--color-accent-500)',
+                  }}
                 />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Agentic</span>
+                <span
+                  className="ml-2 text-sm"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
+                  Agentic
+                </span>
               </label>
               <label className="flex items-center">
                 <input
@@ -216,9 +272,17 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
                   value={TaskType.NON_AGENTIC}
                   checked={type === TaskType.NON_AGENTIC}
                   onChange={() => setType(TaskType.NON_AGENTIC)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  className="h-4 w-4"
+                  style={{
+                    accentColor: 'var(--color-accent-500)',
+                  }}
                 />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Non-Agentic</span>
+                <span
+                  className="ml-2 text-sm"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
+                  Non-Agentic
+                </span>
               </label>
             </div>
           </div>
@@ -227,7 +291,8 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
           <div>
             <label
               htmlFor="trajectoryMatch"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm font-medium mb-1"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
               Trajectory Match: {trajectoryMatch}%
             </label>
@@ -238,32 +303,54 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
               max="100"
               value={trajectoryMatch}
               onChange={(e) => setTrajectoryMatch(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+              className="vesper-slider"
             />
           </div>
 
           {/* Creation Time (Locked) */}
           <div>
-            <span className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+            <span
+              className="block text-sm font-medium mb-1"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
               Creation Time (Locked)
             </span>
-            <div className="px-3 py-2 bg-gray-100 dark:bg-gray-900 rounded-md text-sm text-gray-500 dark:text-gray-400">
+            <div
+              className="text-sm"
+              style={{
+                backgroundColor: 'var(--color-bg-base)',
+                color: 'var(--color-text-muted)',
+                borderRadius: '3px',
+                padding: 'var(--space-3) var(--space-4)',
+              }}
+            >
               {new Date(task.creationTime).toLocaleString()}
             </div>
           </div>
 
           {/* Actor Notes */}
           <div>
-            <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <span
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
               Actor Notes
             </span>
             <div className="space-y-2">
               {actors.length === 0 ? (
-                <p className="text-sm text-gray-400 italic">No actors configured</p>
+                <p
+                  className="text-sm italic"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  No actors configured
+                </p>
               ) : (
                 actors.map((actor) => (
                   <div key={actor.id} className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 w-24 truncate">
+                    <span
+                      className="text-sm font-medium w-24 truncate"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
                       {actor.name}:
                     </span>
                     <input
@@ -271,7 +358,14 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
                       value={actorNotes[actor.id] || ''}
                       onChange={(e) => handleActorNoteChange(actor.id, e.target.value)}
                       placeholder="Add note..."
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                      className="flex-1 text-sm"
+                      style={{
+                        backgroundColor: 'var(--color-bg-input)',
+                        border: '1px solid var(--color-border-default)',
+                        borderRadius: '3px',
+                        color: 'var(--color-text-primary)',
+                        padding: 'var(--space-2) var(--space-3)',
+                      }}
                     />
                   </div>
                 ))
@@ -281,16 +375,27 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-700">
+        <div
+          className="flex justify-end gap-3 p-4"
+          style={{
+            borderTop: '1px solid var(--color-border-subtle)',
+          }}
+        >
           <button
             onClick={handleCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600"
+            className="vesper-btn vesper-btn-secondary"
+            style={{
+              borderRadius: '2px',
+            }}
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+            className="vesper-btn vesper-btn-primary"
+            style={{
+              borderRadius: '2px',
+            }}
           >
             Save Changes
           </button>
@@ -317,4 +422,4 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
 // Lines 236-256: Actor notes section
 // Lines 258-278: Action buttons
 // Lines 280+: Section map
-// LAYER STATUS: Layer 4 Complete
+// LAYER STATUS: Layer 4 Complete (End of file - total 320 lines)
