@@ -37,12 +37,6 @@ export function App({ userType }: AppProps): JSX.Element {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
-  
-  // Debug controls for blob positioning
-  const [debugMode, setDebugMode] = useState(false);
-  const [blobScale, setBlobScale] = useState(0.6);
-  const [blobOffsetY, setBlobOffsetY] = useState(150);
-  const [blobOffsetX, setBlobOffsetX] = useState(0);
 
   const { tasks, loadFromStorage, updateTask, markTaskSent, setUserType } = useTaskStore();
 
@@ -111,7 +105,7 @@ export function App({ userType }: AppProps): JSX.Element {
     <div className="flex flex-col min-h-screen">
       {/* Header - 52px height - sticky */}
       <header
-        className="px-4 py-3 border-b flex items-center justify-between sticky top-0 z-50 shrink-0"
+        className="px-4 py-3 border-b flex items-center justify-between sticky top-0 z-50"
         style={{
           height: '52px',
           borderColor: 'var(--color-border-default)',
@@ -173,66 +167,27 @@ export function App({ userType }: AppProps): JSX.Element {
 
       {/* Main content - permanent 1/3 + 2/3 split */}
       <main className="flex-1 grid grid-cols-1 md:grid-cols-3">
-      {/* LEFT: Agents Panel (1/3) */}
-      <div
-        className="md:col-span-1 border-r p-4 md:sticky md:top-[52px] md:h-[calc(100vh-52px)] overflow-auto relative"
-        style={{
-          borderColor: 'var(--color-border-default)',
-          backgroundColor: 'var(--color-bg-surface)'
-        }}
-      >
+{/* LEFT: Agents Panel (1/3) */}
+<div
+className="md:col-span-1 border-r p-4 md:sticky md:top-0 md:h-screen overflow-auto relative"
+style={{
+borderColor: 'var(--color-border-default)',
+backgroundColor: 'var(--color-bg-surface)'
+}}
+>
       {/* Fluid blob background */}
       <div className="absolute inset-0 overflow-hidden">
-        <FluidBlobCanvas scale={blobScale} offsetY={blobOffsetY} offsetX={blobOffsetX} />
+        <FluidBlobCanvas scale={0.6} offsetY={150} />
         {/* Dark overlay for readability */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ background: 'rgba(12, 15, 26, 0.6)' }}
         />
       </div>
-      
-      {/* Debug Controls */}
-      {debugMode && (
-        <div className="absolute top-2 right-2 z-50 p-3 rounded text-xs" style={{ backgroundColor: 'rgba(0,0,0,0.8)', color: '#fff' }}>
-          <div className="mb-2 font-bold">Blob Debug Controls</div>
-          <div className="space-y-2">
-            <div>
-              <label>Scale: {blobScale.toFixed(2)}</label>
-              <input type="range" min="0.1" max="2" step="0.05" value={blobScale} 
-                onChange={(e) => setBlobScale(parseFloat(e.target.value))}
-                className="w-full" />
-            </div>
-            <div>
-              <label>Offset Y: {blobOffsetY}px</label>
-              <input type="range" min="-500" max="500" step="10" value={blobOffsetY}
-                onChange={(e) => setBlobOffsetY(parseInt(e.target.value))}
-                className="w-full" />
-            </div>
-            <div>
-              <label>Offset X: {blobOffsetX}px</label>
-              <input type="range" min="-500" max="500" step="10" value={blobOffsetX}
-                onChange={(e) => setBlobOffsetX(parseInt(e.target.value))}
-                className="w-full" />
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Content on top */}
-      <div className="relative z-10">
-        {/* Debug toggle */}
-        <button
-          onClick={() => setDebugMode(!debugMode)}
-          className="absolute -top-1 -right-1 w-6 h-6 text-xs rounded"
-          style={{ 
-            backgroundColor: debugMode ? 'var(--color-accent-500)' : 'var(--color-bg-elevated)',
-            color: 'var(--color-text-primary)',
-            border: '1px solid var(--color-border-default)'
-          }}
-        >
-          🛠
-        </button>
-        <div className="flex items-center justify-between mb-4">
+{/* Content on top */}
+<div className="relative z-10">
+<div className="flex items-center justify-between mb-4">
 <h2
 className="text-sm font-medium"
 style={{ color: 'var(--color-text-secondary)' }}
