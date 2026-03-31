@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Motion Orbit</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-base: #0c0f1a;
+  --bg-surface: #121625;
+  --accent-500: #a855f7;
+  --accent-400: #c084fc;
+  --accent-300: #d8b4fe;
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-base);
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* LEFT SIDE - Login Form */
+.login-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-base);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 360px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-300));
+  border-radius: 10px;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.login-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-500);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.form-input::placeholder {
+  color: #475569;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.remember-me input {
+  accent-color: var(--accent-500);
+}
+
+.forgot-link {
+  color: var(--accent-400);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--accent-300);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--accent-500), #9333ea);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1e293b;
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.signup-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.signup-link {
+  color: var(--accent-400);
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  color: var(--accent-300);
+}
+
+/* RIGHT SIDE - Heavy Blurred Schematic with Orbit Motion */
+.schematic-side {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* Schematic container */
+.schematic-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   ORBIT ANIMATIONS - Circular rotating motion
+   ============================================ */
+
+/* Base layer - slowest, largest orbit */
+@keyframes orbit-base {
+  0% { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+
+/* Medium layer - medium speed orbit */
+@keyframes orbit-medium {
+  0% { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+
+/* Sharp layer - fastest, smallest orbit */
+@keyframes orbit-sharp {
+  0% { transform: rotate(0deg) translateX(20px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+/* Glow orbit - counter rotation */
+@keyframes orbit-glow {
+  0% { transform: rotate(0deg) translateX(30px) rotate(0deg); }
+  100% { transform: rotate(-360deg) translateX(30px) rotate(360deg); }
+}
+
+/* BASE LAYER - Maximum blur, full opacity */
+.schematic-layer-base {
+  position: absolute;
+  inset: -100px;
+  filter: blur(60px) saturate(1.3);
+  opacity: 1;
+  animation: orbit-base 50s linear infinite;
+  transform-origin: center center;
+}
+
+/* MEDIUM LAYER - Medium blur, gradient masked */
+.schematic-layer-medium {
+  position: absolute;
+  inset: -50px;
+  filter: blur(35px) saturate(1.2);
+  opacity: 0.7;
+  animation: orbit-medium 35s linear infinite;
+  animation-delay: 5s;
+  transform-origin: center center;
+  mask-image: radial-gradient(
+    ellipse 55% 55% at center,
+    black 20%,
+    transparent 75%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 55% 55% at center,
+    black 20%,
+    transparent 75%
+  );
+}
+
+/* SHARP LAYER - Minimal blur, very transparent */
+.schematic-layer-sharp {
+  position: absolute;
+  inset: 0;
+  filter: blur(2px);
+  opacity: 0.15;
+  animation: orbit-sharp 25s linear infinite;
+  animation-delay: 10s;
+  transform-origin: center center;
+  mask-image: radial-gradient(
+    ellipse 30% 30% at center,
+    black 0%,
+    transparent 50%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 30% 30% at center,
+    black 0%,
+    transparent 50%
+  );
+}
+
+/* The actual schematic SVG */
+.schematic-svg {
+  width: 140%;
+  height: 140%;
+  max-width: none;
+}
+
+/* Ambient glow overlay */
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 80% at 30% 30%,
+    rgba(168, 85, 247, 0.08) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  animation: orbit-glow 45s linear infinite;
+  transform-origin: center center;
+}
+
+.ambient-glow-2 {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 60% at 70% 70%,
+    rgba(192, 132, 252, 0.06) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  animation: orbit-glow 55s linear infinite reverse;
+  transform-origin: center center;
+}
+
+/* Vignette effect */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 100% at center,
+    transparent 30%,
+    rgba(12, 15, 26, 0.6) 100%
+  );
+  pointer-events: none;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .schematic-layer-base,
+  .schematic-layer-medium,
+  .schematic-layer-sharp,
+  .ambient-glow,
+  .ambient-glow-2 {
+    animation: none;
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .schematic-side {
+    display: none;
+  }
+
+  .login-side {
+    justify-content: center;
+  }
+}
+
+/* Mobile motion reduction */
+@media (max-width: 600px) {
+  .schematic-layer-base {
+    animation: orbit-base 80s linear infinite;
+  }
+  
+  .schematic-layer-medium {
+    animation: orbit-medium 60s linear infinite;
+  }
+  
+  .schematic-layer-sharp {
+    animation: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- LEFT: Login Form -->
+  <div class="login-side">
+    <form class="login-form">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Planner</span>
+      </div>
+
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-subtitle">Sign in to continue to your workspace</p>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="form-input"
+          placeholder="you@example.com"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          class="form-input"
+          placeholder="Enter your password"
+        >
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox">
+          Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-primary">Sign in</button>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <p class="signup-text">
+        Don't have an account? <a href="#" class="signup-link">Create one</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- RIGHT: Heavy Blurred Schematic with Orbit Motion -->
+  <div class="schematic-side">
+    <div class="schematic-wrapper">
+      <!-- BASE LAYER: 60px blur, full opacity, slowest orbit -->
+      <div class="schematic-layer-base">
+        <svg class="schematic-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-base" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#a855f7" stroke-width="0.5" opacity="0.3"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-base)"/>
+          <circle cx="200" cy="150" r="25" fill="#a855f7" opacity="0.7"/>
+          <circle cx="400" cy="100" r="30" fill="#c084fc" opacity="0.6"/>
+          <circle cx="600" cy="200" r="35" fill="#a855f7" opacity="0.5"/>
+          <circle cx="300" cy="350" r="28" fill="#d8b4fe" opacity="0.6"/>
+          <circle cx="550" cy="400" r="32" fill="#c084fc" opacity="0.5"/>
+          <circle cx="150" cy="450" r="22" fill="#a855f7" opacity="0.7"/>
+          <circle cx="700" cy="350" r="26" fill="#d8b4fe" opacity="0.6"/>
+          <path d="M200,150 Q300,50 400,100" stroke="#c084fc" stroke-width="3" fill="none" opacity="0.5"/>
+          <path d="M400,100 Q500,150 600,200" stroke="#a855f7" stroke-width="3" fill="none" opacity="0.4"/>
+          <path d="M200,150 Q250,250 300,350" stroke="#d8b4fe" stroke-width="2" fill="none" opacity="0.5"/>
+          <path d="M600,200 Q575,300 550,400" stroke="#c084fc" stroke-width="3" fill="none" opacity="0.4"/>
+          <path d="M300,350 Q400,450 550,400" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.5"/>
+          <path d="M150,450 Q400,500 700,350" stroke="#d8b4fe" stroke-width="2" fill="none" opacity="0.3"/>
+          <circle cx="100" cy="200" r="18" fill="#a855f7" opacity="0.4"/>
+          <circle cx="650" cy="100" r="20" fill="#c084fc" opacity="0.5"/>
+          <circle cx="450" cy="500" r="24" fill="#d8b4fe" opacity="0.4"/>
+          <circle cx="250" cy="250" r="15" fill="#a855f7" opacity="0.6"/>
+          <circle cx="500" cy="300" r="18" fill="#c084fc" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <!-- MEDIUM LAYER: 35px blur, gradient masked, medium orbit -->
+      <div class="schematic-layer-medium">
+        <svg class="schematic-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-med" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#c084fc" stroke-width="0.5" opacity="0.4"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-med)"/>
+          <circle cx="200" cy="150" r="25" fill="#a855f7" opacity="0.8"/>
+          <circle cx="400" cy="100" r="30" fill="#c084fc" opacity="0.7"/>
+          <circle cx="600" cy="200" r="35" fill="#a855f7" opacity="0.6"/>
+          <circle cx="300" cy="350" r="28" fill="#d8b4fe" opacity="0.7"/>
+          <circle cx="550" cy="400" r="32" fill="#c084fc" opacity="0.6"/>
+          <circle cx="150" cy="450" r="22" fill="#a855f7" opacity="0.8"/>
+          <circle cx="700" cy="350" r="26" fill="#d8b4fe" opacity="0.7"/>
+          <path d="M200,150 Q300,50 400,100" stroke="#c084fc" stroke-width="3" fill="none" opacity="0.6"/>
+          <path d="M400,100 Q500,150 600,200" stroke="#a855f7" stroke-width="3" fill="none" opacity="0.5"/>
+          <path d="M200,150 Q250,250 300,350" stroke="#d8b4fe" stroke-width="2" fill="none" opacity="0.6"/>
+          <path d="M600,200 Q575,300 550,400" stroke="#c084fc" stroke-width="3" fill="none" opacity="0.5"/>
+          <path d="M300,350 Q400,450 550,400" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.6"/>
+          <path d="M150,450 Q400,500 700,350" stroke="#d8b4fe" stroke-width="2" fill="none" opacity="0.4"/>
+          <rect x="185" y="135" width="30" height="12" rx="2" fill="#1e293b" opacity="0.7"/>
+          <rect x="385" y="85" width="30" height="12" rx="2" fill="#1e293b" opacity="0.7"/>
+          <rect x="585" y="185" width="30" height="12" rx="2" fill="#1e293b" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <!-- SHARP LAYER: Minimal blur, center reveal, fastest subtle orbit -->
+      <div class="schematic-layer-sharp">
+        <svg class="schematic-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-sharp" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#d8b4fe" stroke-width="0.3" opacity="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-sharp)"/>
+          <circle cx="200" cy="150" r="25" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.9"/>
+          <circle cx="200" cy="150" r="8" fill="#a855f7" opacity="0.9"/>
+          <circle cx="400" cy="100" r="30" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.9"/>
+          <circle cx="400" cy="100" r="10" fill="#c084fc" opacity="0.9"/>
+          <circle cx="600" cy="200" r="35" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.9"/>
+          <circle cx="600" cy="200" r="12" fill="#a855f7" opacity="0.9"/>
+          <circle cx="300" cy="350" r="28" fill="none" stroke="#d8b4fe" stroke-width="2" opacity="0.9"/>
+          <circle cx="300" cy="350" r="9" fill="#d8b4fe" opacity="0.9"/>
+          <circle cx="550" cy="400" r="32" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.9"/>
+          <circle cx="550" cy="400" r="11" fill="#c084fc" opacity="0.9"/>
+          <path d="M200,150 Q300,50 400,100" stroke="#c084fc" stroke-width="2" fill="none" opacity="0.8"/>
+          <path d="M400,100 Q500,150 600,200" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.8"/>
+          <path d="M200,150 Q250,250 300,350" stroke="#d8b4fe" stroke-width="2" fill="none" opacity="0.8"/>
+          <path d="M600,200 Q575,300 550,400" stroke="#c084fc" stroke-width="2" fill="none" opacity="0.8"/>
+          <path d="M300,350 Q400,450 550,400" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.8"/>
+          <circle cx="250" cy="250" r="15" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.9"/>
+          <circle cx="250" cy="250" r="5" fill="#a855f7" opacity="0.9"/>
+          <circle cx="500" cy="300" r="18" fill="none" stroke="#c084fc" stroke-width="1.5" opacity="0.9"/>
+          <circle cx="500" cy="300" r="6" fill="#c084fc" opacity="0.9"/>
+          <rect x="180" y="165" width="40" height="16" rx="3" fill="#1e293b" opacity="0.9"/>
+          <text x="200" y="177" text-anchor="middle" fill="#d8b4fe" font-size="8" opacity="0.9">Task A</text>
+          <rect x="380" y="115" width="40" height="16" rx="3" fill="#1e293b" opacity="0.9"/>
+          <text x="400" y="127" text-anchor="middle" fill="#d8b4fe" font-size="8" opacity="0.9">Task B</text>
+          <rect x="580" y="215" width="40" height="16" rx="3" fill="#1e293b" opacity="0.9"/>
+          <text x="600" y="227" text-anchor="middle" fill="#d8b4fe" font-size="8" opacity="0.9">Task C</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Ambient glow overlays -->
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Vignette -->
+    <div class="vignette"></div>
+  </div>
+</div>
+</body>
+</html>

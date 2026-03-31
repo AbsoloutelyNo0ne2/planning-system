@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Planning System</title>
+  <style>
+    :root {
+      --bg-base: #0a1419;
+      --bg-surface: #0f1b22;
+      --accent-500: #06b6d4;
+      --accent-700: #0e7490;
+      --text-primary: #e2e8f0;
+      --text-muted: #64748b;
+      --grid-color: rgba(6, 182, 212, 0.06);
+      --node-inactive: rgba(6, 182, 212, 0.2);
+      --node-active: rgba(6, 182, 212, 0.6);
+      --line-color: rgba(6, 182, 212, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* LEFT HALF - Login Form */
+    .login-panel {
+      width: 40%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface);
+      position: relative;
+      z-index: 10;
+    }
+
+    .login-form {
+      width: 100%;
+      max-width: 320px;
+      padding: 2rem;
+    }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.9375rem;
+      background: var(--bg-base);
+      border: 1px solid #1e293b;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent-500);
+    }
+
+    .form-input::placeholder {
+      color: #475569;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      background: var(--accent-500);
+      color: var(--bg-base);
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .login-button:hover {
+      background: var(--accent-700);
+    }
+
+    .login-button:focus {
+      outline: 2px solid var(--accent-500);
+      outline-offset: 2px;
+    }
+
+    /* RIGHT HALF - Schematic */
+    .visual-panel {
+      width: 60%;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+
+    #schematic-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Grid pattern */
+    .grid-line {
+      stroke: var(--grid-color);
+      stroke-width: 1;
+    }
+
+    /* Connections */
+    .connection {
+      stroke: var(--line-color);
+      stroke-width: 1;
+      fill: none;
+    }
+
+    /* Nodes */
+    .node-circle {
+      fill: var(--node-inactive);
+      stroke: var(--accent-500);
+      stroke-width: 1;
+    }
+
+    .node-square {
+      fill: var(--node-inactive);
+      stroke: var(--accent-500);
+      stroke-width: 1;
+    }
+
+    .node-core {
+      fill: var(--accent-700);
+    }
+
+    /* Pulse animations */
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.6; }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { 
+        filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.3));
+        opacity: 0.2;
+      }
+      50% { 
+        filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
+        opacity: 0.6;
+      }
+    }
+
+    @keyframes line-pulse {
+      0%, 100% { stroke-opacity: 0.15; }
+      50% { stroke-opacity: 0.4; }
+    }
+
+    .node-pulse {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .connection-pulse {
+      animation: line-pulse 2.5s ease-in-out infinite;
+    }
+
+    .node-pulse-slow {
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+
+    .connection-pulse-slow {
+      animation: line-pulse 3.5s ease-in-out infinite;
+    }
+
+    /* Staggered delays */
+    .delay-1 { animation-delay: 0s; }
+    .delay-2 { animation-delay: 0.5s; }
+    .delay-3 { animation-delay: 1s; }
+    .delay-4 { animation-delay: 1.5s; }
+    .delay-5 { animation-delay: 2s; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column-reverse;
+      }
+
+      .login-panel {
+        width: 100%;
+        min-height: auto;
+        padding: 4rem 0;
+      }
+
+      .visual-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      .login-panel {
+        z-index: 10;
+        background: rgba(15, 27, 34, 0.92);
+        backdrop-filter: blur(8px);
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .node-pulse,
+      .node-pulse-slow,
+      .connection-pulse,
+      .connection-pulse-slow {
+        animation: none;
+        opacity: 0.3;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- LEFT: Login Form -->
+    <div class="login-panel">
+      <form class="login-form" onsubmit="return false;">
+        <h1 class="login-title">Planning System</h1>
+        <p class="login-subtitle">Enter your passphrase to continue</p>
+        
+        <div class="form-group">
+          <label class="form-label" for="passphrase">Passphrase</label>
+          <input 
+            type="password" 
+            id="passphrase" 
+            class="form-input" 
+            placeholder="Enter passphrase"
+            autocomplete="current-password"
+          >
+        </div>
+        
+        <button type="submit" class="login-button">Login</button>
+      </form>
+    </div>
+
+    <!-- RIGHT: Schematic SVG -->
+    <div class="visual-panel">
+      <svg id="schematic-svg" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" class="grid-line"/>
+          </pattern>
+        </defs>
+        
+        <!-- Grid background -->
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+        
+        <!-- Connection lines -->
+        <g class="connections">
+          <!-- Main vertical trunk -->
+          <path d="M 300 80 L 300 200" class="connection connection-pulse delay-1"/>
+          <path d="M 300 200 L 300 320" class="connection connection-pulse delay-2"/>
+          <path d="M 300 320 L 300 440" class="connection connection-pulse delay-3"/>
+          <path d="M 300 440 L 300 560" class="connection connection-pulse-slow delay-4"/>
+          <path d="M 300 560 L 300 720" class="connection connection-pulse-slow delay-5"/>
+          
+          <!-- Left branches -->
+          <path d="M 300 200 L 150 280" class="connection connection-pulse delay-2"/>
+          <path d="M 150 280 L 80 380" class="connection connection-pulse-slow delay-3"/>
+          <path d="M 150 280 L 150 420" class="connection connection-pulse delay-4"/>
+          
+          <!-- Right branches -->
+          <path d="M 300 320 L 450 400" class="connection connection-pulse delay-1"/>
+          <path d="M 450 400 L 520 480" class="connection connection-pulse-slow delay-2"/>
+          <path d="M 450 400 L 450 540" class="connection connection-pulse delay-3"/>
+          
+          <!-- Lower branches -->
+          <path d="M 300 560 L 180 620" class="connection connection-pulse-slow delay-4"/>
+          <path d="M 300 560 L 420 620" class="connection connection-pulse-slow delay-5"/>
+          
+          <!-- Cross connections -->
+          <path d="M 150 420 L 250 500" class="connection connection-pulse delay-2"/>
+          <path d="M 450 540 L 350 600" class="connection connection-pulse delay-3"/>
+        </g>
+        
+        <!-- Nodes -->
+        <g class="nodes">
+          <!-- Top node (entry point) -->
+          <g class="node-pulse delay-1">
+            <circle cx="300" cy="80" r="12" class="node-circle"/>
+            <circle cx="300" cy="80" r="5" class="node-core"/>
+          </g>
+          
+          <!-- Level 1 nodes -->
+          <g class="node-pulse delay-2">
+            <circle cx="300" cy="200" r="10" class="node-circle"/>
+            <circle cx="300" cy="200" r="4" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse-slow delay-3">
+            <rect x="140" y="270" width="20" height="20" class="node-square"/>
+            <rect x="147" y="277" width="6" height="6" class="node-core"/>
+          </g>
+          
+          <!-- Level 2 nodes -->
+          <g class="node-pulse delay-3">
+            <circle cx="300" cy="320" r="10" class="node-circle"/>
+            <circle cx="300" cy="320" r="4" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse-slow delay-4">
+            <rect x="70" y="370" width="20" height="20" class="node-square"/>
+            <rect x="77" y="377" width="6" height="6" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse delay-1">
+            <circle cx="150" cy="420" r="8" class="node-circle"/>
+            <circle cx="150" cy="420" r="3" class="node-core"/>
+          </g>
+          
+          <!-- Level 3 nodes -->
+          <g class="node-pulse delay-4">
+            <circle cx="300" cy="440" r="10" class="node-circle"/>
+            <circle cx="300" cy="440" r="4" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse-slow delay-2">
+            <rect x="440" y="390" width="20" height="20" class="node-square"/>
+            <rect x="447" y="397" width="6" height="6" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse delay-5">
+            <circle cx="520" cy="480" r="8" class="node-circle"/>
+            <circle cx="520" cy="480" r="3" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse-slow delay-3">
+            <circle cx="450" cy="540" r="8" class="node-circle"/>
+            <circle cx="450" cy="540" r="3" class="node-core"/>
+          </g>
+          
+          <!-- Level 4 nodes -->
+          <g class="node-pulse delay-5">
+            <circle cx="300" cy="560" r="10" class="node-circle"/>
+            <circle cx="300" cy="560" r="4" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse-slow delay-4">
+            <rect x="170" y="610" width="20" height="20" class="node-square"/>
+            <rect x="177" y="617" width="6" height="6" class="node-core"/>
+          </g>
+          
+          <g class="node-pulse delay-2">
+            <rect x="410" y="610" width="20" height="20" class="node-square"/>
+            <rect x="417" y="617" width="6" height="6" class="node-core"/>
+          </g>
+          
+          <!-- Bottom node (terminal) -->
+          <g class="node-pulse delay-1">
+            <circle cx="300" cy="720" r="12" class="node-circle"/>
+            <circle cx="300" cy="720" r="5" class="node-core"/>
+          </g>
+          
+          <!-- Cross connection nodes -->
+          <g class="node-pulse-slow delay-4">
+            <circle cx="250" cy="500" r="6" class="node-circle"/>
+          </g>
+          
+          <g class="node-pulse-slow delay-5">
+            <circle cx="350" cy="600" r="6" class="node-circle"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

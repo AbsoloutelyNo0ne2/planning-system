@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Interactive Subtle Motion</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-base: #0c0f1a;
+  --bg-surface: #121625;
+  --accent-300: #d8b4fe;
+  --accent-400: #c084fc;
+  --accent-500: #a855f7;
+  --accent-600: #8b5cf6;
+  --accent-700: #7c3aed;
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-base);
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* LEFT SIDE - Login Form */
+.login-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-base);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 360px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-300));
+  border-radius: 10px;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.login-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-500);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.form-input::placeholder {
+  color: #475569;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.remember-me input {
+  accent-color: var(--accent-500);
+}
+
+.forgot-link {
+  color: var(--accent-400);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--accent-300);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--accent-500), #9333ea);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1e293b;
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.signup-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.signup-link {
+  color: var(--accent-400);
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  color: var(--accent-300);
+}
+
+/* RIGHT SIDE - Interactive Canvas */
+.canvas-side {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 40% 40%, #1a1f35 0%, var(--bg-base) 70%);
+}
+
+#interactive-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.canvas-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(148, 163, 184, 0.5);
+  font-size: 0.8rem;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 130% 130% at center, transparent 35%, rgba(12, 15, 26, 0.5) 100%);
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .canvas-side {
+    display: none;
+  }
+  .login-side {
+    justify-content: center;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:hover {
+    transform: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- LEFT: Login Form -->
+  <div class="login-side">
+    <form class="login-form">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Planner</span>
+      </div>
+
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-subtitle">Sign in to continue to your workspace</p>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Enter your password">
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox">
+          Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-primary">Sign in</button>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <p class="signup-text">
+        Don't have an account? <a href="#" class="signup-link">Create one</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- RIGHT: Interactive Canvas -->
+  <div class="canvas-side">
+    <canvas id="interactive-canvas"></canvas>
+    <div class="canvas-hint">Move your cursor to interact</div>
+    <div class="vignette"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('interactive-canvas');
+  const ctx = canvas.getContext('2d');
+  const hint = document.querySelector('.canvas-hint');
+
+  // Configuration - SLOWER, BIGGER, SUBTLER
+  const CONFIG = {
+    // Fewer, bigger elements
+    numCircles: 6,
+    numArcs: 4,
+    circleRadiusRange: [100, 250],  // Bigger: 100-250px (was 60-150)
+    arcStrokeWidth: 40,             // Thicker arcs (was 20-30)
+    
+    // Slower interaction
+    interactionRadius: 280,         // Larger reach for bigger elements
+    friction: 0.92,                 // Slower decay (was 0.94)
+    returnForce: 0.005,             // Gentler return (was 0.008)
+    cursorInfluence: 0.08,          // Much less reactive (was 0.6)
+    repulsionStrength: 0.2,         // Gentler push (was 0.5)
+    
+    // Slower ambient motion
+    ambientWaveSpeed: 0.0003,       // Much slower (was 0.0008)
+    ambientWaveAmplitude: 0.3,      // Smaller movement (was 0.5)
+    ambientDriftAmplitude: 15,      // Gentler drift
+    
+    // Speed limits
+    minSpeed: 0,
+    maxSpeed: 6,
+    
+    // Color: Purple base with subtle tints
+    baseHue: 280,                   // Purple base
+    slowTint: 8,                    // +8 = warmer (288)
+    fastTint: -15,                  // -15 = cooler (265)
+    baseSaturation: 65,
+    baseLightness: 55
+  };
+
+  // State
+  let elements = [];
+  let arcs = [];
+  let cursorX = 0;
+  let cursorY = 0;
+  let prevCursorX = 0;
+  let prevCursorY = 0;
+  let cursorVx = 0;
+  let cursorVy = 0;
+  let cursorSpeed = 0;
+  let isCursorInCanvas = false;
+  let animationId = null;
+  let lastTime = 0;
+  let hintVisible = true;
+
+  // Map speed to subtle hue tint
+  function mapSpeedToTint(speed) {
+    // Base hue: 280 (purple)
+    // Slow: slight warm tint (hue +5 to +10)
+    // Fast: slight cool tint (hue -10 to -20)
+    
+    if (speed < 0.5) {
+      // Very slow: slight warm tint
+      return CONFIG.baseHue + 8;  // ~288 (slightly pink/warm)
+    } else if (speed < 2) {
+      // Medium: base purple (interpolate from warm to base)
+      const t = (speed - 0.5) / 1.5;
+      return CONFIG.baseHue + 8 - (8 * t);  // 288 -> 280
+    } else {
+      // Fast: slight cool tint (interpolate from base to cool)
+      const t = Math.min((speed - 2) / 4, 1);
+      return CONFIG.baseHue - (15 * t);  // 280 -> 265
+    }
+  }
+
+  // Map speed to saturation/lightness
+  function mapSpeedToSaturation(speed) {
+    // Subtle changes: 60-75%
+    return CONFIG.baseSaturation + speed * 3;
+  }
+
+  function mapSpeedToLightness(speed) {
+    // Subtle changes: 50-60%
+    return CONFIG.baseLightness + speed * 2;
+  }
+
+  // Element class
+  class Element {
+    constructor(x, y, radius, type = 'circle') {
+      this.x = x;
+      this.y = y;
+      this.originX = x;
+      this.originY = y;
+      this.vx = 0;
+      this.vy = 0;
+      this.radius = radius;
+      this.type = type;
+      this.hue = CONFIG.baseHue;
+      this.targetHue = CONFIG.baseHue;
+      this.saturation = CONFIG.baseSaturation;
+      this.lightness = CONFIG.baseLightness;
+      this.phase = Math.random() * Math.PI * 2;
+      this.rotationPhase = Math.random() * Math.PI * 2;
+      this.waveOffsetX = (Math.random() - 0.5) * 80;
+      this.waveOffsetY = (Math.random() - 0.5) * 80;
+    }
+
+    update(time) {
+      // Calculate speed
+      const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+
+      // Map speed to subtle color tints
+      this.targetHue = mapSpeedToTint(speed);
+      this.hue = this.hue + (this.targetHue - this.hue) * 0.05;  // Slow color transition
+      
+      this.saturation = mapSpeedToSaturation(speed);
+      this.lightness = mapSpeedToLightness(speed);
+
+      // Apply friction (slower decay)
+      this.vx *= CONFIG.friction;
+      this.vy *= CONFIG.friction;
+
+      // Very slow ambient drift
+      const waveTime = time * CONFIG.ambientWaveSpeed;
+      const driftX = Math.sin(waveTime + this.phase) * CONFIG.ambientDriftAmplitude;
+      const driftY = Math.cos(waveTime + this.phase * 1.3) * CONFIG.ambientDriftAmplitude * 0.7;
+      
+      // Gentle rotation
+      this.rotationPhase += 0.0001;
+
+      // Target position with ambient motion
+      const targetX = this.originX + driftX + this.waveOffsetX * 0.03;
+      const targetY = this.originY + driftY + this.waveOffsetY * 0.03;
+
+      // Gentle return force
+      this.vx += (targetX - this.x) * CONFIG.returnForce;
+      this.vy += (targetY - this.y) * CONFIG.returnForce;
+
+      // Update position
+      this.x += this.vx;
+      this.y += this.vy;
+    }
+
+    draw(ctx) {
+      const gradient = ctx.createRadialGradient(
+        this.x, this.y, 0,
+        this.x, this.y, this.radius
+      );
+
+      // Normalize hue for HSL
+      const normalizedHue = ((this.hue % 360) + 360) % 360;
+
+      // Subtle purple-based gradients
+      gradient.addColorStop(0, `hsla(${normalizedHue}, ${this.saturation + 10}%, ${this.lightness + 10}%, 0.85)`);
+      gradient.addColorStop(0.4, `hsla(${normalizedHue}, ${this.saturation}%, ${this.lightness}%, 0.5)`);
+      gradient.addColorStop(0.7, `hsla(${normalizedHue}, ${this.saturation - 5}%, ${this.lightness - 5}%, 0.25)`);
+      gradient.addColorStop(1, `hsla(${normalizedHue}, ${this.saturation - 10}%, ${this.lightness - 10}%, 0)`);
+
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+  }
+
+  // Arc class
+  class Arc {
+    constructor(x1, y1, cx, cy, x2, y2, strokeWidth) {
+      this.x1 = x1;
+      this.y1 = y1;
+      this.cx = cx;
+      this.cy = cy;
+      this.x2 = x2;
+      this.y2 = y2;
+      this.strokeWidth = strokeWidth;
+      this.originX1 = x1;
+      this.originY1 = y1;
+      this.originCx = cx;
+      this.originCy = cy;
+      this.originX2 = x2;
+      this.originY2 = y2;
+      this.vx = 0;
+      this.vy = 0;
+      this.hue = CONFIG.baseHue;
+      this.phase = Math.random() * Math.PI * 2;
+    }
+
+    update(time) {
+      // Average velocity from control points
+      const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+
+      // Map speed to subtle hue tint
+      this.targetHue = mapSpeedToTint(speed);
+      this.hue = this.hue + (this.targetHue - this.hue) * 0.05;  // Slow color transition
+
+      // Apply friction
+      this.vx *= CONFIG.friction;
+      this.vy *= CONFIG.friction;
+
+      // Very slow ambient motion
+      const waveTime = time * CONFIG.ambientWaveSpeed;
+      const waveX = Math.sin(waveTime + this.phase) * 10;
+      const waveY = Math.cos(waveTime + this.phase * 1.5) * 8;
+
+      const targetX1 = this.originX1 + waveX;
+      const targetY1 = this.originY1 + waveY;
+      const targetCx = this.originCx + waveX * 1.2;
+      const targetCy = this.originCy + waveY * 1.2;
+      const targetX2 = this.originX2 + waveX * 0.8;
+      const targetY2 = this.originY2 + waveY * 0.8;
+
+      // Gentle return force
+      this.x1 += (targetX1 - this.x1) * CONFIG.returnForce + this.vx;
+      this.y1 += (targetY1 - this.y1) * CONFIG.returnForce + this.vy;
+      this.cx += (targetCx - this.cx) * CONFIG.returnForce + this.vx * 0.8;
+      this.cy += (targetCy - this.cy) * CONFIG.returnForce + this.vy * 0.8;
+      this.x2 += (targetX2 - this.x2) * CONFIG.returnForce + this.vx * 0.6;
+      this.y2 += (targetY2 - this.y2) * CONFIG.returnForce + this.vy * 0.6;
+    }
+
+    draw(ctx) {
+      const normalizedHue = ((this.hue % 360) + 360) % 360;
+      const sat = CONFIG.baseSaturation;
+      const light = CONFIG.baseLightness;
+
+      const gradient = ctx.createLinearGradient(this.x1, this.y1, this.x2, this.y2);
+      gradient.addColorStop(0, `hsla(${normalizedHue}, ${sat}%, ${light}%, 0)`);
+      gradient.addColorStop(0.3, `hsla(${normalizedHue}, ${sat + 5}%, ${light + 5}%, 0.55)`);
+      gradient.addColorStop(0.7, `hsla(${normalizedHue}, ${sat}%, ${light}%, 0.45)`);
+      gradient.addColorStop(1, `hsla(${normalizedHue}, ${sat - 5}%, ${light - 5}%, 0)`);
+
+      ctx.beginPath();
+      ctx.moveTo(this.x1, this.y1);
+      ctx.quadraticCurveTo(this.cx, this.cy, this.x2, this.y2);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = this.strokeWidth;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+  }
+
+  // Initialize elements - fewer, bigger
+  function initElements() {
+    elements = [];
+    arcs = [];
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Predefined positions for better distribution
+    const circlePositions = [
+      { radius: 180, x: 0.25, y: 0.3 },
+      { radius: 220, x: 0.6, y: 0.25 },
+      { radius: 150, x: 0.4, y: 0.55 },
+      { radius: 200, x: 0.75, y: 0.5 },
+      { radius: 170, x: 0.3, y: 0.75 },
+      { radius: 190, x: 0.65, y: 0.8 }
+    ];
+
+    // Create circles from predefined positions
+    circlePositions.forEach(pos => {
+      const x = pos.x * width;
+      const y = pos.y * height;
+      elements.push(new Element(x, y, pos.radius, 'circle'));
+    });
+
+    // Predefined arc positions
+    const arcPositions = [
+      { x1: 0.1, y1: 0.2, cx: 0.3, cy: 0.4, x2: 0.5, y2: 0.3 },
+      { x1: 0.5, y1: 0.1, cx: 0.7, cy: 0.3, x2: 0.9, y2: 0.2 },
+      { x1: 0.2, y1: 0.6, cx: 0.4, cy: 0.8, x2: 0.6, y2: 0.7 },
+      { x1: 0.6, y1: 0.5, cx: 0.8, cy: 0.7, x2: 0.95, y2: 0.6 }
+    ];
+
+    // Create arcs
+    arcPositions.forEach(pos => {
+      arcs.push(new Arc(
+        pos.x1 * width, pos.y1 * height,
+        pos.cx * width, pos.cy * height,
+        pos.x2 * width, pos.y2 * height,
+        CONFIG.arcStrokeWidth
+      ));
+    });
+  }
+
+  // Resize handler
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    initElements();
+  }
+
+  // Apply cursor force - gentler
+  function applyCursorForce() {
+    if (!isCursorInCanvas) return;
+
+    elements.forEach(el => {
+      const dx = cursorX - el.x;
+      const dy = cursorY - el.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < CONFIG.interactionRadius && dist > 0) {
+        // Force decreases with distance
+        const force = (CONFIG.interactionRadius - dist) / CONFIG.interactionRadius;
+        
+        // Much gentler cursor velocity transfer
+        el.vx += cursorVx * force * CONFIG.cursorInfluence;
+        el.vy += cursorVy * force * CONFIG.cursorInfluence;
+
+        // Gentle repulsion
+        el.vx -= (dx / dist) * force * CONFIG.repulsionStrength;
+        el.vy -= (dy / dist) * force * CONFIG.repulsionStrength;
+      }
+    });
+
+    // Apply to arcs (based on control point proximity)
+    arcs.forEach(arc => {
+      const midX = (arc.x1 + arc.x2) / 2;
+      const midY = (arc.y1 + arc.y2) / 2;
+      const dx = cursorX - midX;
+      const dy = cursorY - midY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < CONFIG.interactionRadius && dist > 0) {
+        const force = (CONFIG.interactionRadius - dist) / CONFIG.interactionRadius;
+        arc.vx += cursorVx * force * CONFIG.cursorInfluence * 0.7;
+        arc.vy += cursorVy * force * CONFIG.cursorInfluence * 0.7;
+      }
+    });
+  }
+
+  // Animation loop
+  function animate(currentTime) {
+    const deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update cursor velocity (with smoothing for slower feel)
+    cursorVx = (cursorX - prevCursorX) * 0.6;
+    cursorVy = (cursorY - prevCursorY) * 0.6;
+    prevCursorX = cursorX;
+    prevCursorY = cursorY;
+
+    // Apply forces
+    applyCursorForce();
+
+    // Update and draw arcs (behind circles)
+    arcs.forEach(arc => {
+      arc.update(currentTime);
+      arc.draw(ctx);
+    });
+
+    // Update and draw circles
+    elements.forEach(el => {
+      el.update(currentTime);
+      el.draw(ctx);
+    });
+
+    // Clamp velocities
+    elements.forEach(el => {
+      const speed = Math.sqrt(el.vx * el.vx + el.vy * el.vy);
+      if (speed > CONFIG.maxSpeed) {
+        el.vx = (el.vx / speed) * CONFIG.maxSpeed;
+        el.vy = (el.vy / speed) * CONFIG.maxSpeed;
+      }
+    });
+
+    animationId = requestAnimationFrame(animate);
+  }
+
+  // Event listeners
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    cursorX = e.clientX - rect.left;
+    cursorY = e.clientY - rect.top;
+    isCursorInCanvas = true;
+
+    // Hide hint after first interaction
+    if (hintVisible) {
+      hint.style.opacity = '0';
+      hintVisible = false;
+    }
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    isCursorInCanvas = false;
+  });
+
+  canvas.addEventListener('mouseenter', () => {
+    const rect = canvas.getBoundingClientRect();
+    prevCursorX = cursorX;
+    prevCursorY = cursorY;
+    isCursorInCanvas = true;
+  });
+
+  // Touch support
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    cursorX = touch.clientX - rect.left;
+    cursorY = touch.clientY - rect.top;
+    isCursorInCanvas = true;
+
+    if (hintVisible) {
+      hint.style.opacity = '0';
+      hintVisible = false;
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', () => {
+    isCursorInCanvas = false;
+  });
+
+  // Initialize
+  window.addEventListener('resize', resize);
+  resize();
+  animate(0);
+})();
+</script>
+</body>
+</html>

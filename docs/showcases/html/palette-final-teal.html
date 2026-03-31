@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palette Final - Teal (Primary Choice)</title>
+  <style>
+    :root {
+      --bg-base: #0a1419;
+      --bg-surface: #0f1b22;
+      --bg-elevated: #162330;
+      --bg-input: #081014;
+      --bg-hover: #1a2e38;
+      --text-primary: #f0fdfa;
+      --text-secondary: #99f6e4;
+      --text-muted: #5eead4;
+      --accent-500: #06b6d4;
+      --accent-600: #0891b2;
+      --accent-400: #22d3ee;
+      --accent-300: #67e8f9;
+      --border-default: #1e3a44;
+      --border-subtle: #15302a;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --error: #f87171;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .page-title {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .page-title h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--accent-400);
+    }
+
+    .page-title p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .section {
+      padding: 48px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-header h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-header span {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-left: 12px;
+    }
+
+    /* ==================== SECTION 1: LOGIN SCREEN ==================== */
+    .login-mockup {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      padding: 80px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 500px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      padding: 48px 32px;
+    }
+
+    .login-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-500);
+      border-radius: 4px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--bg-base);
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 15px;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-500);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent-500);
+      color: var(--bg-base);
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-400);
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .login-footer a {
+      color: var(--accent-400);
+      text-decoration: none;
+    }
+
+    /* ==================== SECTION 2: APP LAYOUT ==================== */
+    .app-layout {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .app-header {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-default);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-500);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--bg-base);
+    }
+
+    .trajectory-path {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .trajectory-path span {
+      color: var(--text-muted);
+    }
+
+    .trajectory-path .current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .header-btn {
+      padding: 8px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .app-body {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 400px;
+    }
+
+    .sidebar {
+      background: var(--bg-elevated);
+      border-right: 1px solid var(--border-default);
+      padding: 16px;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .agent-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .agent-item:hover {
+      border-color: var(--accent-500);
+      background: var(--bg-hover);
+    }
+
+    .agent-avatar {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-600);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .agent-info {
+      flex: 1;
+    }
+
+    .agent-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .agent-status {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .agent-badge {
+      padding: 2px 8px;
+      background: var(--success);
+      color: var(--bg-base);
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 2px;
+    }
+
+    .main-content {
+      padding: 20px;
+      position: relative;
+    }
+
+    .task-form {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      padding: 20px;
+      max-width: 500px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .tasks-background {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      bottom: 20px;
+      width: 300px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .task-card-bg {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .task-card-bg .task-title {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .task-card-bg .task-meta {
+      display: flex;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ==================== SECTION 3: COMPONENTS ==================== */
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .component-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .component-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .component-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .component-row:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Buttons */
+    .btn-secondary {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-500);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    /* Inputs */
+    .input-demo {
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .input-focused {
+      border-color: var(--accent-500) !important;
+    }
+
+    .input-error {
+      border-color: var(--error) !important;
+    }
+
+    .error-message {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    /* Task Cards */
+    .task-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .task-card:hover {
+      border-color: var(--accent-500);
+      background: var(--bg-hover);
+    }
+
+    .task-card-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .task-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .task-card-badge {
+      padding: 3px 8px;
+      background: var(--accent-500);
+      color: var(--bg-base);
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 2px;
+    }
+
+    /* Status Badges */
+    .badge {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-success {
+      background: var(--success);
+      color: var(--bg-base);
+    }
+
+    .badge-warning {
+      background: var(--warning);
+      color: var(--bg-base);
+    }
+
+    .badge-error {
+      background: var(--error);
+      color: var(--bg-base);
+    }
+
+    .badge-neutral {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+    }
+
+    /* Progress Indicators */
+    .progress-bar {
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-500);
+      border-radius: 3px;
+    }
+
+    .progress-steps {
+      display: flex;
+      gap: 8px;
+    }
+
+    .progress-step {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-default);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .progress-step.active {
+      background: var(--accent-500);
+      border-color: var(--accent-500);
+      color: var(--bg-base);
+    }
+
+    .progress-step.completed {
+      background: var(--success);
+      border-color: var(--success);
+      color: var(--bg-base);
+    }
+
+    /* ==================== SECTION 4: COLOR SWATCHES ==================== */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .swatch {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .swatch-color {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .swatch-info {
+      padding: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .swatch-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .swatch-hex {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .swatch-group {
+      margin-bottom: 32px;
+    }
+
+    .swatch-group-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Title -->
+  <div class="page-title">
+    <h1>Teal Palette</h1>
+    <p>Primary Choice - High contrast cyan accent on deep teal base</p>
+  </div>
+
+  <!-- Section 1: Login Screen -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Login Screen</h2>
+      <span>Full mockup - clean, minimal</span>
+    </div>
+    <div class="login-mockup">
+      <div class="login-card">
+        <div class="login-logo">P</div>
+        <h2 class="login-title">Welcome back</h2>
+        <p class="login-subtitle">Sign in to continue to Planning System</p>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" placeholder="Enter your password">
+        </div>
+        <button class="btn btn-primary">Sign in</button>
+        <p class="login-footer">
+          Don't have an account? <a href="#">Create one</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: App Layout -->
+  <section class="section">
+    <div class="section-header">
+      <h2>App Layout Preview</h2>
+      <span>Header, sidebar, task creation</span>
+    </div>
+    <div class="app-layout">
+      <header class="app-header">
+        <div class="header-left">
+          <div class="header-logo">P</div>
+          <div class="trajectory-path">
+            <span>Workspace</span>
+            <span>/</span>
+            <span>Project Alpha</span>
+            <span>/</span>
+            <span class="current">Tasks</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="header-btn">Search</button>
+          <button class="header-btn">Settings</button>
+        </div>
+      </header>
+      <div class="app-body">
+        <aside class="sidebar">
+          <div class="sidebar-title">Agents</div>
+          <div class="agent-list">
+            <div class="agent-item">
+              <div class="agent-avatar">T</div>
+              <div class="agent-info">
+                <div class="agent-name">Task Planner</div>
+                <div class="agent-status">3 active tasks</div>
+              </div>
+              <span class="agent-badge">Live</span>
+            </div>
+            <div class="agent-item">
+              <div class="agent-avatar">R</div>
+              <div class="agent-info">
+                <div class="agent-name">Research Agent</div>
+                <div class="agent-status">Processing</div>
+              </div>
+            </div>
+            <div class="agent-item">
+              <div class="agent-avatar">A</div>
+              <div class="agent-info">
+                <div class="agent-name">Analytics</div>
+                <div class="agent-status">Idle</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+        <main class="main-content">
+          <div class="task-form">
+            <h3 class="form-title">Create New Task</h3>
+            <div class="form-group">
+              <label class="form-label">Task Title</label>
+              <input type="text" class="form-input" placeholder="Enter task title">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Priority</label>
+                <input type="text" class="form-input" placeholder="High">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Due Date</label>
+                <input type="text" class="form-input" placeholder="Tomorrow">
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width: auto;">Create Task</button>
+          </div>
+          <div class="tasks-background">
+            <div class="task-card-bg">
+              <div class="task-title">Review pull request #127</div>
+              <div class="task-meta">
+                <span>High priority</span>
+                <span>Due today</span>
+              </div>
+            </div>
+            <div class="task-card-bg">
+              <div class="task-title">Update documentation</div>
+              <div class="task-meta">
+                <span>Medium</span>
+                <span>Due in 2 days</span>
+              </div>
+            </div>
+            <div class="task-card-bg">
+              <div class="task-title">Fix authentication bug</div>
+              <div class="task-meta">
+                <span>Critical</span>
+                <span>Overdue</span>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Components -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Component Examples</h2>
+      <span>Buttons, inputs, cards, badges</span>
+    </div>
+    <div class="component-grid">
+      <!-- Buttons -->
+      <div class="component-card">
+        <div class="component-label">Buttons</div>
+        <div class="component-row">
+          <button class="btn btn-primary" style="width: auto;">Primary</button>
+          <button class="btn btn-secondary" style="width: auto;">Secondary</button>
+          <button class="btn btn-ghost" style="width: auto;">Ghost</button>
+        </div>
+      </div>
+
+      <!-- Inputs -->
+      <div class="component-card">
+        <div class="component-label">Inputs</div>
+        <div class="input-demo">
+          <div class="form-group">
+            <label class="form-label">Default</label>
+            <input type="text" class="form-input" placeholder="Enter text...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Focused</label>
+            <input type="text" class="form-input input-focused" value="Active input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Error</label>
+            <input type="text" class="form-input input-error" value="Invalid input">
+            <div class="error-message">This field is required</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Cards -->
+      <div class="component-card">
+        <div class="component-label">Task Cards</div>
+        <div class="task-card">
+          <div class="task-card-title">Implement user authentication</div>
+          <div class="task-card-meta">
+            <span class="task-card-badge">In Progress</span>
+            <span>Due: Mar 25</span>
+          </div>
+        </div>
+        <div style="margin-top: 12px;">
+          <small style="color: var(--text-muted);">Hover to see interaction</small>
+        </div>
+      </div>
+
+      <!-- Status Badges -->
+      <div class="component-card">
+        <div class="component-label">Status Badges</div>
+        <div class="component-row">
+          <span class="badge badge-success">Success</span>
+          <span class="badge badge-warning">Warning</span>
+          <span class="badge badge-error">Error</span>
+          <span class="badge badge-neutral">Neutral</span>
+        </div>
+      </div>
+
+      <!-- Progress Indicators -->
+      <div class="component-card">
+        <div class="component-label">Progress Indicators</div>
+        <div style="margin-bottom: 20px;">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 65%;"></div>
+          </div>
+          <small style="color: var(--text-muted);">65% complete</small>
+        </div>
+        <div class="progress-steps">
+          <div class="progress-step completed">1</div>
+          <div class="progress-step completed">2</div>
+          <div class="progress-step active">3</div>
+          <div class="progress-step">4</div>
+          <div class="progress-step">5</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Color Swatches -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Color Swatches</h2>
+      <span>Full palette with hex codes</span>
+    </div>
+
+    <div class="swatch-group">
+      <div class="swatch-group-title">Backgrounds</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-base); color: var(--text-secondary);">#0a1419</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--bg-base</div>
+            <div class="swatch-hex">#0a1419</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-surface); color: var(--text-secondary);">#0f1b22</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--bg-surface</div>
+            <div class="swatch-hex">#0f1b22</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-elevated); color: var(--text-primary);">#162330</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--bg-elevated</div>
+            <div class="swatch-hex">#162330</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-default);">#081014</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--bg-input</div>
+            <div class="swatch-hex">#081014</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-hover); color: var(--text-primary);">#1a2e38</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--bg-hover</div>
+            <div class="swatch-hex">#1a2e38</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swatch-group">
+      <div class="swatch-group-title">Text</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-base); color: var(--text-primary);">#f0fdfa</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--text-primary</div>
+            <div class="swatch-hex">#f0fdfa</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-base); color: var(--text-secondary);">#99f6e4</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--text-secondary</div>
+            <div class="swatch-hex">#99f6e4</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-base); color: var(--text-muted);">#5eead4</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--text-muted</div>
+            <div class="swatch-hex">#5eead4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swatch-group">
+      <div class="swatch-group-title">Accent</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent-300); color: var(--bg-base);">#67e8f9</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--accent-300</div>
+            <div class="swatch-hex">#67e8f9</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent-400); color: var(--bg-base);">#22d3ee</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--accent-400</div>
+            <div class="swatch-hex">#22d3ee</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent-500); color: var(--bg-base);">#06b6d4</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--accent-500</div>
+            <div class="swatch-hex">#06b6d4</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent-600); color: var(--text-primary);">#0891b2</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--accent-600</div>
+            <div class="swatch-hex">#0891b2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swatch-group">
+      <div class="swatch-group-title">Borders</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-base); color: var(--text-secondary); border: 2px solid var(--border-default);">#1e3a44</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--border-default</div>
+            <div class="swatch-hex">#1e3a44</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg-base); color: var(--text-muted); border: 2px solid var(--border-subtle);">#15302a</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--border-subtle</div>
+            <div class="swatch-hex">#15302a</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swatch-group">
+      <div class="swatch-group-title">Semantic Colors</div>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--success); color: var(--bg-base);">#34d399</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--success</div>
+            <div class="swatch-hex">#34d399</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--warning); color: var(--bg-base);">#fbbf24</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--warning</div>
+            <div class="swatch-hex">#fbbf24</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--error); color: var(--bg-base);">#f87171</div>
+          <div class="swatch-info">
+            <div class="swatch-name">--error</div>
+            <div class="swatch-hex">#f87171</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

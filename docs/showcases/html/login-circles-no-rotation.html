@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Big Gradient Circles (No Rotation)</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-base: #0c0f1a;
+  --bg-surface: #121625;
+  --accent-300: #d8b4fe;
+  --accent-400: #c084fc;
+  --accent-500: #a855f7;
+  --accent-600: #8b5cf6;
+  --accent-700: #7c3aed;
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-base);
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* LEFT SIDE - Login Form */
+.login-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-base);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 360px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-300));
+  border-radius: 10px;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.login-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-500);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.form-input::placeholder {
+  color: #475569;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.remember-me input {
+  accent-color: var(--accent-500);
+}
+
+.forgot-link {
+  color: var(--accent-400);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--accent-300);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--accent-500), #9333ea);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1e293b;
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.signup-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.signup-link {
+  color: var(--accent-400);
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  color: var(--accent-300);
+}
+
+/* RIGHT SIDE - Big Gradient Circles */
+.schematic-side {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 40% 40%, #1a1f35 0%, var(--bg-base) 70%);
+}
+
+.schematic-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* WAVE ANIMATIONS - Float movement */
+@keyframes wave-base {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(50px, -30px); }
+  50% { transform: translate(70px, 35px); }
+  75% { transform: translate(20px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes wave-medium {
+  0% { transform: translate(0, 0); }
+  30% { transform: translate(-35px, 18px); }
+  60% { transform: translate(45px, -22px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes wave-sharp {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(20px, -12px); }
+  66% { transform: translate(-15px, 8px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* BASE LAYER - Maximum blur */
+.schematic-layer-base {
+  position: absolute;
+  inset: -150px;
+  filter: blur(80px) saturate(1.4);
+  opacity: 1;
+  animation: wave-base 18s ease-in-out infinite;
+}
+
+/* MEDIUM LAYER - Medium blur */
+.schematic-layer-medium {
+  position: absolute;
+  inset: -100px;
+  filter: blur(45px) saturate(1.3);
+  opacity: 0.75;
+  animation: wave-medium 14s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* SHARP LAYER - Minimal blur */
+.schematic-layer-sharp {
+  position: absolute;
+  inset: -40px;
+  filter: blur(8px);
+  opacity: 0.3;
+  animation: wave-sharp 10s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+/* Ambient glow */
+@keyframes glow-pulse-1 {
+  0%, 100% {
+    background: radial-gradient(ellipse 55% 55% at 35% 35%, rgba(168, 85, 247, 0.15) 0%, transparent 65%);
+  }
+  50% {
+    background: radial-gradient(ellipse 65% 65% at 65% 55%, rgba(192, 132, 252, 0.18) 0%, transparent 70%);
+  }
+}
+
+@keyframes glow-pulse-2 {
+  0%, 100% {
+    background: radial-gradient(ellipse 60% 60% at 70% 65%, rgba(216, 180, 254, 0.12) 0%, transparent 75%);
+  }
+  50% {
+    background: radial-gradient(ellipse 70% 70% at 30% 45%, rgba(139, 92, 246, 0.14) 0%, transparent 80%);
+  }
+}
+
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  animation: glow-pulse-1 16s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ambient-glow-2 {
+  position: absolute;
+  inset: 0;
+  animation: glow-pulse-2 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 130% 130% at center, transparent 35%, rgba(12, 15, 26, 0.6) 100%);
+  pointer-events: none;
+}
+
+.schematic-svg {
+  width: 140%;
+  height: 140%;
+  max-width: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .schematic-layer-base,
+  .schematic-layer-medium,
+  .schematic-layer-sharp,
+  .ambient-glow,
+  .ambient-glow-2 {
+    animation: none;
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .schematic-side {
+    display: none;
+  }
+  .login-side {
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- LEFT: Login Form -->
+  <div class="login-side">
+    <form class="login-form">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Planner</span>
+      </div>
+
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-subtitle">Sign in to continue to your workspace</p>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Enter your password">
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox">
+          Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-primary">Sign in</button>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <p class="signup-text">
+        Don't have an account? <a href="#" class="signup-link">Create one</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- RIGHT: Big Gradient Circles - No Rotation -->
+  <div class="schematic-side">
+    <div class="schematic-wrapper">
+      <!-- BASE LAYER: 80px blur -->
+      <div class="schematic-layer-base">
+        <svg class="schematic-svg" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- BIG CIRCLE GRADIENTS -->
+            <radialGradient id="big-circle-1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="0.9"/>
+              <stop offset="40%" stop-color="#a855f7" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="big-circle-2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#d8b4fe" stop-opacity="0.85"/>
+              <stop offset="35%" stop-color="#c084fc" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="big-circle-3" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#a855f7" stop-opacity="0.8"/>
+              <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="big-circle-4" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="0.75"/>
+              <stop offset="45%" stop-color="#a855f7" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+            </radialGradient>
+            <!-- BIG ARC/TRAIL GRADIENTS -->
+            <linearGradient id="big-trail-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a855f7" stop-opacity="0"/>
+              <stop offset="30%" stop-color="#c084fc" stop-opacity="0.6"/>
+              <stop offset="70%" stop-color="#d8b4fe" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="big-trail-2" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0"/>
+              <stop offset="40%" stop-color="#a855f7" stop-opacity="0.5"/>
+              <stop offset="60%" stop-color="#c084fc" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="big-trail-3" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#d8b4fe" stop-opacity="0"/>
+              <stop offset="50%" stop-color="#c084fc" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          
+          <!-- BIG CIRCLES - 100-180px radius -->
+          <circle cx="200" cy="200" r="140" fill="url(#big-circle-1)"/>
+          <circle cx="750" cy="150" r="120" fill="url(#big-circle-2)"/>
+          <circle cx="500" cy="400" r="180" fill="url(#big-circle-3)"/>
+          <circle cx="300" cy="600" r="110" fill="url(#big-circle-4)"/>
+          <circle cx="850" cy="550" r="130" fill="url(#big-circle-1)"/>
+          <circle cx="100" cy="450" r="95" fill="url(#big-circle-2)"/>
+          
+          <!-- BIG ARCS/TRAILS - 25-40px stroke width -->
+          <path d="M 100 200 Q 300 50 500 350" stroke="url(#big-trail-1)" stroke-width="35" fill="none"/>
+          <path d="M 400 450 Q 600 300 800 500" stroke="url(#big-trail-2)" stroke-width="40" fill="none"/>
+          <path d="M 200 600 Q 500 400 750 600" stroke="url(#big-trail-3)" stroke-width="30" fill="none"/>
+          <path d="M 50 350 Q 250 500 450 300" stroke="url(#big-trail-1)" stroke-width="28" fill="none"/>
+          <path d="M 600 100 Q 700 300 900 200" stroke="url(#big-trail-2)" stroke-width="32" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- MEDIUM LAYER: 45px blur -->
+      <div class="schematic-layer-medium">
+        <svg class="schematic-svg" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="med-circle-1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#d8b4fe" stop-opacity="0.85"/>
+              <stop offset="35%" stop-color="#c084fc" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="med-circle-2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="0.8"/>
+              <stop offset="45%" stop-color="#a855f7" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="med-trail-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="0"/>
+              <stop offset="50%" stop-color="#d8b4fe" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          
+          <circle cx="350" cy="250" r="100" fill="url(#med-circle-1)"/>
+          <circle cx="650" cy="500" r="115" fill="url(#med-circle-2)"/>
+          <circle cx="180" cy="550" r="85" fill="url(#med-circle-1)"/>
+          <circle cx="800" cy="350" r="95" fill="url(#med-circle-2)"/>
+          
+          <path d="M 150 300 Q 400 150 650 350" stroke="url(#med-trail-1)" stroke-width="30" fill="none"/>
+          <path d="M 300 600 Q 550 450 800 550" stroke="url(#med-trail-1)" stroke-width="25" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- SHARP LAYER: 8px blur -->
+      <div class="schematic-layer-sharp">
+        <svg class="schematic-svg" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sharp-circle-1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#d8b4fe" stop-opacity="0.9"/>
+              <stop offset="30%" stop-color="#c084fc" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          
+          <circle cx="500" cy="350" r="70" fill="url(#sharp-circle-1)"/>
+          <circle cx="250" cy="500" r="55" fill="url(#sharp-circle-1)"/>
+          <circle cx="750" cy="300" r="60" fill="url(#sharp-circle-1)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+    <div class="vignette"></div>
+  </div>
+</div>
+</body>
+</html>

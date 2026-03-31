@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Planning System</title>
+  <style>
+    :root {
+      --bg-base: #0a1419;
+      --bg-surface: #0f1b22;
+      --accent-500: #06b6d4;
+      --accent-700: #0e7490;
+      --text-primary: #e2e8f0;
+      --text-muted: #64748b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* LEFT HALF - Login Form */
+    .login-panel {
+      width: 40%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface);
+      position: relative;
+      z-index: 10;
+    }
+
+    .login-form {
+      width: 100%;
+      max-width: 320px;
+      padding: 2rem;
+    }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.9375rem;
+      background: var(--bg-base);
+      border: 1px solid #1e293b;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent-500);
+    }
+
+    .form-input::placeholder {
+      color: #475569;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      background: var(--accent-500);
+      color: var(--bg-base);
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .login-button:hover {
+      background: var(--accent-700);
+    }
+
+    .login-button:focus {
+      outline: 2px solid var(--accent-500);
+      outline-offset: 2px;
+    }
+
+    /* RIGHT HALF - Gradient Mesh */
+    .visual-panel {
+      width: 60%;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+
+    #gradient-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* CSS Fallback for reduced motion or no JS */
+    .css-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(ellipse at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(14, 116, 144, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column-reverse;
+      }
+
+      .login-panel {
+        width: 100%;
+        min-height: auto;
+        padding: 4rem 0;
+      }
+
+      .visual-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      .login-panel {
+        z-index: 10;
+        background: rgba(15, 27, 34, 0.92);
+        backdrop-filter: blur(8px);
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .css-fallback {
+        display: block;
+      }
+      #gradient-canvas {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- LEFT: Login Form -->
+    <div class="login-panel">
+      <form class="login-form" onsubmit="return false;">
+        <h1 class="login-title">Planning System</h1>
+        <p class="login-subtitle">Enter your passphrase to continue</p>
+        
+        <div class="form-group">
+          <label class="form-label" for="passphrase">Passphrase</label>
+          <input 
+            type="password" 
+            id="passphrase" 
+            class="form-input" 
+            placeholder="Enter passphrase"
+            autocomplete="current-password"
+          >
+        </div>
+        
+        <button type="submit" class="login-button">Login</button>
+      </form>
+    </div>
+
+    <!-- RIGHT: Gradient Mesh -->
+    <div class="visual-panel">
+      <div class="css-fallback"></div>
+      <canvas id="gradient-canvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+
+      const canvas = document.getElementById('gradient-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let width, height;
+      let animationId;
+      let time = 0;
+
+      // Blob configuration
+      const blobs = [
+        { x: 0.2, y: 0.3, radius: 0.4, color: 'rgba(6, 182, 212, 0.12)', speed: 0.0003, phase: 0 },
+        { x: 0.7, y: 0.6, radius: 0.35, color: 'rgba(14, 116, 144, 0.10)', speed: 0.00025, phase: 2 },
+        { x: 0.5, y: 0.4, radius: 0.45, color: 'rgba(6, 182, 212, 0.08)', speed: 0.0002, phase: 4 },
+        { x: 0.3, y: 0.7, radius: 0.3, color: 'rgba(14, 116, 144, 0.06)', speed: 0.00035, phase: 1 },
+        { x: 0.8, y: 0.3, radius: 0.25, color: 'rgba(6, 182, 212, 0.05)', speed: 0.00028, phase: 3 }
+      ];
+
+      function resize() {
+        width = canvas.width = canvas.offsetWidth;
+        height = canvas.height = canvas.offsetHeight;
+      }
+
+      function drawBlob(blob, t) {
+        const centerX = width * (blob.x + Math.sin(t * blob.speed * 1000 + blob.phase) * 0.1);
+        const centerY = height * (blob.y + Math.cos(t * blob.speed * 800 + blob.phase) * 0.1);
+        const baseRadius = Math.min(width, height) * blob.radius;
+        const radius = baseRadius + Math.sin(t * blob.speed * 500 + blob.phase) * baseRadius * 0.2;
+
+        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+        gradient.addColorStop(0, blob.color);
+        gradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function animate(timestamp) {
+        time = timestamp;
+        ctx.clearRect(0, 0, width, height);
+        
+        // Background
+        ctx.fillStyle = '#0a1419';
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw blobs
+        blobs.forEach(blob => drawBlob(blob, time));
+
+        animationId = requestAnimationFrame(animate);
+      }
+
+      // Initialize
+      resize();
+      window.addEventListener('resize', resize);
+      
+      // Start animation
+      animationId = requestAnimationFrame(animate);
+
+      // Cleanup on page hide
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(animationId);
+        } else {
+          animationId = requestAnimationFrame(animate);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

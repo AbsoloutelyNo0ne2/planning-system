@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planning System - Layout Preview</title>
+  <style>
+    :root {
+      --bg-base: #0a1419;
+      --bg-surface: #0f1b22;
+      --bg-elevated: #162330;
+      --text-primary: #f0fdfa;
+      --text-secondary: #99f6e4;
+      --text-muted: #5eead4;
+      --accent-500: #06b6d4;
+      --accent-600: #0891b2;
+      --border-default: #1e3a44;
+      --border-subtle: #15302a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .user-badge {
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent-500);
+      border-radius: 2px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-500);
+      letter-spacing: 0.5px;
+    }
+
+    .trajectory {
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 2px;
+      transition: background 0.15s;
+    }
+
+    .trajectory:hover {
+      background: var(--bg-elevated);
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--border-default);
+      border-radius: 2px;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--accent-500);
+      color: var(--text-primary);
+    }
+
+    /* MAIN LAYOUT */
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* LEFT COLUMN - AGENTS */
+    .agents-column {
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-default);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .agents-header {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .actor-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .actor-card:hover {
+      border-color: var(--accent-500);
+    }
+
+    .actor-card .actor-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .actor-card .actor-role {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .actor-card.primary {
+      border-left: 2px solid var(--accent-500);
+    }
+
+    .add-actor-btn {
+      background: transparent;
+      border: 1px dashed var(--border-default);
+      border-radius: 2px;
+      color: var(--text-muted);
+      padding: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: auto;
+      transition: all 0.15s;
+    }
+
+    .add-actor-btn:hover {
+      border-color: var(--accent-500);
+      color: var(--text-secondary);
+    }
+
+    /* RIGHT COLUMN */
+    .content-column {
+      background: var(--bg-base);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOGGLE BUTTONS */
+    .toggle-container {
+      display: flex;
+      gap: 0;
+      padding: 16px 16px 0;
+    }
+
+    .toggle-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 2px;
+      padding: 10px 24px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.5px;
+    }
+
+    .toggle-btn:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .toggle-btn:last-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: none;
+    }
+
+    .toggle-btn.active {
+      background: var(--accent-600);
+      border-color: var(--accent-500);
+      color: var(--text-primary);
+    }
+
+    .toggle-btn:not(.active):hover {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+    }
+
+    /* CONTENT AREA */
+    .content-area {
+      flex: 1;
+      padding: 20px 16px 16px;
+    }
+
+    .content-panel {
+      display: none;
+    }
+
+    .content-panel.active {
+      display: block;
+    }
+
+    /* CREATE MODE */
+    .create-panel {
+      max-width: 500px;
+    }
+
+    .step-indicator {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .step-indicator .step-number {
+      color: var(--accent-500);
+      font-weight: 600;
+    }
+
+    .value-class-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .value-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .value-option:hover {
+      border-color: var(--accent-500);
+    }
+
+    .value-option.selected {
+      border-color: var(--accent-500);
+      background: var(--bg-elevated);
+    }
+
+    .value-option .checkbox {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--border-default);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .value-option.selected .checkbox {
+      background: var(--accent-500);
+      border-color: var(--accent-500);
+    }
+
+    .value-option.selected .checkbox::after {
+      content: '';
+      width: 6px;
+      height: 3px;
+      border-left: 2px solid var(--bg-base);
+      border-bottom: 2px solid var(--bg-base);
+      transform: rotate(-45deg) translateY(-1px);
+    }
+
+    .value-option .option-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .value-option.selected .option-text {
+      color: var(--text-primary);
+    }
+
+    .navigation-hint {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* TASKS MODE */
+    .tasks-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .task-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+    }
+
+    .section-limit {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .section-limit.unlimited {
+      color: var(--accent-500);
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-item .task-label {
+      color: var(--text-muted);
+    }
+
+    .task-item .task-text {
+      color: var(--text-primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .agents-column {
+        order: 2;
+        border-right: none;
+        border-top: 1px solid var(--border-default);
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .content-column {
+        order: 1;
+      }
+
+      .header {
+        padding: 10px 12px;
+      }
+
+      .trajectory {
+        font-size: 12px;
+      }
+
+      .toggle-container {
+        padding: 12px 12px 0;
+      }
+
+      .content-area {
+        padding: 16px 12px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="user-badge">[Personal]</div>
+    <div class="trajectory" title="Click to edit trajectory">Weekly planning session → Sprint goals</div>
+    <button class="logout-btn">Logout</button>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+    <!-- LEFT COLUMN - AGENTS -->
+    <aside class="agents-column">
+      <div class="agents-header">AGENTS (3)</div>
+      
+      <div class="actor-card primary">
+        <div class="actor-name">@ Daniel</div>
+        <div class="actor-role">Primary actor</div>
+      </div>
+      
+      <div class="actor-card">
+        <div class="actor-name">@ Claude</div>
+        <div class="actor-role">AI Assistant</div>
+      </div>
+      
+      <div class="actor-card">
+        <div class="actor-name">@ GPT-4</div>
+        <div class="actor-role">Research agent</div>
+      </div>
+      
+      <button class="add-actor-btn">+ Add actor</button>
+    </aside>
+
+    <!-- RIGHT COLUMN - TOGGLE + CONTENT -->
+    <section class="content-column">
+      <!-- TOGGLE BUTTONS -->
+      <div class="toggle-container">
+        <button class="toggle-btn active" data-panel="create">CREATE</button>
+        <button class="toggle-btn" data-panel="tasks">TASKS</button>
+      </div>
+
+      <!-- CONTENT AREA -->
+      <div class="content-area">
+        <!-- CREATE PANEL -->
+        <div id="create-panel" class="content-panel create-panel active">
+          <div class="step-indicator">
+            <span class="step-number">STEP 2 OF 6:</span> Value Class
+          </div>
+          
+          <div class="value-class-title">Select value classification:</div>
+          
+          <div class="value-option selected" data-value="fun-useful">
+            <div class="checkbox"></div>
+            <span class="option-text">Fun & Useful</span>
+          </div>
+          
+          <div class="value-option" data-value="useful">
+            <div class="checkbox"></div>
+            <span class="option-text">Useful</span>
+          </div>
+          
+          <div class="value-option" data-value="has-to-be-done">
+            <div class="checkbox"></div>
+            <span class="option-text">Has to be Done</span>
+          </div>
+          
+          <div class="value-option" data-value="boring-necessary">
+            <div class="checkbox"></div>
+            <span class="option-text">Has to be Done (Boring)</span>
+          </div>
+          
+          <div class="value-option" data-value="fun-useless">
+            <div class="checkbox"></div>
+            <span class="option-text">Fun but Useless</span>
+          </div>
+          
+          <div class="value-option" data-value="boring-useless">
+            <div class="checkbox"></div>
+            <span class="option-text">Boring & Useless</span>
+          </div>
+          
+          <div class="navigation-hint">↑/↓ or W/S to navigate</div>
+        </div>
+
+        <!-- TASKS PANEL -->
+        <div id="tasks-panel" class="content-panel tasks-panel">
+          <!-- AGENTIC TASKS -->
+          <div class="task-section">
+            <div class="section-header">
+              <span class="section-title">AGENTIC TASKS</span>
+              <span class="section-limit unlimited">[Unlimited]</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="task-item">
+              <span class="task-label">Task:</span>
+              <span class="task-text">Review quarterly goals</span>
+            </div>
+            <div class="task-item">
+              <span class="task-label">Task:</span>
+              <span class="task-text">Plan sprint objectives</span>
+            </div>
+          </div>
+
+          <!-- HYBRID TASKS -->
+          <div class="task-section">
+            <div class="section-header">
+              <span class="section-title">HYBRID TASKS</span>
+              <span class="section-limit">[3 remaining]</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="task-item">
+              <span class="task-label">Task:</span>
+              <span class="task-text">Draft project proposal</span>
+            </div>
+          </div>
+
+          <!-- NON-AGENTIC TASKS -->
+          <div class="task-section">
+            <div class="section-header">
+              <span class="section-title">NON-AGENTIC TASKS</span>
+              <span class="section-limit">[2 remaining]</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="task-item">
+              <span class="task-label">Task:</span>
+              <span class="task-text">Schedule team meeting</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Toggle functionality
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    const panels = document.querySelectorAll('.content-panel');
+
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active from all buttons
+        toggleBtns.forEach(b => b.classList.remove('active'));
+        // Add active to clicked button
+        btn.classList.add('active');
+
+        // Hide all panels
+        panels.forEach(p => p.classList.remove('active'));
+        
+        // Show target panel
+        const targetPanel = document.getElementById(`${btn.dataset.panel}-panel`);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+        }
+      });
+    });
+
+    // Value option selection (CREATE mode)
+    const valueOptions = document.querySelectorAll('.value-option');
+    valueOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        valueOptions.forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+      });
+    });
+
+    // Keyboard navigation for value options
+    let selectedIndex = 0;
+    document.addEventListener('keydown', (e) => {
+      const createPanel = document.getElementById('create-panel');
+      if (!createPanel.classList.contains('active')) return;
+
+      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        selectedIndex = Math.max(0, selectedIndex - 1);
+        updateSelection();
+      } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        selectedIndex = Math.min(valueOptions.length - 1, selectedIndex + 1);
+        updateSelection();
+      }
+    });
+
+    function updateSelection() {
+      valueOptions.forEach((o, i) => {
+        o.classList.toggle('selected', i === selectedIndex);
+      });
+    }
+  </script>
+</body>
+</html>

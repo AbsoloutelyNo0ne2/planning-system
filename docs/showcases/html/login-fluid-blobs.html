@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Fluid Blobs</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-base: #0c0f1a;
+  --bg-surface: #121625;
+  --accent-300: #d8b4fe;
+  --accent-400: #c084fc;
+  --accent-500: #a855f7;
+  --accent-600: #8b5cf6;
+  --accent-700: #7c3aed;
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-base);
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* LEFT SIDE - Login Form */
+.login-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-base);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 360px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-300));
+  border-radius: 10px;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.login-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-500);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+.form-input::placeholder {
+  color: #475569;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.remember-me input {
+  accent-color: var(--accent-500);
+}
+
+.forgot-link {
+  color: var(--accent-400);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--accent-300);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--accent-500), #9333ea);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1e293b;
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.signup-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.signup-link {
+  color: var(--accent-400);
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  color: var(--accent-300);
+}
+
+/* RIGHT SIDE - Interactive Canvas */
+.canvas-side {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 40% 40%, #1a1f35 0%, var(--bg-base) 70%);
+}
+
+#interactive-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.canvas-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(148, 163, 184, 0.5);
+  font-size: 0.8rem;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 130% 130% at center, transparent 35%, rgba(12, 15, 26, 0.5) 100%);
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .canvas-side {
+    display: none;
+  }
+  .login-side {
+    justify-content: center;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:hover {
+    transform: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- LEFT: Login Form -->
+  <div class="login-side">
+    <form class="login-form">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Planner</span>
+      </div>
+
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-subtitle">Sign in to continue to your workspace</p>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Enter your password">
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox">
+          Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-primary">Sign in</button>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <p class="signup-text">
+        Don't have an account? <a href="#" class="signup-link">Create one</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- RIGHT: Interactive Canvas -->
+  <div class="canvas-side">
+    <canvas id="interactive-canvas"></canvas>
+    <div class="canvas-hint">Move your cursor to interact</div>
+    <div class="vignette"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+const canvas = document.getElementById('interactive-canvas');
+const ctx = canvas.getContext('2d');
+const hint = document.querySelector('.canvas-hint');
+
+ // Configuration
+ const CONFIG = {
+ numBlobs: 5,
+ pointsPerBlob: 8,
+
+ // Blob sizes (2x bigger)
+ minRadius: 200,
+ maxRadius: 500,
+
+ // Interaction (amp'd up)
+ interactionRadius: 400,
+ friction: 0.92,
+ returnForce: 0.003,
+ cursorInfluence: 0.15,
+ repulsionStrength: 0.18,
+
+ // Animation (slow, ambient - 8x slower)
+    wobbleSpeed: 0.0001,
+    morphSpeed: 0.00004,
+
+  // Colors
+  baseHue: 280,
+  slowTint: 8,
+  fastTint: -15,
+  baseSaturation: 60,
+  baseLightness: 55,
+
+  // Dynamic blur system (organic, depth-based)
+  blurRadius: 30,      // Base blur (mid-range)
+  minBlur: 10,         // Near blobs (depth 0)
+  maxBlur: 60,         // Far blobs (depth 1)
+  motionBlurFactor: 8, // Additional blur per unit speed
+  depthDriftSpeed: 0.00008, // How fast blobs drift in Z-space
+  depthOscillation: 0.15    // Amplitude of depth oscillation
+};
+
+// State
+let blobs = [];
+let cursorX = 0;
+let cursorY = 0;
+let prevCursorX = 0;
+let prevCursorY = 0;
+let cursorVx = 0;
+let cursorVy = 0;
+let cursorSpeed = 0;
+let isCursorInCanvas = false;
+let lastTime = 0;
+let hintVisible = true;
+
+// Noise function for organic movement
+function noise(x, y, seed) {
+  const n = Math.sin(x * 12.9898 + y * 78.233 + seed) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+// Map speed to hue tint
+function mapSpeedToTint(speed) {
+  if (speed < 0.5) {
+    return CONFIG.baseHue + CONFIG.slowTint;
+  } else if (speed < 2) {
+    const t = (speed - 0.5) / 1.5;
+    return CONFIG.baseHue + CONFIG.slowTint - (CONFIG.slowTint * t);
+  } else {
+    const t = Math.min((speed - 2) / 4, 1);
+    return CONFIG.baseHue + (CONFIG.fastTint * t);
+  }
+}
+
+ // Fluid Blob class
+ class FluidBlob {
+ constructor(x, y, radius) {
+ this.x = x;
+ this.y = y;
+ this.originX = x;
+ this.originY = y;
+ this.vx = 0;
+ this.vy = 0;
+ this.radius = radius;
+ this.points = CONFIG.pointsPerBlob;
+ this.hue = CONFIG.baseHue;
+ this.targetHue = CONFIG.baseHue;
+
+ // Drift motion for organic movement (8x slower)
+    this.driftX = (Math.random() - 0.5) * 0.06;
+    this.driftY = (Math.random() - 0.5) * 0.06;
+
+    // Rotation for more organic shape (8x slower)
+    this.rotationSpeed = (Math.random() - 0.5) * 0.00006;
+
+    // Control point offsets for organic wobble (8x slower frequency, smaller amplitude)
+    this.offsets = [];
+    for (let i = 0; i < this.points; i++) {
+      this.offsets.push({
+        amplitude: Math.random() * 40 + 20, // Smoother, less frantic
+        frequency: Math.random() * 0.005 + 0.0025, // 8x slower
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    this.phase = Math.random() * Math.PI * 2;
+    this.morphPhase = Math.random() * Math.PI * 2;
+
+    // Depth system for dynamic blur
+    this.depth = Math.random(); // 0 = near (sharp), 1 = far (blurry)
+    this.targetDepth = this.depth;
+    this.depthPhase = Math.random() * Math.PI * 2; // Phase for Z-space oscillation
+    this.baseDepth = this.depth; // Store initial depth for oscillation center
+  }
+
+  update(time) {
+    const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+
+    // Update color based on speed
+    this.targetHue = mapSpeedToTint(speed);
+    this.hue = this.hue + (this.targetHue - this.hue) * 0.03;
+
+    // Depth drift - blobs slowly oscillate in Z-space (organic depth changes)
+    this.depthPhase += CONFIG.depthDriftSpeed;
+    const depthOscillation = Math.sin(this.depthPhase) * CONFIG.depthOscillation;
+    this.depth = Math.max(0, Math.min(1, this.baseDepth + depthOscillation));
+
+    // Apply friction
+    this.vx *= CONFIG.friction;
+    this.vy *= CONFIG.friction;
+
+    // Ambient drift (8x slower)
+    const driftTime = time * 0.000025;
+    const driftX = Math.sin(driftTime + this.phase) * 40;
+    const driftY = Math.cos(driftTime + this.phase * 1.3) * 35;
+
+    const targetX = this.originX + driftX;
+    const targetY = this.originY + driftY;
+
+    // Return force
+    this.vx += (targetX - this.x) * CONFIG.returnForce;
+    this.vy += (targetY - this.y) * CONFIG.returnForce;
+
+    // Apply drift motion
+    this.x += this.driftX;
+    this.y += this.driftY;
+
+    // Wrap around edges for continuous movement
+    if (this.x < -this.radius) this.x = canvas.width + this.radius;
+    if (this.x > canvas.width + this.radius) this.x = -this.radius;
+    if (this.y < -this.radius) this.y = canvas.height + this.radius;
+    if (this.y > canvas.height + this.radius) this.y = -this.radius;
+
+    // Update position
+    this.x += this.vx;
+    this.y += this.vy;
+  }
+  
+  draw(ctx, time) {
+    const normalizedHue = ((this.hue % 360) + 360) % 360;
+    const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+
+    // Dynamic blur calculation:
+    // 1. Base blur from depth (near = sharp, far = blurry)
+    // 2. Motion blur effect (faster movement = more blur)
+    const depthBlur = CONFIG.minBlur + (this.depth * (CONFIG.maxBlur - CONFIG.minBlur));
+    const motionBlur = Math.min(speed * CONFIG.motionBlurFactor, 15); // Cap motion blur
+    const dynamicBlur = depthBlur + motionBlur;
+
+    // Apply dynamic blur for organic, atmospheric aesthetic
+    ctx.save();
+    ctx.filter = `blur(${dynamicBlur}px)`;
+
+    ctx.beginPath();
+
+    // Draw blob shape with organic wobble + secondary wobble + rotation
+    for (let i = 0; i <= this.points; i++) {
+      // Add rotation for more organic movement
+      const angle = (i / this.points) * Math.PI * 2 + time * this.rotationSpeed;
+      const offset = this.offsets[i % this.points];
+
+      // Primary wobble (slower)
+      const wobble1 = Math.sin(time * offset.frequency + offset.phase) * offset.amplitude;
+      // Secondary wobble for more complex shapes (slower, smaller)
+      const wobble2 = Math.cos(time * offset.frequency * 0.8 + offset.phase * 0.7) * offset.amplitude * 0.3;
+      // Morph wobble (8x slower)
+      const morphWobble = Math.sin(time * CONFIG.morphSpeed + this.morphPhase + i * 0.5) * 15;
+
+      const r = this.radius + wobble1 + wobble2 + morphWobble;
+      const x = this.x + Math.cos(angle) * r;
+      const y = this.y + Math.sin(angle) * r;
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        // Smooth bezier curve
+        const prevAngle = ((i - 1) / this.points) * Math.PI * 2 + time * this.rotationSpeed;
+        const prevOffset = this.offsets[(i - 1) % this.points];
+        const prevWobble1 = Math.sin(time * prevOffset.frequency + prevOffset.phase) * prevOffset.amplitude;
+        const prevWobble2 = Math.cos(time * prevOffset.frequency * 0.8 + prevOffset.phase * 0.7) * prevOffset.amplitude * 0.3;
+        const prevMorphWobble = Math.sin(time * CONFIG.morphSpeed + this.morphPhase + (i - 1) * 0.5) * 15;
+        const prevR = this.radius + prevWobble1 + prevWobble2 + prevMorphWobble;
+
+        // Control points for smooth curves
+        const cp1x = this.x + Math.cos(prevAngle + 0.3) * prevR * 1.1;
+        const cp1y = this.y + Math.sin(prevAngle + 0.3) * prevR * 1.1;
+
+        ctx.quadraticCurveTo(cp1x, cp1y, x, y);
+      }
+    }
+
+    ctx.closePath();
+
+    // Radial gradient for soft, fluid look (larger scale)
+    const gradient = ctx.createRadialGradient(
+      this.x, this.y, 0,
+      this.x, this.y, this.radius * 2 // Was 1.8
+    );
+
+    gradient.addColorStop(0, `hsla(${normalizedHue}, ${CONFIG.baseSaturation + 15}%, ${CONFIG.baseLightness + 15}%, 0.9)`);
+    gradient.addColorStop(0.3, `hsla(${normalizedHue}, ${CONFIG.baseSaturation + 5}%, ${CONFIG.baseLightness + 5}%, 0.65)`);
+    gradient.addColorStop(0.6, `hsla(${normalizedHue}, ${CONFIG.baseSaturation}%, ${CONFIG.baseLightness}%, 0.35)`);
+    gradient.addColorStop(1, `hsla(${normalizedHue}, ${CONFIG.baseSaturation - 10}%, ${CONFIG.baseLightness - 10}%, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Restore context to reset blur filter
+    ctx.restore();
+  }
+}
+
+ // Initialize blobs (2x bigger)
+ function initBlobs() {
+ blobs = [];
+
+ const width = canvas.width;
+ const height = canvas.height;
+
+ const positions = [
+ { radius: 350, x: 0.25, y: 0.35 }, // Was 180
+ { radius: 450, x: 0.65, y: 0.3 }, // Was 220
+ { radius: 300, x: 0.4, y: 0.6 }, // Was 160
+ { radius: 400, x: 0.75, y: 0.55 }, // Was 200
+ { radius: 280, x: 0.35, y: 0.8 } // Was 170
+ ];
+
+ positions.forEach(pos => {
+ const x = pos.x * width;
+ const y = pos.y * height;
+ blobs.push(new FluidBlob(x, y, pos.radius));
+ });
+ }
+
+// Resize handler
+function resize() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  initBlobs();
+}
+
+// Apply cursor force
+function applyCursorForce() {
+  if (!isCursorInCanvas) return;
+  
+  blobs.forEach(blob => {
+    const dx = cursorX - blob.x;
+    const dy = cursorY - blob.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    
+    if (dist < CONFIG.interactionRadius && dist > 0) {
+      const force = (CONFIG.interactionRadius - dist) / CONFIG.interactionRadius;
+      
+      // Gentle cursor influence
+      blob.vx += cursorVx * force * CONFIG.cursorInfluence;
+      blob.vy += cursorVy * force * CONFIG.cursorInfluence;
+      
+      // Soft repulsion
+      blob.vx -= (dx / dist) * force * CONFIG.repulsionStrength;
+      blob.vy -= (dy / dist) * force * CONFIG.repulsionStrength;
+    }
+  });
+}
+
+// Animation loop
+function animate(currentTime) {
+  lastTime = currentTime;
+  
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Update cursor velocity
+  cursorVx = (cursorX - prevCursorX) * 0.5;
+  cursorVy = (cursorY - prevCursorY) * 0.5;
+  cursorSpeed = Math.sqrt(cursorVx * cursorVx + cursorVy * cursorVy);
+  prevCursorX = cursorX;
+  prevCursorY = cursorY;
+  
+  // Apply forces
+  applyCursorForce();
+  
+  // Update and draw blobs (back to front)
+  blobs.forEach(blob => {
+    blob.update(currentTime);
+  });
+  
+  // Sort by y position for depth
+  const sortedBlobs = [...blobs].sort((a, b) => a.y - b.y);
+  
+  sortedBlobs.forEach(blob => {
+    blob.draw(ctx, currentTime);
+  });
+  
+  requestAnimationFrame(animate);
+}
+
+// Event listeners
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  cursorX = e.clientX - rect.left;
+  cursorY = e.clientY - rect.top;
+  isCursorInCanvas = true;
+  
+  if (hintVisible) {
+    hint.style.opacity = '0';
+    hintVisible = false;
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  isCursorInCanvas = false;
+});
+
+canvas.addEventListener('mouseenter', () => {
+  prevCursorX = cursorX;
+  prevCursorY = cursorY;
+  isCursorInCanvas = true;
+});
+
+// Touch support
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  cursorX = touch.clientX - rect.left;
+  cursorY = touch.clientY - rect.top;
+  isCursorInCanvas = true;
+  
+  if (hintVisible) {
+    hint.style.opacity = '0';
+    hintVisible = false;
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => {
+  isCursorInCanvas = false;
+});
+
+// Initialize
+window.addEventListener('resize', resize);
+resize();
+animate(0);
+})();
+</script>
+</body>
+</html>
