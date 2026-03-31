@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 
 interface FluidBlobCanvasProps {
   className?: string;
+  scale?: number; // Zoom factor (e.g., 0.6 = 60% size)
   offsetY?: number; // Offset in pixels (e.g., 150 = shift down 150px)
 }
 
@@ -306,7 +307,7 @@ const BLOB_POSITIONS = [
   { radius: 280, x: 0.35, y: 0.8 },
 ];
 
-const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, offsetY = 0 }) => {
+const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1, offsetY = 0 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const blobsRef = useRef<FluidBlob[]>([]);
   const cursorRef = useRef({
@@ -556,7 +557,7 @@ const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, offsetY = 
           width: '100%',
           height: '100%',
           cursor: 'crosshair',
-          transform: offsetY ? `translateY(${offsetY}px)` : undefined,
+          transform: `scale(${scale}) translateY(${offsetY}px)`,
           transformOrigin: 'center center',
         }}
       />
