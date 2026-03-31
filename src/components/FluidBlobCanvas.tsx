@@ -4,6 +4,7 @@ interface FluidBlobCanvasProps {
   className?: string;
   scale?: number; // Zoom factor (e.g., 0.6 = 60% size)
   offsetY?: number; // Offset in pixels (e.g., 150 = shift down 150px)
+  positionsPreset?: 'default' | 'agents'; // Which blob positions to use
 }
 
 // Configuration types
@@ -299,7 +300,7 @@ const CONFIG: Config = {
 };
 
 // Blob position presets
-const BLOB_POSITIONS = [
+const BLOB_POSITIONS_DEFAULT = [
   { radius: 350, x: 0.25, y: 0.35 },
   { radius: 450, x: 0.65, y: 0.3 },
   { radius: 300, x: 0.4, y: 0.6 },
@@ -307,7 +308,16 @@ const BLOB_POSITIONS = [
   { radius: 280, x: 0.35, y: 0.8 },
 ];
 
-const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1, offsetY = 0 }) => {
+// Agents panel preset - blobs positioned lower
+const BLOB_POSITIONS_AGENTS = [
+  { radius: 350, x: 0.25, y: 0.65 },
+  { radius: 450, x: 0.65, y: 0.93 },
+  { radius: 300, x: 0.40, y: 0.77 },
+  { radius: 400, x: 0.75, y: 1.00 },
+  { radius: 280, x: 0.35, y: 1.00 },
+];
+
+const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1, offsetY = 0, positionsPreset = 'default' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const blobsRef = useRef<FluidBlob[]>([]);
   const cursorRef = useRef({
@@ -324,12 +334,13 @@ const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1,
 
   // Initialize blobs
   const initBlobs = useCallback((width: number, height: number) => {
-    blobsRef.current = BLOB_POSITIONS.map((pos) => {
+    const positions = positionsPreset === 'agents' ? BLOB_POSITIONS_AGENTS : BLOB_POSITIONS_DEFAULT;
+    blobsRef.current = positions.map((pos) => {
       const x = pos.x * width;
       const y = pos.y * height;
       return new FluidBlob(x, y, pos.radius, CONFIG, width, height);
     });
-  }, []);
+  }, [positionsPreset]);
 
   // Apply cursor force to blobs
   const applyCursorForce = useCallback(() => {
@@ -452,15 +463,16 @@ const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1,
     canvas.height = rect.height;
 
     // Update blob dimensions and reinitialize positions
+    const positions = positionsPreset === 'agents' ? BLOB_POSITIONS_AGENTS : BLOB_POSITIONS_DEFAULT;
     blobsRef.current.forEach((blob, index) => {
-      const pos = BLOB_POSITIONS[index];
+      const pos = positions[index];
       blob.originX = pos.x * canvas.width;
       blob.originY = pos.y * canvas.height;
       blob.x = pos.x * canvas.width;
       blob.y = pos.y * canvas.height;
       blob.updateCanvasDimensions(canvas.width, canvas.height);
     });
-  }, []);
+  }, [positionsPreset]);
 
   // Handle mouse move
   const handleMouseMove = useCallback((e: MouseEvent) => {
