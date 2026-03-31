@@ -23,6 +23,7 @@ import { useLimitStore } from '../stores/limitStore';
 import { Task } from '../types/task';
 import { useAuth } from '../contexts/AuthContext';
 import type { UserType } from '../types/auth';
+import FluidBlobCanvas from './FluidBlobCanvas';
 
 export type ViewMode = 'input' | 'plan';
 
@@ -166,84 +167,97 @@ export function App({ userType }: AppProps): JSX.Element {
 
       {/* Main content - permanent 1/3 + 2/3 split */}
       <main className="flex-1 grid grid-cols-1 md:grid-cols-3">
-        {/* LEFT: Agents Panel (1/3) */}
-        <div
-          className="md:col-span-1 border-r p-4 md:sticky md:top-0 md:h-screen overflow-auto"
-          style={{
-            borderColor: 'var(--color-border-default)',
-            backgroundColor: 'var(--color-bg-surface)'
-          }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2
-              className="text-sm font-medium"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Agents
-            </h2>
-            <div className="flex gap-1">
-              <button
-                onClick={handleAddActor}
-                className="px-2 py-1 text-xs rounded font-medium transition-all"
-                style={{
-                  backgroundColor: 'var(--color-bg-elevated)',
-                  color: 'var(--color-text-primary)',
-                  border: '1px solid var(--color-border-default)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
-                }}
-              >
-                +Add
-              </button>
-              <button
-                onClick={handleRemoveActor}
-                className="px-2 py-1 text-xs rounded font-medium transition-all"
-                style={{
-                  backgroundColor: 'var(--color-bg-elevated)',
-                  color: 'var(--color-error-text)',
-                  border: '1px solid var(--color-error-border)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--color-error-bg)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
-                }}
-              >
-                -Remove
-              </button>
-            </div>
-          </div>
+{/* LEFT: Agents Panel (1/3) */}
+<div
+className="md:col-span-1 border-r p-4 md:sticky md:top-0 md:h-screen overflow-auto relative"
+style={{
+borderColor: 'var(--color-border-default)',
+backgroundColor: 'var(--color-bg-surface)'
+}}
+>
+{/* Fluid blob background */}
+<div className="absolute inset-0 overflow-hidden">
+<FluidBlobCanvas />
+{/* Dark overlay for readability */}
+<div
+className="absolute inset-0 pointer-events-none"
+style={{ background: 'rgba(12, 15, 26, 0.6)' }}
+/>
+</div>
 
-          {actors.length === 0 ? (
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-              No actors configured
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {actors.map(actor => (
-                <div
-                  key={actor.id}
-                  className="flex items-center gap-2 p-2 rounded"
-                  style={{ backgroundColor: 'var(--color-bg-elevated)' }}
-                >
-                  <span style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>
-                    {actor.name}
-                  </span>
-                  {actor.notes && (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
-                      — {actor.notes}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+{/* Content on top */}
+<div className="relative z-10">
+<div className="flex items-center justify-between mb-4">
+<h2
+className="text-sm font-medium"
+style={{ color: 'var(--color-text-secondary)' }}
+>
+Agents
+</h2>
+<div className="flex gap-1">
+<button
+onClick={handleAddActor}
+className="px-2 py-1 text-xs rounded font-medium transition-all"
+style={{
+backgroundColor: 'var(--color-bg-elevated)',
+color: 'var(--color-text-primary)',
+border: '1px solid var(--color-border-default)'
+}}
+onMouseEnter={(e) => {
+e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
+}}
+onMouseLeave={(e) => {
+e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+}}
+>
++Add
+</button>
+<button
+onClick={handleRemoveActor}
+className="px-2 py-1 text-xs rounded font-medium transition-all"
+style={{
+backgroundColor: 'var(--color-bg-elevated)',
+color: 'var(--color-error-text)',
+border: '1px solid var(--color-error-border)'
+}}
+onMouseEnter={(e) => {
+e.currentTarget.style.backgroundColor = 'var(--color-error-bg)';
+}}
+onMouseLeave={(e) => {
+e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+}}
+>
+-Remove
+</button>
+</div>
+</div>
+
+{actors.length === 0 ? (
+<p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+No actors configured
+</p>
+) : (
+<div className="space-y-2">
+{actors.map(actor => (
+<div
+key={actor.id}
+className="flex items-center gap-2 p-2 rounded"
+style={{ backgroundColor: 'var(--color-bg-elevated)' }}
+>
+<span style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>
+{actor.name}
+</span>
+{actor.notes && (
+<span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+— {actor.notes}
+</span>
+)}
+</div>
+))}
+</div>
+)}
+</div>
+</div>
 
         {/* RIGHT: Task Creation (2/3) */}
         <div
