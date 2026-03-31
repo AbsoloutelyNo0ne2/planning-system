@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blob Position Test</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0c0f1a;
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* LEFT SIDE - Controls */
+.controls-side {
+  width: 320px;
+  background: #121625;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #1e293b;
+}
+
+.controls-side h1 {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  color: #a855f7;
+}
+
+.control-group {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #1a1f30;
+  border-radius: 8px;
+}
+
+.control-group h3 {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #94a3b8;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.control-row label {
+  width: 60px;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.control-row input[type="range"] {
+  flex: 1;
+}
+
+.control-row span {
+  width: 60px;
+  text-align: right;
+  font-size: 0.85rem;
+  font-family: monospace;
+  color: #a855f7;
+}
+
+.values-display {
+  margin-top: 20px;
+  padding: 12px;
+  background: #0c0f1a;
+  border-radius: 8px;
+  border: 1px solid #1e293b;
+}
+
+.values-display h3 {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #94a3b8;
+}
+
+.values-display pre {
+  font-size: 0.75rem;
+  color: #10b981;
+  white-space: pre-wrap;
+}
+
+/* RIGHT SIDE - Canvas */
+.canvas-side {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 40% 40%, #1a1f35 0%, #0c0f1a 70%);
+}
+
+#blob-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dark-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 15, 26, 0.6);
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .controls-side {
+    width: 100%;
+    max-height: 40vh;
+  }
+  .canvas-side {
+    min-height: 60vh;
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- LEFT: Controls -->
+  <div class="controls-side">
+    <h1>🛠 Blob Position Test</h1>
+    
+    <div id="blob-controls"></div>
+    
+    <div class="values-display">
+      <h3>Copy these values:</h3>
+      <pre id="values-output">// positions array</pre>
+    </div>
+  </div>
+  
+  <!-- RIGHT: Canvas -->
+  <div class="canvas-side">
+    <canvas id="blob-canvas"></canvas>
+    <div class="dark-overlay"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('blob-canvas');
+  const ctx = canvas.getContext('2d');
+  const controlsContainer = document.getElementById('blob-controls');
+  const valuesOutput = document.getElementById('values-output');
+
+  // Initial blob positions (from login-fluid-blobs.html)
+  const initialPositions = [
+    { radius: 350, x: 0.25, y: 0.35 },
+    { radius: 450, x: 0.65, y: 0.30 },
+    { radius: 300, x: 0.40, y: 0.60 },
+    { radius: 400, x: 0.75, y: 0.55 },
+    { radius: 280, x: 0.35, y: 0.80 }
+  ];
+
+  // Current positions (will be modified by sliders)
+  let positions = JSON.parse(JSON.stringify(initialPositions));
+
+  // Create controls for each blob
+  positions.forEach((pos, i) => {
+    const group = document.createElement('div');
+    group.className = 'control-group';
+    group.innerHTML = `
+      <h3>Blob ${i + 1} (radius: ${pos.radius})</h3>
+      <div class="control-row">
+        <label>X:</label>
+        <input type="range" min="0" max="1" step="0.01" value="${pos.x}" data-blob="${i}" data-prop="x">
+        <span id="blob-${i}-x">${pos.x.toFixed(2)}</span>
+      </div>
+      <div class="control-row">
+        <label>Y:</label>
+        <input type="range" min="0" max="1" step="0.01" value="${pos.y}" data-blob="${i}" data-prop="y">
+        <span id="blob-${i}-y">${pos.y.toFixed(2)}</span>
+      </div>
+    `;
+    controlsContainer.appendChild(group);
+  });
+
+  // Add global Y offset control
+  const globalGroup = document.createElement('div');
+  globalGroup.className = 'control-group';
+  globalGroup.innerHTML = `
+    <h3>Global Offset</h3>
+    <div class="control-row">
+      <label>All Y:</label>
+      <input type="range" min="0" max="0.5" step="0.01" value="0" id="global-y-offset">
+      <span id="global-y-value">+0.00</span>
+    </div>
+  `;
+  controlsContainer.appendChild(globalGroup);
+
+  // Handle slider changes
+  controlsContainer.addEventListener('input', (e) => {
+    if (e.target.type === 'range') {
+      const blobIndex = e.target.dataset.blob;
+      const prop = e.target.dataset.prop;
+      
+      if (blobIndex !== undefined) {
+        positions[blobIndex][prop] = parseFloat(e.target.value);
+        document.getElementById(`blob-${blobIndex}-${prop}`).textContent = parseFloat(e.target.value).toFixed(2);
+      }
+      
+      updateValuesOutput();
+    }
+  });
+
+  // Global Y offset
+  document.getElementById('global-y-offset').addEventListener('input', (e) => {
+    const offset = parseFloat(e.target.value);
+    document.getElementById('global-y-value').textContent = `+${offset.toFixed(2)}`;
+    
+    positions = JSON.parse(JSON.stringify(initialPositions));
+    positions.forEach(pos => {
+      pos.y = Math.min(1, pos.y + offset);
+    });
+    
+    // Update individual sliders
+    positions.forEach((pos, i) => {
+      const xSlider = document.querySelector(`input[data-blob="${i}"][data-prop="x"]`);
+      const ySlider = document.querySelector(`input[data-blob="${i}"][data-prop="y"]`);
+      const xSpan = document.getElementById(`blob-${i}-x`);
+      const ySpan = document.getElementById(`blob-${i}-y`);
+      
+      if (ySlider) {
+        ySlider.value = pos.y;
+        ySpan.textContent = pos.y.toFixed(2);
+      }
+    });
+    
+    updateValuesOutput();
+  });
+
+  function updateValuesOutput() {
+    const lines = positions.map((pos, i) => 
+      `  { radius: ${pos.radius}, x: ${pos.x.toFixed(2)}, y: ${pos.y.toFixed(2)} }${i < positions.length - 1 ? ',' : ''}`
+    );
+    valuesOutput.textContent = `const positions = [\n${lines.join('\n')}\n];`;
+  }
+
+  // Blob animation (simplified for testing)
+  const CONFIG = {
+    numBlobs: 5,
+    pointsPerBlob: 8,
+    minRadius: 200,
+    maxRadius: 500,
+    baseHue: 280,
+    slowTint: -15,
+    fastTint: 8,
+    baseSaturation: 60,
+    baseLightness: 55,
+    minBlur: 25,
+    maxBlur: 100,
+    wobbleSpeed: 0.0001,
+    morphSpeed: 0.00004
+  };
+
+  class FluidBlob {
+    constructor(x, y, radius) {
+      this.x = x;
+      this.y = y;
+      this.originX = x;
+      this.originY = y;
+      this.vx = 0;
+      this.vy = 0;
+      this.radius = radius;
+      this.points = CONFIG.pointsPerBlob;
+      this.hue = CONFIG.baseHue;
+      this.depth = Math.random();
+      this.depthPhase = Math.random() * Math.PI * 2;
+      this.baseDepth = this.depth;
+      
+      this.offsets = [];
+      for (let i = 0; i < this.points; i++) {
+        this.offsets.push({
+          amplitude: Math.random() * 40 + 20,
+          frequency: Math.random() * 0.005 + 0.0025,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+      
+      this.rotationSpeed = (Math.random() - 0.5) * 0.00006;
+      this.phase = Math.random() * Math.PI * 2;
+      this.morphPhase = Math.random() * Math.PI * 2;
+    }
+
+    draw(ctx, time) {
+      const depthBlur = CONFIG.minBlur + this.depth * (CONFIG.maxBlur - CONFIG.minBlur);
+      
+      ctx.save();
+      ctx.filter = `blur(${depthBlur}px)`;
+      
+      ctx.beginPath();
+      
+      for (let i = 0; i <= this.points; i++) {
+        const angle = (i / this.points) * Math.PI * 2 + time * this.rotationSpeed;
+        const offset = this.offsets[i % this.points];
+        
+        const wobble1 = Math.sin(time * offset.frequency + offset.phase) * offset.amplitude;
+        const wobble2 = Math.cos(time * offset.frequency * 0.8 + offset.phase * 0.7) * offset.amplitude * 0.3;
+        const morphWobble = Math.sin(time * CONFIG.morphSpeed + this.morphPhase + i * 0.5) * 15;
+        
+        const r = this.radius + wobble1 + wobble2 + morphWobble;
+        const x = this.x + Math.cos(angle) * r;
+        const y = this.y + Math.sin(angle) * r;
+        
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          const prevAngle = ((i - 1) / this.points) * Math.PI * 2 + time * this.rotationSpeed;
+          const prevOffset = this.offsets[(i - 1) % this.points];
+          const prevWobble1 = Math.sin(time * prevOffset.frequency + prevOffset.phase) * prevOffset.amplitude;
+          const prevWobble2 = Math.cos(time * prevOffset.frequency * 0.8 + prevOffset.phase * 0.7) * prevOffset.amplitude * 0.3;
+          const prevMorphWobble = Math.sin(time * CONFIG.morphSpeed + this.morphPhase + (i - 1) * 0.5) * 15;
+          const prevR = this.radius + prevWobble1 + prevWobble2 + prevMorphWobble;
+          
+          const cp1x = this.x + Math.cos(prevAngle + 0.3) * prevR * 1.1;
+          const cp1y = this.y + Math.sin(prevAngle + 0.3) * prevR * 1.1;
+          
+          ctx.quadraticCurveTo(cp1x, cp1y, x, y);
+        }
+      }
+      
+      ctx.closePath();
+      
+      const gradient = ctx.createRadialGradient(
+        this.x, this.y, 0,
+        this.x, this.y, this.radius * 2
+      );
+      
+      const normalizedHue = ((this.hue % 360) + 360) % 360;
+      gradient.addColorStop(0, `hsla(${normalizedHue}, ${CONFIG.baseSaturation + 15}%, ${CONFIG.baseLightness + 15}%, 0.9)`);
+      gradient.addColorStop(0.3, `hsla(${normalizedHue}, ${CONFIG.baseSaturation + 5}%, ${CONFIG.baseLightness + 5}%, 0.65)`);
+      gradient.addColorStop(0.6, `hsla(${normalizedHue}, ${CONFIG.baseSaturation}%, ${CONFIG.baseLightness}%, 0.35)`);
+      gradient.addColorStop(1, `hsla(${normalizedHue}, ${CONFIG.baseSaturation - 10}%, ${CONFIG.baseLightness - 10}%, 0)`);
+      
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+
+  let blobs = [];
+
+  function initBlobs() {
+    blobs = [];
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    positions.forEach(pos => {
+      const x = pos.x * width;
+      const y = pos.y * height;
+      blobs.push(new FluidBlob(x, y, pos.radius));
+    });
+  }
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    initBlobs();
+  }
+
+  function animate(time) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const sortedBlobs = [...blobs].sort((a, b) => a.y - b.y);
+    sortedBlobs.forEach(blob => blob.draw(ctx, time));
+    
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  animate(0);
+  updateValuesOutput();
+})();
+</script>
+</body>
+</html>
