@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useCallback } from 'react';
 
 interface FluidBlobCanvasProps {
   className?: string;
+  scale?: number; // Zoom factor (e.g., 0.6 = 60% size)
+  offsetY?: number; // Offset in pixels (e.g., 150 = shift down 150px)
 }
 
 // Configuration types
@@ -305,7 +307,7 @@ const BLOB_POSITIONS = [
   { radius: 280, x: 0.35, y: 0.8 },
 ];
 
-const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className }) => {
+const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1, offsetY = 0 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const blobsRef = useRef<FluidBlob[]>([]);
   const cursorRef = useRef({
@@ -541,17 +543,25 @@ const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className }) => {
   }, [animate, handleMouseMove, handleMouseLeave, handleMouseEnter, handleTouchMove, handleTouchEnd, handleResize, initBlobs]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={className}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        cursor: 'crosshair',
-      }}
-    />
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      overflow: 'hidden',
+    }}>
+      <canvas
+        ref={canvasRef}
+        className={className}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          cursor: 'crosshair',
+          transform: `scale(${scale}) translateY(${offsetY}px)`,
+          transformOrigin: 'center center',
+        }}
+      />
+    </div>
   );
 };
 

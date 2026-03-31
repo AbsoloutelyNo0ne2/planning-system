@@ -103,9 +103,9 @@ export function App({ userType }: AppProps): JSX.Element {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header - 52px height */}
+      {/* Header - 52px height - sticky */}
       <header
-        className="px-4 py-3 border-b flex items-center justify-between"
+        className="px-4 py-3 border-b flex items-center justify-between sticky top-0 z-50"
         style={{
           height: '52px',
           borderColor: 'var(--color-border-default)',
@@ -175,15 +175,15 @@ borderColor: 'var(--color-border-default)',
 backgroundColor: 'var(--color-bg-surface)'
 }}
 >
-{/* Fluid blob background */}
-<div className="absolute inset-0 overflow-hidden">
-<FluidBlobCanvas />
-{/* Dark overlay for readability */}
-<div
-className="absolute inset-0 pointer-events-none"
-style={{ background: 'rgba(12, 15, 26, 0.6)' }}
-/>
-</div>
+      {/* Fluid blob background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <FluidBlobCanvas scale={0.6} offsetY={150} />
+        {/* Dark overlay for readability */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'rgba(12, 15, 26, 0.6)' }}
+        />
+      </div>
 
 {/* Content on top */}
 <div className="relative z-10">
