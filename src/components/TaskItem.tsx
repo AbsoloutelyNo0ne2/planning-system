@@ -71,26 +71,27 @@ export function TaskItem(props: TaskItemProps): JSX.Element {
   const showRemaining = task.type !== TaskType.AGENTIC && remainingCount < Infinity;
   const isUnlimited = task.type === TaskType.AGENTIC;
 
-  return (
-    <div
-      className="task-item flex flex-col p-3 mb-2 rounded-lg cursor-pointer transition-all"
-      style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        border: '1px solid var(--color-border-subtle)',
-        opacity: isLimitReached ? 0.5 : 1
-      }}
-      onClick={handleClick}
-      onMouseEnter={(e) => {
-        if (!isLimitReached) {
-          e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
-          e.currentTarget.style.borderColor = 'var(--color-border-default)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'var(--color-bg-surface)';
-        e.currentTarget.style.borderColor = 'var(--color-border-subtle)';
-      }}
-    >
+	return (
+	<div
+		className="task-item flex flex-col p-3 mb-2 cursor-pointer transition-colors"
+		style={{
+			backgroundColor: 'var(--color-bg-surface)',
+			border: '1px solid var(--color-border-default)',
+			borderRadius: '4px',
+			opacity: isLimitReached ? 0.5 : 1
+		}}
+		onClick={handleClick}
+		onMouseEnter={(e) => {
+			if (!isLimitReached) {
+				e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+				e.currentTarget.style.borderColor = 'var(--color-accent-600)';
+			}
+		}}
+		onMouseLeave={(e) => {
+			e.currentTarget.style.backgroundColor = 'var(--color-bg-surface)';
+			e.currentTarget.style.borderColor = 'var(--color-border-default)';
+		}}
+	>
       <div className="flex items-center justify-between w-full">
         <span 
           className="task-description flex-1 pr-4 break-all overflow-wrap-anywhere"
@@ -116,49 +117,52 @@ export function TaskItem(props: TaskItemProps): JSX.Element {
 }
 
 function RemainingBadge({ count, isLimitReached }: { count: number; isLimitReached: boolean }): JSX.Element {
-  if (isLimitReached) {
-    return (
-      <span 
-        className="text-xs font-medium px-2 py-1 rounded"
-        style={{ 
-          backgroundColor: 'var(--color-error-bg)',
-          color: 'var(--color-error-text)',
-          border: '1px solid var(--color-error-border)'
-        }}
-      >
-        Limit reached
-      </span>
-    );
-  }
-  
-  const isLow = count <= 2;
-  return (
-    <span 
-      className="text-xs font-medium px-2 py-1 rounded"
-      style={{ 
-        backgroundColor: isLow ? 'var(--color-warning-bg)' : 'var(--color-info-bg)',
-        color: isLow ? 'var(--color-warning-text)' : 'var(--color-info-text)',
-        border: `1px solid ${isLow ? 'var(--color-warning-border)' : 'var(--color-info-border)'}`
-      }}
-    >
-      {count} remaining
-    </span>
-  );
+	if (isLimitReached) {
+		return (
+			<span
+				className="text-xs font-medium px-2 py-1"
+				style={{
+					backgroundColor: 'var(--color-bg-elevated)',
+					color: 'var(--color-text-secondary)',
+					border: '1px solid var(--color-border-default)',
+					borderRadius: '2px'
+				}}
+			>
+				Limit reached
+			</span>
+		);
+	}
+
+	const isLow = count <= 2;
+	return (
+		<span
+			className="text-xs font-medium px-2 py-1"
+			style={{
+				backgroundColor: 'var(--color-bg-elevated)',
+				color: isLow ? 'var(--color-accent-500)' : 'var(--color-text-secondary)',
+				border: `1px solid ${isLow ? 'var(--color-accent-600)' : 'var(--color-border-default)'}`,
+				borderRadius: '2px'
+			}}
+		>
+			{count} remaining
+		</span>
+	);
 }
 
 function UnlimitedBadge(): JSX.Element {
-  return (
-    <span 
-      className="text-xs font-medium px-2 py-1 rounded"
-      style={{ 
-        backgroundColor: 'var(--color-success-bg)',
-        color: 'var(--color-success-text)',
-        border: '1px solid var(--color-success-border)'
-      }}
-    >
-      Unlimited
-    </span>
-  );
+	return (
+		<span
+			className="text-xs font-medium px-2 py-1"
+			style={{
+				backgroundColor: 'var(--color-bg-elevated)',
+				color: 'var(--color-accent-500)',
+				border: '1px solid var(--color-accent-600)',
+				borderRadius: '2px'
+			}}
+		>
+			Unlimited
+		</span>
+	);
 }
 
 function CopyButton({
@@ -189,40 +193,41 @@ function CopyButton({
     }
   };
 
-  return (
-    <button
-      onClick={handleClick}
-      disabled={disabled}
-      className="px-3 py-1 text-sm font-medium rounded transition-all"
-      style={{
-        backgroundColor: disabled 
-          ? 'var(--color-bg-elevated)' 
-          : copied 
-            ? 'var(--color-success-bg)' 
-            : 'var(--color-accent-600)',
-        color: disabled 
-          ? 'var(--color-text-disabled)' 
-          : copied 
-            ? 'var(--color-success-text)' 
-            : 'var(--color-bg-base)',
-        border: disabled ? '1px solid var(--color-border-subtle)' : 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer'
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !copied) {
-          e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled && !copied) {
-          e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-        }
-      }}
-      aria-disabled={disabled}
-    >
-      {copied ? 'Copied!' : 'Copy'}
-    </button>
-  );
+	return (
+		<button
+			onClick={handleClick}
+			disabled={disabled}
+			className="px-3 py-1 text-sm font-medium transition-colors"
+			style={{
+				backgroundColor: disabled
+					? 'var(--color-bg-elevated)'
+					: copied
+					? 'var(--color-bg-elevated)'
+					: 'var(--color-accent-600)',
+				color: disabled
+					? 'var(--color-text-secondary)'
+					: copied
+					? 'var(--color-accent-500)'
+					: 'var(--color-bg-base)',
+				border: disabled ? '1px solid var(--color-border-default)' : 'none',
+				borderRadius: '4px',
+				cursor: disabled ? 'not-allowed' : 'pointer'
+			}}
+			onMouseEnter={(e) => {
+				if (!disabled && !copied) {
+					e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
+				}
+			}}
+			onMouseLeave={(e) => {
+				if (!disabled && !copied) {
+					e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+				}
+			}}
+			aria-disabled={disabled}
+		>
+			{copied ? 'Copied!' : 'Copy'}
+		</button>
+	);
 }
 
 function SentButton({
@@ -249,36 +254,37 @@ function SentButton({
     }
   };
 
-  return (
-    <button
-      onClick={handleClick}
-      disabled={disabled || isProcessing}
-      className="px-3 py-1 text-sm font-medium rounded transition-all"
-      style={{
-        backgroundColor: disabled || isProcessing 
-          ? 'var(--color-bg-elevated)' 
-          : 'var(--color-mint-700)',
-        color: disabled || isProcessing 
-          ? 'var(--color-text-disabled)' 
-          : 'var(--color-bg-base)',
-        border: disabled || isProcessing ? '1px solid var(--color-border-subtle)' : 'none',
-        cursor: disabled || isProcessing ? 'not-allowed' : 'pointer'
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !isProcessing) {
-          e.currentTarget.style.backgroundColor = 'var(--color-mint-600)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled && !isProcessing) {
-          e.currentTarget.style.backgroundColor = 'var(--color-mint-700)';
-        }
-      }}
-      aria-disabled={disabled || isProcessing}
-    >
-      {isProcessing ? 'On it' : 'Sent'}
-    </button>
-  );
+	return (
+		<button
+			onClick={handleClick}
+			disabled={disabled || isProcessing}
+			className="px-3 py-1 text-sm font-medium transition-colors"
+			style={{
+				backgroundColor: disabled || isProcessing
+					? 'var(--color-bg-elevated)'
+					: 'var(--color-accent-600)',
+				color: disabled || isProcessing
+					? 'var(--color-text-secondary)'
+					: 'var(--color-bg-base)',
+				border: disabled || isProcessing ? '1px solid var(--color-border-default)' : 'none',
+				borderRadius: '4px',
+				cursor: disabled || isProcessing ? 'not-allowed' : 'pointer'
+			}}
+			onMouseEnter={(e) => {
+				if (!disabled && !isProcessing) {
+					e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
+				}
+			}}
+			onMouseLeave={(e) => {
+				if (!disabled && !isProcessing) {
+					e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+				}
+			}}
+			aria-disabled={disabled || isProcessing}
+		>
+			{isProcessing ? 'On it' : 'Sent'}
+		</button>
+	);
 }
 
 export function handleDisabledButtonClick(): void {

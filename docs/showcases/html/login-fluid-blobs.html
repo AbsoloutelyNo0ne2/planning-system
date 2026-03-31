@@ -337,13 +337,21 @@ const hint = document.querySelector('.canvas-hint');
   baseLightness: 55,
 
   // Dynamic blur system (organic, depth-based)
-  blurRadius: 30,      // Base blur (mid-range)
-  minBlur: 10,         // Near blobs (depth 0)
-  maxBlur: 60,         // Far blobs (depth 1)
-  motionBlurFactor: 8, // Additional blur per unit speed
-  depthDriftSpeed: 0.00008, // How fast blobs drift in Z-space
-  depthOscillation: 0.15    // Amplitude of depth oscillation
-};
+    blurRadius: 30, // Base blur (mid-range)
+    minBlur: 10, // Near blobs (depth 0)
+    maxBlur: 60, // Far blobs (depth 1)
+    motionBlurFactor: 8, // Additional blur per unit speed
+    depthDriftSpeed: 0.00008, // How fast blobs drift in Z-space
+    depthOscillation: 0.15, // Amplitude of depth oscillation
+
+    // Blob-to-blob repulsion (spread across canvas)
+    blobRepulsion: {
+      enabled: true,
+      minDistanceFactor: 1.5, // Repel when closer than 1.5x combined radius
+      strength: 0.02, // Gentle, subtle repulsion
+      maxDistance: 600 // Optimization: don't check beyond this
+    }
+  };
 
 // State
 let blobs = [];
@@ -565,28 +573,70 @@ function resize() {
   initBlobs();
 }
 
-// Apply cursor force
-function applyCursorForce() {
-  if (!isCursorInCanvas) return;
-  
-  blobs.forEach(blob => {
-    const dx = cursorX - blob.x;
-    const dy = cursorY - blob.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    
-    if (dist < CONFIG.interactionRadius && dist > 0) {
-      const force = (CONFIG.interactionRadius - dist) / CONFIG.interactionRadius;
-      
-      // Gentle cursor influence
-      blob.vx += cursorVx * force * CONFIG.cursorInfluence;
-      blob.vy += cursorVy * force * CONFIG.cursorInfluence;
-      
-      // Soft repulsion
-      blob.vx -= (dx / dist) * force * CONFIG.repulsionStrength;
-      blob.vy -= (dy / dist) * force * CONFIG.repulsionStrength;
+  // Apply cursor force
+  function applyCursorForce() {
+    if (!isCursorInCanvas) return;
+
+    blobs.forEach(blob => {
+      const dx = cursorX - blob.x;
+      const dy = cursorY - blob.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < CONFIG.interactionRadius && dist > 0) {
+        const force = (CONFIG.interactionRadius - dist) / CONFIG.interactionRadius;
+
+        // Gentle cursor influence
+        blob.vx += cursorVx * force * CONFIG.cursorInfluence;
+        blob.vy += cursorVy * force * CONFIG.cursorInfluence;
+
+        // Soft repulsion
+        blob.vx -= (dx / dist) * force * CONFIG.repulsionStrength;
+        blob.vy -= (dy / dist) * force * CONFIG.repulsionStrength;
+      }
+    });
+  }
+
+  // Apply blob-to-blob repulsion (spread across canvas)
+  function applyBlobRepulsion() {
+    if (!CONFIG.blobRepulsion.enabled) return;
+
+    const { minDistanceFactor, strength, maxDistance } = CONFIG.blobRepulsion;
+
+    for (let i = 0; i < blobs.length; i++) {
+      const blobA = blobs[i];
+
+      for (let j = i + 1; j < blobs.length; j++) {
+        const blobB = blobs[j];
+
+        const dx = blobB.x - blobA.x;
+        const dy = blobB.y - blobA.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Optimization: skip if too far apart
+        if (dist > maxDistance) continue;
+
+        // Minimum distance before repulsion kicks in
+        const minDist = (blobA.radius + blobB.radius) * minDistanceFactor;
+
+        if (dist < minDist && dist > 0.01) {
+          // Repulsion force (stronger when closer)
+          const force = (minDist - dist) / minDist * strength;
+
+          // Normalize direction
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          // Push A away from B
+          blobA.vx -= nx * force;
+          blobA.vy -= ny * force;
+
+          // Push B away from A (equal and opposite)
+          blobB.vx += nx * force;
+          blobB.vy += ny * force;
+        }
+      }
     }
-  });
-}
+  }
 
 // Animation loop
 function animate(currentTime) {
@@ -602,8 +652,9 @@ function animate(currentTime) {
   prevCursorX = cursorX;
   prevCursorY = cursorY;
   
-  // Apply forces
-  applyCursorForce();
+    // Apply forces
+    applyCursorForce();
+    applyBlobRepulsion();
   
   // Update and draw blobs (back to front)
   blobs.forEach(blob => {

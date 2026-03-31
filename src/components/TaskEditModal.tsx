@@ -123,32 +123,32 @@ export function TaskEditModal(props: TaskEditModalProps): JSX.Element | null {
     }
   };
 
-  return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-[var(--z-modal)]"
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="edit-task-title"
-      style={{
-        backgroundColor: '#0f172aeb',
-      }}
-    >
-      <div
-        className="w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
-        style={{
-          backgroundColor: 'var(--color-bg-surface)',
-          border: '1px solid var(--color-border-subtle)',
-          borderRadius: '4px',
-        }}
-      >
-        {/* Header */}
-        <div
-          className="flex items-center justify-between p-4"
-          style={{
-            borderBottom: '1px solid var(--color-border-subtle)',
-          }}
-        >
+	return (
+	<div
+		className="fixed inset-0 flex items-center justify-center z-[var(--z-modal)]"
+		onClick={handleBackdropClick}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="edit-task-title"
+		style={{
+			backgroundColor: 'rgba(12, 15, 26, 0.9)',
+		}}
+	>
+		<div
+			className="w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+			style={{
+				backgroundColor: 'var(--color-bg-surface)',
+				border: '1px solid var(--color-border-default)',
+				borderRadius: '4px',
+			}}
+		>
+	{/* Header */}
+		<div
+			className="flex items-center justify-between p-4"
+			style={{
+				borderBottom: '1px solid var(--color-border-default)',
+			}}
+		>
           <h2
             id="edit-task-title"
             className="text-lg font-semibold"

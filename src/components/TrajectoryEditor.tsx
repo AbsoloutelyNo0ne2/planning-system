@@ -58,132 +58,133 @@ export function TrajectoryEditor({
     }
   };
 
-  return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-50"
-      style={{ backgroundColor: 'var(--color-bg-base)' }}
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="trajectory-editor-title"
-    >
-      <div
-        className="p-6 w-full max-w-lg mx-4"
-        style={{
-          backgroundColor: 'var(--color-bg-surface)',
-          border: '1px solid var(--color-border-default)',
-          borderRadius: '4px'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2
-          id="trajectory-editor-title"
-          className="text-xl font-bold mb-4"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
-          Edit Trajectory
-        </h2>
+	return (
+	<div
+		className="fixed inset-0 flex items-center justify-center z-50"
+		style={{ backgroundColor: 'rgba(12, 15, 26, 0.9)' }}
+		onClick={onClose}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="trajectory-editor-title"
+	>
+		<div
+			className="p-6 w-full max-w-lg mx-4"
+			style={{
+				backgroundColor: 'var(--color-bg-surface)',
+				border: '1px solid var(--color-border-default)',
+				borderRadius: '4px'
+			}}
+			onClick={(e) => e.stopPropagation()}
+		>
+			<h2
+				id="trajectory-editor-title"
+				className="text-xl font-bold mb-4"
+				style={{ color: 'var(--color-text-primary)' }}
+			>
+				Edit Trajectory
+			</h2>
 
-        <p 
-          className="text-sm mb-4"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
-          Define your long-term goal. Use &gt; to chain steps:
-          <br />
-        <code
-          className="px-2 py-1 text-xs"
-          style={{
-            backgroundColor: 'var(--color-bg-elevated)',
-            color: 'var(--color-accent-400)',
-            borderRadius: '3px'
-          }}
-        >
-            Make X &gt; Use X to make Y &gt; Deliver Z
-          </code>
-        </p>
+			<p
+				className="text-sm mb-4"
+				style={{ color: 'var(--color-text-secondary)' }}
+			>
+				Define your long-term goal. Use &gt; to chain steps:
+				<br />
+				<code
+					className="px-2 py-1 text-xs"
+					style={{
+						backgroundColor: 'var(--color-bg-elevated)',
+						color: 'var(--color-accent-500)',
+						borderRadius: '4px'
+					}}
+				>
+					Make X &gt; Use X to make Y &gt; Deliver Z
+				</code>
+			</p>
 
-        <textarea
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            setError(null);
-          }}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter your trajectory..."
-          className="w-full h-32 p-3 resize-none outline-none transition-colors"
-          style={{
-            backgroundColor: 'var(--color-bg-input)',
-            border: '1px solid var(--color-border-default)',
-            color: 'var(--color-text-primary)',
-            borderRadius: '3px'
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-border-default)';
-          }}
-          aria-label="Trajectory text"
-        />
+			<textarea
+				value={text}
+				onChange={(e) => {
+					setText(e.target.value);
+					setError(null);
+				}}
+				onKeyDown={handleKeyDown}
+				placeholder="Enter your trajectory..."
+				className="w-full h-32 p-3 resize-none outline-none transition-colors"
+				style={{
+					backgroundColor: 'var(--color-bg-input)',
+					border: '1px solid var(--color-border-default)',
+					color: 'var(--color-text-primary)',
+					borderRadius: '4px'
+				}}
+				onFocus={(e) => {
+					e.currentTarget.style.borderColor = 'var(--color-accent-500)';
+				}}
+				onBlur={(e) => {
+					e.currentTarget.style.borderColor = 'var(--color-border-default)';
+				}}
+				aria-label="Trajectory text"
+			/>
 
-        {error && (
-          <p 
-            className="text-sm mt-2" 
-            role="alert"
-            style={{ color: 'var(--color-error-text)' }}
-          >
-            {error}
-          </p>
-        )}
+			{error && (
+				<p
+					className="text-sm mt-2"
+					role="alert"
+					style={{ color: 'var(--color-text-secondary)' }}
+				>
+					{error}
+				</p>
+			)}
 
-        <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={onClose}
-          disabled={isSaving}
-          className="px-4 py-2 transition-colors font-medium"
-          style={{
-            color: 'var(--color-text-secondary)',
-            backgroundColor: 'transparent',
-            borderRadius: '2px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
-            e.currentTarget.style.color = 'var(--color-text-primary)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = 'var(--color-text-secondary)';
-          }}
-          type="button"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-4 py-2 transition-colors font-medium"
-          style={{
-            backgroundColor: isSaving ? 'var(--color-bg-elevated)' : 'var(--color-accent-600)',
-            color: isSaving ? 'var(--color-text-disabled)' : 'var(--color-bg-base)',
-            cursor: isSaving ? 'not-allowed' : 'pointer',
-            borderRadius: '2px'
-          }}
-          onMouseEnter={(e) => {
-            if (!isSaving) {
-              e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isSaving) {
-              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-            }
-          }}
-          type="button"
-        >
-          {isSaving ? 'On it' : 'Save'}
-        </button>
-        </div>
-      </div>
-    </div>
-  );
+			<div className="flex justify-end gap-2 mt-4">
+				<button
+					onClick={onClose}
+					disabled={isSaving}
+					className="px-4 py-2 transition-colors font-medium"
+					style={{
+						color: 'var(--color-text-secondary)',
+						backgroundColor: 'transparent',
+						borderRadius: '4px',
+						border: '1px solid var(--color-border-default)'
+					}}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
+						e.currentTarget.style.color = 'var(--color-text-primary)';
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.backgroundColor = 'transparent';
+						e.currentTarget.style.color = 'var(--color-text-secondary)';
+					}}
+					type="button"
+				>
+					Cancel
+				</button>
+				<button
+					onClick={handleSave}
+					disabled={isSaving}
+					className="px-4 py-2 transition-colors font-medium"
+					style={{
+						backgroundColor: isSaving ? 'var(--color-bg-elevated)' : 'var(--color-accent-600)',
+						color: isSaving ? 'var(--color-text-secondary)' : 'var(--color-bg-base)',
+						cursor: isSaving ? 'not-allowed' : 'pointer',
+						borderRadius: '4px'
+					}}
+					onMouseEnter={(e) => {
+						if (!isSaving) {
+							e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
+						}
+					}}
+					onMouseLeave={(e) => {
+						if (!isSaving) {
+							e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+						}
+					}}
+					type="button"
+				>
+					{isSaving ? 'On it' : 'Save'}
+				</button>
+			</div>
+		</div>
+	</div>
+);
 }

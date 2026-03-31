@@ -108,7 +108,7 @@ const isCompleteRef = useRef(isComplete);
   // Touch/swipe gesture state for mobile
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
-  const [swipeFeedback, setSwipeFeedback] = useState<'none' | 'left' | 'right'>('none');
+  const [_swipeFeedback, setSwipeFeedback] = useState<'none' | 'left' | 'right'>('none');
 
 // Sync ref with state to prevent stale closure issues
 useEffect(() => {
@@ -540,67 +540,58 @@ completionGuard.current = false;
   const currentStepIndex = stepOrder.indexOf(currentStep);
   const progressPercent = ((currentStepIndex + 1) / stepOrder.length) * 100;
 
-  return (
-    <div
-      className="w-full max-w-2xl mx-auto p-6 touch-pan-y"
-      style={{
-        backgroundColor: swipeFeedback === 'left'
-          ? 'var(--color-accent-600)'
-          : swipeFeedback === 'right'
-          ? 'var(--color-error-border)'
-          : 'var(--color-bg-surface)',
-        border: '1px solid var(--color-border-subtle)',
-        borderRadius: '4px',
-        transition: 'background-color 0.2s ease, border-color 0.2s ease',
-        borderColor: swipeFeedback === 'left'
-          ? 'var(--color-accent-600)'
-          : swipeFeedback === 'right'
-          ? 'var(--color-error-border)'
-          : 'var(--color-border-subtle)'
-      }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Progress Header */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-            {stepLabels[currentStep]}
-          </h2>
-          <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-            Step {currentStepIndex + 1} of {stepOrder.length}
-          </span>
-        </div>
-        <div 
-          className="w-full rounded-full h-1"
-          style={{ backgroundColor: 'var(--color-bg-elevated)' }}
-        >
+	return (
 		<div
-				className="h-1 rounded-full transition-all duration-300"
-				style={{
-					width: `${progressPercent}%`,
-					background: 'linear-gradient(90deg, var(--color-accent-500), var(--color-secondary-500))'
-				}}
-			/>
-        </div>
-      </div>
+			className="w-full max-w-2xl mx-auto p-6 touch-pan-y"
+			style={{
+				backgroundColor: 'var(--color-bg-surface)',
+				border: '1px solid var(--color-border-default)',
+				borderRadius: '4px',
+			}}
+			onTouchStart={handleTouchStart}
+			onTouchEnd={handleTouchEnd}
+		>
+	{/* Progress Header */}
+			<div className="mb-6">
+				<div className="flex justify-between items-center mb-2">
+					<h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+						{stepLabels[currentStep]}
+					</h2>
+					<span style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+						Step {currentStepIndex + 1} of {stepOrder.length}
+					</span>
+				</div>
+				<div
+					className="w-full h-1"
+					style={{ backgroundColor: 'var(--color-bg-elevated)', borderRadius: '2px' }}
+				>
+					<div
+						className="h-1 transition-all duration-300"
+						style={{
+							width: `${progressPercent}%`,
+							background: 'linear-gradient(90deg, var(--color-accent-500), var(--color-accent-600))',
+							borderRadius: '2px'
+						}}
+					/>
+				</div>
+			</div>
 
       {/* Step Content */}
       <div className="min-h-[200px]">{renderStep()}</div>
 
-      {/* Keyboard Help */}
-      <div
-        className="mt-6 pt-4 flex justify-between text-xs"
-        style={{
-          borderTop: '1px solid var(--color-border-subtle)',
-          color: 'var(--color-text-muted)'
-        }}
-      >
-        <span className="hidden sm:inline">Press Enter to continue</span>
-        <span className="hidden sm:inline">Esc to go back</span>
-        <span className="sm:hidden">← Swipe right to go back</span>
-        <span className="sm:hidden">Swipe left to continue →</span>
-      </div>
+	{/* Keyboard Help */}
+			<div
+				className="mt-6 pt-4 flex justify-between text-xs"
+				style={{
+					borderTop: '1px solid var(--color-border-default)',
+					color: 'var(--color-text-secondary)'
+				}}
+			>
+				<span className="hidden sm:inline">Press Enter to continue</span>
+				<span className="hidden sm:inline">Esc to go back</span>
+				<span className="sm:hidden">← Swipe right to go back</span>
+				<span className="sm:hidden">Swipe left to continue →</span>
+			</div>
     </div>
   );
 }
@@ -636,52 +627,54 @@ export function DescriptionInput(props: DescriptionInputProps): JSX.Element {
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <div className="relative">
-	<textarea
-				value={value}
-				onChange={(e) => onChange(e.target.value)}
-				onKeyDown={handleKeyDown}
-				placeholder="Describe the task in detail..."
-				className="w-full h-40 px-4 py-3 resize-none outline-none transition-all"
-				style={{
-					backgroundColor: 'var(--color-bg-input)',
-					border: '1px solid var(--color-border-default)',
-					borderRadius: '3px',
-					color: 'var(--color-text-primary)'
-				}}
-				onFocus={(e) => {
-					e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-				}}
-				onBlur={(e) => {
-					e.currentTarget.style.borderColor = 'var(--color-border-default)';
-				}}
-				autoFocus
-			/>
-      </div>
+	return (
+		<div className="space-y-4">
+			<div className="relative">
+				<textarea
+					value={value}
+					onChange={(e) => onChange(e.target.value)}
+					onKeyDown={handleKeyDown}
+					placeholder="Describe the task in detail..."
+					className="w-full h-40 px-4 py-3 resize-none outline-none transition-colors"
+					style={{
+						backgroundColor: 'var(--color-bg-input)',
+						border: '1px solid var(--color-border-default)',
+						borderRadius: '4px',
+						color: 'var(--color-text-primary)'
+					}}
+					onFocus={(e) => {
+						e.currentTarget.style.borderColor = 'var(--color-accent-500)';
+					}}
+					onBlur={(e) => {
+						e.currentTarget.style.borderColor = 'var(--color-border-default)';
+					}}
+					autoFocus
+				/>
+			</div>
 
-      <div className="flex justify-between items-center text-sm">
-        <div className="flex items-center gap-2">
-		<span style={{ fontWeight: 500, color: wordCount >= 250 ? 'var(--color-success-text)' : 'var(--color-text-muted)' }}>
-            {wordCount} words
-          </span>
-          {showDigSuggestion && (
-            <span 
-              className="px-2 py-1 rounded text-xs"
-              style={{ 
-                backgroundColor: 'var(--color-warning-bg)',
-                color: 'var(--color-warning-text)'
-              }}
-            >
-              /DIG suggested — enhance task for better clarity
-            </span>
-          )}
-        </div>
-        <span style={{ color: 'var(--color-text-muted)' }}>Press Enter to continue</span>
-      </div>
-    </div>
-  );
+			<div className="flex justify-between items-center text-sm">
+				<div className="flex items-center gap-2">
+					<span style={{ fontWeight: 500, color: wordCount >= 250 ? 'var(--color-accent-400)' : 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+						{wordCount} words
+					</span>
+					{showDigSuggestion && (
+						<span
+							className="px-2 py-1 text-xs"
+							style={{
+								backgroundColor: 'var(--color-bg-elevated)',
+								color: 'var(--color-accent-400)',
+								borderRadius: '2px',
+								border: '1px solid var(--color-accent-600)'
+							}}
+						>
+							/DIG suggested — enhance task for better clarity
+						</span>
+					)}
+				</div>
+				<span style={{ color: 'var(--color-text-secondary)' }}>Press Enter to continue</span>
+			</div>
+		</div>
+	);
 }
 
 // REASONING:
@@ -746,53 +739,51 @@ export function ValueClassSelector(props: ValueClassSelectorProps): JSX.Element 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIndex, setSelectedIndex, onSelect, onSubmit]);
 
-  return (
-    <div className="space-y-2">
-      {valueClassOptions.map((option, index) => {
-        const isSelected = selected === option.value;
-        const isHighlighted = selectedIndex === index;
-        return (
-	<button
-				key={option.value}
-				onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
-				onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
-				className="w-full text-left px-4 py-3 border transition-all duration-150"
-				style={{
-					borderRadius: '3px',
-					backgroundColor: isSelected
-						? 'oklch(30% 0.05 173 / 0.3)'
-						: isHighlighted
-						? 'var(--color-bg-hover)'
-						: 'var(--color-bg-elevated)',
-					borderColor: isSelected
-						? 'var(--color-accent-500)'
-						: isHighlighted
-						? 'var(--color-border-focus)'
-						: 'var(--color-border-subtle)',
-					borderWidth: '1px',
-					borderStyle: 'solid'
-				}}
-			>
-            <div className="flex items-center justify-between">
-              <div>
-                <div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{option.label}</div>
-                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{option.description}</div>
-              </div>
-              {isSelected && (
-                <svg style={{ width: '1.25rem', height: '1.25rem', color: 'var(--color-accent-400)' }} fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              )}
-            </div>
-          </button>
-        );
-      })}
-      <div className="pt-2 text-xs flex items-center gap-4" style={{ color: 'var(--color-text-muted)' }}>
-        <span>↑/↓ or W/S to navigate</span>
-        <span>Enter to select</span>
-      </div>
-    </div>
-  );
+	return (
+		<div className="space-y-2">
+			{valueClassOptions.map((option, index) => {
+				const isSelected = selected === option.value;
+				const isHighlighted = selectedIndex === index;
+				return (
+					<button
+						key={option.value}
+						onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
+						onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
+						className="w-full text-left px-4 py-3 transition-colors"
+						style={{
+							borderRadius: '4px',
+							backgroundColor: isSelected
+								? 'var(--color-bg-elevated)'
+								: isHighlighted
+								? 'var(--color-bg-hover)'
+								: 'var(--color-bg-elevated)',
+							border: `1px solid ${isSelected
+								? 'var(--color-accent-500)'
+								: isHighlighted
+								? 'var(--color-accent-600)'
+								: 'var(--color-border-default)'}`,
+						}}
+					>
+						<div className="flex items-center justify-between">
+							<div>
+								<div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{option.label}</div>
+								<div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{option.description}</div>
+							</div>
+							{isSelected && (
+								<svg style={{ width: '1.25rem', height: '1.25rem', color: 'var(--color-accent-500)' }} fill="currentColor" viewBox="0 0 20 20">
+									<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+								</svg>
+							)}
+						</div>
+					</button>
+				);
+			})}
+			<div className="pt-2 text-xs flex items-center gap-4" style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+				<span>↑/↓ or W/S to navigate</span>
+				<span>Enter to select</span>
+			</div>
+		</div>
+	);
 }
 
 // REASONING:
@@ -854,56 +845,54 @@ export function TypeSelector(props: TypeSelectorProps): JSX.Element {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIndex, setSelectedIndex, onSelect, onSubmit]);
 
-  return (
-    <div className="space-y-2">
-      {typeOptions.map((option, index) => {
-        const isSelected = selected === option.value;
-        const isHighlighted = selectedIndex === index;
-		const accentColor = option.value === TaskType.AGENTIC ? 'var(--color-secondary-400)' :
-				option.value === TaskType.HYBRID ? 'var(--color-accent-500)' :
-				'var(--color-text-muted)';
-        return (
-	<button
-				key={option.value}
-				onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
-				onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
-				className="w-full text-left px-4 py-3 border transition-all duration-150"
-				style={{
-					borderRadius: '3px',
-					backgroundColor: isSelected
-						? `${accentColor}20`
-						: isHighlighted
-						? 'var(--color-bg-hover)'
-						: 'var(--color-bg-elevated)',
-					borderColor: isSelected
-						? accentColor
-						: isHighlighted
-						? 'var(--color-border-focus)'
-						: 'var(--color-border-subtle)',
-					borderWidth: '1px',
-					borderStyle: 'solid'
-				}}
-			>
-            <div className="flex items-center justify-between">
-              <div>
-                <div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{option.label}</div>
-                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{option.description}</div>
-              </div>
-              {isSelected && (
-                <svg style={{ width: '1.25rem', height: '1.25rem', color: accentColor }} fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              )}
-            </div>
-          </button>
-        );
-      })}
-      <div className="pt-2 text-xs flex items-center gap-4" style={{ color: 'var(--color-text-muted)' }}>
-        <span>↑/↓ or W/S to navigate</span>
-        <span>Enter to select</span>
-      </div>
-    </div>
-  );
+	return (
+		<div className="space-y-2">
+			{typeOptions.map((option, index) => {
+				const isSelected = selected === option.value;
+				const isHighlighted = selectedIndex === index;
+				const accentColor = option.value === TaskType.AGENTIC ? 'var(--color-accent-500)' :
+					option.value === TaskType.HYBRID ? 'var(--color-accent-400)' :
+					'var(--color-text-secondary)';
+				return (
+					<button
+						key={option.value}
+						onClick={() => { setSelectedIndex(index); onSelect(option.value); }}
+						onDoubleClick={() => { onSelect(option.value); onSubmit(); }}
+						className="w-full text-left px-4 py-3 transition-colors"
+						style={{
+							borderRadius: '4px',
+							backgroundColor: isSelected
+								? 'var(--color-bg-elevated)'
+								: isHighlighted
+								? 'var(--color-bg-hover)'
+								: 'var(--color-bg-elevated)',
+							border: `1px solid ${isSelected
+								? accentColor
+								: isHighlighted
+								? 'var(--color-accent-600)'
+								: 'var(--color-border-default)'}`,
+						}}
+					>
+						<div className="flex items-center justify-between">
+							<div>
+								<div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{option.label}</div>
+								<div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{option.description}</div>
+							</div>
+							{isSelected && (
+								<svg style={{ width: '1.25rem', height: '1.25rem', color: accentColor }} fill="currentColor" viewBox="0 0 20 20">
+									<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+								</svg>
+							)}
+						</div>
+					</button>
+				);
+			})}
+			<div className="pt-2 text-xs flex items-center gap-4" style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+				<span>↑/↓ or W/S to navigate</span>
+				<span>Enter to select</span>
+			</div>
+		</div>
+	);
 }
 
 // REASONING:
@@ -934,40 +923,42 @@ export function TrajectoryMatchInput(props: TrajectoryMatchInputProps): JSX.Elem
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onSubmit]);
 
-  return (
-    <div className="space-y-6">
-      <div className="vesper-slider-display">
-        <div className="vesper-slider-display-value">
-          {currentValue}%
-        </div>
-        <div className="vesper-slider-display-label">Trajectory Match</div>
-      </div>
+	return (
+		<div className="space-y-6">
+			<div style={{ textAlign: 'center' }}>
+				<div style={{ fontSize: '2.5rem', fontWeight: 600, color: 'var(--color-accent-500)', fontFamily: 'monospace' }}>
+					{currentValue}%
+				</div>
+				<div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>Trajectory Match</div>
+			</div>
 
-      <div className="vesper-slider-container px-2">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={currentValue}
-          onChange={(e) => onChange(parseInt(e.target.value, 10))}
-          className="vesper-slider"
-          style={{
-            background: `linear-gradient(to right, oklch(70% 0.25 195) 0%, oklch(72% 0.22 145) ${currentValue}%, oklch(18% 0.03 260) ${currentValue}%, oklch(18% 0.03 260) 100%)`
-          }}
-          autoFocus
-        />
-        <div className="vesper-slider-labels">
-          <span>0%</span>
-          <span>50%</span>
-          <span>100%</span>
-        </div>
-      </div>
+			<div className="px-2">
+				<input
+					type="range"
+					min="0"
+					max="100"
+					value={currentValue}
+					onChange={(e) => onChange(parseInt(e.target.value, 10))}
+					className="w-full"
+					style={{
+						background: `linear-gradient(to right, var(--color-accent-500) 0%, var(--color-accent-600) ${currentValue}%, var(--color-bg-elevated) ${currentValue}%, var(--color-bg-elevated) 100%)`,
+						borderRadius: '4px',
+						height: '6px'
+					}}
+					autoFocus
+				/>
+				<div className="flex justify-between text-xs mt-2" style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+					<span>0%</span>
+					<span>50%</span>
+					<span>100%</span>
+				</div>
+			</div>
 
-      <div className="text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        Press Enter to confirm
-      </div>
-    </div>
-  );
+			<div className="text-center text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+				Press Enter to confirm
+			</div>
+		</div>
+	);
 }
 
 // REASONING:
@@ -1002,62 +993,62 @@ export function ActorNoteInput(props: ActorNoteInputProps): JSX.Element {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onSubmit]);
 
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center font-medium"
-            style={{ 
-              backgroundColor: 'var(--color-accent-700)',
-              color: 'var(--color-bg-base)'
-            }}
-          >
-            {actorName.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{actorName}</div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-              Actor {actorIndex + 1} of {totalActors}
-            </div>
-          </div>
-        </div>
-      </div>
+	return (
+		<div className="space-y-4">
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-3">
+					<div
+						className="w-10 h-10 flex items-center justify-center font-medium"
+						style={{
+							backgroundColor: 'var(--color-accent-600)',
+							color: 'var(--color-bg-base)',
+							borderRadius: '4px'
+						}}
+					>
+						{actorName.charAt(0).toUpperCase()}
+					</div>
+					<div>
+						<div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>{actorName}</div>
+						<div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+							Actor {actorIndex + 1} of {totalActors}
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div className="relative">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={`Add notes for ${actorName}...`}
-          className="w-full px-4 py-3 rounded-lg outline-none transition-all"
-          style={{
-            backgroundColor: 'var(--color-bg-input)',
-            border: '1px solid var(--color-border-default)',
-            color: 'var(--color-text-primary)'
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-            e.currentTarget.style.boxShadow = '0 0 0 3px oklch(45% 0.15 195 / 0.2)';
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = 'var(--color-border-default)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-          autoFocus
-        />
-      </div>
+			<div className="relative">
+				<input
+					type="text"
+					value={value}
+					onChange={(e) => onChange(e.target.value)}
+					placeholder={`Add notes for ${actorName}...`}
+					className="w-full px-4 py-3 outline-none transition-colors"
+					style={{
+						backgroundColor: 'var(--color-bg-input)',
+						border: '1px solid var(--color-border-default)',
+						borderRadius: '4px',
+						color: 'var(--color-text-primary)'
+					}}
+					onFocus={(e) => {
+						e.currentTarget.style.borderColor = 'var(--color-accent-500)';
+					}}
+					onBlur={(e) => {
+						e.currentTarget.style.borderColor = 'var(--color-border-default)';
+					}}
+					autoFocus
+				/>
+			</div>
 
-      <div className="flex justify-between items-center text-sm">
-        <span style={{ color: 'var(--color-text-muted)' }}>
-          {actorIndex < totalActors - 1 ? 'Press Enter for next actor' : 'Press Enter to complete'}
-        </span>
-        <span style={{ color: 'var(--color-text-secondary)' }}>
-          {actorIndex + 1} / {totalActors}
-        </span>
-      </div>
-    </div>
-  );
+			<div className="flex justify-between items-center text-sm">
+				<span style={{ color: 'var(--color-text-secondary)' }}>
+					{actorIndex < totalActors - 1 ? 'Press Enter for next actor' : 'Press Enter to complete'}
+				</span>
+				<span style={{ color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+					{actorIndex + 1} / {totalActors}
+				</span>
+			</div>
+		</div>
+	);
 }
 
 // SECTION MAP:

@@ -88,41 +88,42 @@ function AgenticSection({
 }): JSX.Element {
   if (tasks.length === 0) return <EmptyAgenticState />;
 
-  return (
-    <section className="agentic-section space-y-3" aria-label="Agentic tasks">
-      <div className="flex items-center justify-between">
-        <h2 
-          className="text-lg font-semibold uppercase tracking-wide"
-          style={{ color: 'var(--color-mint-400)' }}
-        >
-          AGENTIC TASKS
-        </h2>
-        <span 
-          className="text-xs font-medium px-2 py-1 rounded"
-          style={{ 
-            backgroundColor: 'var(--color-success-bg)',
-            color: 'var(--color-success-text)',
-            border: '1px solid var(--color-success-border)'
-          }}
-        >
-          Unlimited
-        </span>
-      </div>
-      <div className="grid gap-3">
-        {tasks.map(task => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            isLimitReached={isLimitReached}
-            remainingCount={remainingCount}
-            onClick={() => onTaskClick(task)}
-            onCopy={() => onCopyClick(task)}
-            onSent={() => onSentClick(task)}
-          />
-        ))}
-      </div>
-    </section>
-  );
+	return (
+	<section className="agentic-section space-y-3" aria-label="Agentic tasks">
+		<div className="flex items-center justify-between">
+			<h2
+				className="text-lg font-semibold uppercase tracking-wide"
+				style={{ color: 'var(--color-accent-400)' }}
+			>
+				AGENTIC TASKS
+			</h2>
+			<span
+				className="text-xs font-medium px-2 py-1"
+				style={{
+					backgroundColor: 'var(--color-bg-elevated)',
+					color: 'var(--color-accent-500)',
+					border: '1px solid var(--color-accent-600)',
+					borderRadius: '2px'
+				}}
+			>
+				Unlimited
+			</span>
+		</div>
+		<div className="grid gap-3">
+			{tasks.map(task => (
+				<TaskItem
+					key={task.id}
+					task={task}
+					isLimitReached={isLimitReached}
+					remainingCount={remainingCount}
+					onClick={() => onTaskClick(task)}
+					onCopy={() => onCopyClick(task)}
+					onSent={() => onSentClick(task)}
+				/>
+			))}
+		</div>
+	</section>
+);
 }
 
 function NonAgenticSection({
@@ -142,32 +143,32 @@ function NonAgenticSection({
 }): JSX.Element {
   if (tasks.length === 0) return <EmptyNonAgenticState />;
 
-  return (
-    <section className="non-agentic-section space-y-3" aria-label="Non-agentic tasks">
-      <div className="flex items-center justify-between">
-        <h2 
-          className="text-lg font-semibold uppercase tracking-wide"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
-          NON-AGENTIC TASKS
-        </h2>
-        <RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
-      </div>
-      <div className="grid gap-3">
-        {tasks.map(task => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            isLimitReached={isLimitReached}
-            remainingCount={remainingCount}
-            onClick={() => onTaskClick(task)}
-            onCopy={() => onCopyClick(task)}
-            onSent={() => onSentClick(task)}
-          />
-        ))}
-      </div>
-    </section>
-  );
+	return (
+	<section className="non-agentic-section space-y-3" aria-label="Non-agentic tasks">
+		<div className="flex items-center justify-between">
+			<h2
+				className="text-lg font-semibold uppercase tracking-wide"
+				style={{ color: 'var(--color-text-secondary)' }}
+			>
+				NON-AGENTIC TASKS
+			</h2>
+			<RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
+		</div>
+		<div style={{ display: 'grid', gap: '0.75rem' }}>
+			{tasks.map(task => (
+				<TaskItem
+					key={task.id}
+					task={task}
+					isLimitReached={isLimitReached}
+					remainingCount={remainingCount}
+					onClick={() => onTaskClick(task)}
+					onCopy={() => onCopyClick(task)}
+					onSent={() => onSentClick(task)}
+				/>
+			))}
+		</div>
+	</section>
+);
 }
 
 function HybridSection({
@@ -187,63 +188,65 @@ function HybridSection({
 }): JSX.Element {
   if (tasks.length === 0) return <EmptyHybridState />;
 
-  return (
-    <section className="hybrid-section space-y-3" aria-label="Hybrid tasks">
-      <div className="flex items-center justify-between">
-        <h2 
-          className="text-lg font-semibold uppercase tracking-wide"
-          style={{ color: 'var(--color-accent-400)' }}
-        >
-          HYBRID TASKS
-        </h2>
-        <RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
-      </div>
-      <div className="grid gap-3">
-        {tasks.map(task => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            isLimitReached={isLimitReached}
-            remainingCount={remainingCount}
-            onClick={() => onTaskClick(task)}
-            onCopy={() => onCopyClick(task)}
-            onSent={() => onSentClick(task)}
-          />
-        ))}
-      </div>
-    </section>
-  );
+	return (
+	<section className="hybrid-section space-y-3" aria-label="Hybrid tasks">
+		<div className="flex items-center justify-between">
+			<h2
+				className="text-lg font-semibold uppercase tracking-wide"
+				style={{ color: 'var(--color-accent-500)' }}
+			>
+				HYBRID TASKS
+			</h2>
+			<RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
+		</div>
+		<div style={{ display: 'grid', gap: '0.75rem' }}>
+			{tasks.map(task => (
+				<TaskItem
+					key={task.id}
+					task={task}
+					isLimitReached={isLimitReached}
+					remainingCount={remainingCount}
+					onClick={() => onTaskClick(task)}
+					onCopy={() => onCopyClick(task)}
+					onSent={() => onSentClick(task)}
+				/>
+			))}
+		</div>
+	</section>
+);
 }
 
 function RemainingHeader({ count, isLimitReached }: { count: number; isLimitReached: boolean }): JSX.Element {
-  if (isLimitReached) {
-    return (
-      <span 
-        className="text-xs font-medium px-2 py-1 rounded"
-        style={{ 
-          backgroundColor: 'var(--color-error-bg)',
-          color: 'var(--color-error-text)',
-          border: '1px solid var(--color-error-border)'
-        }}
-      >
-        Daily limit reached
-      </span>
-    );
-  }
-  
-  const isLow = count <= 2;
-  return (
-    <span 
-      className="text-xs font-medium px-2 py-1 rounded"
-      style={{ 
-        backgroundColor: isLow ? 'var(--color-warning-bg)' : 'var(--color-info-bg)',
-        color: isLow ? 'var(--color-warning-text)' : 'var(--color-info-text)',
-        border: `1px solid ${isLow ? 'var(--color-warning-border)' : 'var(--color-info-border)'}`
-      }}
-    >
-      {count} remaining today
-    </span>
-  );
+	if (isLimitReached) {
+		return (
+			<span
+				className="text-xs font-medium px-2 py-1"
+				style={{
+					backgroundColor: 'var(--color-bg-elevated)',
+					color: 'var(--color-text-secondary)',
+					border: '1px solid var(--color-border-default)',
+					borderRadius: '2px'
+				}}
+			>
+				Daily limit reached
+			</span>
+		);
+	}
+
+	const isLow = count <= 2;
+	return (
+		<span
+			className="text-xs font-medium px-2 py-1"
+			style={{
+				backgroundColor: 'var(--color-bg-elevated)',
+				color: isLow ? 'var(--color-accent-500)' : 'var(--color-text-secondary)',
+				border: `1px solid ${isLow ? 'var(--color-accent-600)' : 'var(--color-border-default)'}`,
+				borderRadius: '2px'
+			}}
+		>
+			{count} remaining today
+		</span>
+	);
 }
 
 function EmptyAgenticState(): JSX.Element {

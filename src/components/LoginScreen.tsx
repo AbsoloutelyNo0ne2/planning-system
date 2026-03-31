@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import FluidBlobCanvas from './FluidBlobCanvas';
 
 const MIN_SWIPE_DISTANCE = 50;
 
@@ -63,31 +64,53 @@ export function LoginScreen(): JSX.Element {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
-      style={{ backgroundColor: 'var(--color-bg-base)' }}
+      className="flex min-h-screen"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1
-            className="text-3xl font-bold mb-3"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            Planning System
-          </h1>
-          <p style={{ color: 'var(--color-text-secondary)' }}>
-            Enter your passphrase to continue
-          </p>
-        </div>
+      {/* LEFT: Login Form (50%) */}
+      <div
+        className="flex-1 flex items-center justify-center p-8"
+        style={{ backgroundColor: 'var(--color-bg-base)' }}
+      >
+        <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
+          {/* Logo */}
+          <div className="flex items-center gap-3 mb-10">
+            <div
+              className="w-10 h-10 rounded-[10px]"
+              style={{
+                background: 'linear-gradient(135deg, var(--color-accent-500), #d8b4fe)',
+              }}
+            />
+            <span
+              className="text-xl font-semibold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              Planner
+            </span>
+          </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
+          {/* Title */}
+          <div className="mb-8">
+            <h1
+              className="text-2xl font-semibold mb-1"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              Welcome back
+            </h1>
+            <p
+              className="text-sm"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              Sign in to continue to your workspace
+            </p>
+          </div>
+
+          {/* Passphrase Input */}
+          <div className="space-y-2">
             <label
               htmlFor="passphrase"
-              className="block text-sm font-medium mb-2"
+              className="block text-sm font-medium"
               style={{ color: 'var(--color-text-primary)' }}
             >
               Passphrase
@@ -100,17 +123,17 @@ export function LoginScreen(): JSX.Element {
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
                 placeholder="Enter your passphrase..."
-                className="w-full px-4 py-3 transition-colors duration-150"
+                className="w-full px-4 py-3 text-sm transition-colors duration-150"
                 style={{
-                  backgroundColor: 'var(--color-bg-input)',
+                  backgroundColor: 'var(--color-bg-surface)',
                   color: 'var(--color-text-primary)',
                   border: swipeFeedback
                     ? swipeFeedback === 'submit'
                       ? '2px solid var(--color-accent-500)'
                       : '2px solid var(--color-error-border)'
                     : '1px solid var(--color-border-default)',
-                  borderRadius: '3px',
-                  outline: 'none'
+                  borderRadius: '4px',
+                  outline: 'none',
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'var(--color-accent-500)';
@@ -126,12 +149,12 @@ export function LoginScreen(): JSX.Element {
               <button
                 type="button"
                 onClick={() => setShowPassphrase(!showPassphrase)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm font-medium transition-colors duration-150"
+                className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-medium transition-colors duration-150"
                 style={{
                   backgroundColor: 'var(--color-bg-elevated)',
-                  color: 'var(--color-text-secondary)',
+                  color: 'var(--color-text-muted)',
                   border: '1px solid var(--color-border-subtle)',
-                  borderRadius: '2px'
+                  borderRadius: '4px',
                 }}
               >
                 {showPassphrase ? 'Hide' : 'Show'}
@@ -140,8 +163,8 @@ export function LoginScreen(): JSX.Element {
 
             {/* Helper Text */}
             <p
-              className="mt-2 text-sm"
-              style={{ color: 'var(--color-text-tertiary)' }}
+              className="text-xs mt-2"
+              style={{ color: 'var(--color-text-muted)' }}
             >
               This is a password-free system. Your passphrase is your identity.
             </p>
@@ -150,12 +173,12 @@ export function LoginScreen(): JSX.Element {
           {/* Error Message */}
           {error && (
             <div
-              className="p-4"
+              className="p-4 text-sm"
               style={{
                 backgroundColor: 'var(--color-error-bg)',
                 border: '1px solid var(--color-error-border)',
                 color: 'var(--color-error-text)',
-                borderRadius: '4px'
+                borderRadius: '4px',
               }}
             >
               {error}
@@ -166,11 +189,12 @@ export function LoginScreen(): JSX.Element {
           <button
             type="submit"
             disabled={isLoading || !passphrase.trim()}
-            className="w-full py-3 px-6 font-medium text-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
+            className="w-full py-3 px-6 font-medium text-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block hover:-translate-y-px"
             style={{
-              backgroundColor: 'var(--color-accent-600)',
+              background: 'linear-gradient(135deg, var(--color-accent-500), #9333ea)',
               color: '#ffffff',
-              borderRadius: '2px'
+              borderRadius: '4px',
+              boxShadow: isLoading || !passphrase.trim() ? 'none' : '0 4px 20px rgba(168, 85, 247, 0.3)',
             }}
           >
             {isLoading ? (
@@ -194,7 +218,7 @@ export function LoginScreen(): JSX.Element {
                 Verifying...
               </span>
             ) : (
-              'Enter'
+              'Sign in'
             )}
           </button>
 
@@ -203,12 +227,12 @@ export function LoginScreen(): JSX.Element {
             <button
               type="button"
               onClick={() => setPassphrase('')}
-              className="flex-1 py-3 px-6 font-medium transition-colors duration-150"
+              className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150"
               style={{
                 backgroundColor: 'transparent',
-                color: 'var(--color-text-secondary)',
+                color: 'var(--color-text-muted)',
                 border: '1px solid var(--color-border-default)',
-                borderRadius: '2px'
+                borderRadius: '4px',
               }}
             >
               Clear
@@ -216,11 +240,11 @@ export function LoginScreen(): JSX.Element {
             <button
               type="submit"
               disabled={isLoading || !passphrase.trim()}
-              className="flex-1 py-3 px-6 font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                backgroundColor: 'var(--color-accent-600)',
+                background: 'linear-gradient(135deg, var(--color-accent-500), #9333ea)',
                 color: '#ffffff',
-                borderRadius: '2px'
+                borderRadius: '4px',
               }}
             >
               {isLoading ? (
@@ -244,19 +268,43 @@ export function LoginScreen(): JSX.Element {
                   Verifying...
                 </span>
               ) : (
-                'Enter'
+                'Sign in'
               )}
             </button>
           </div>
-        </form>
 
-        {/* Footer */}
+          {/* Footer */}
+          <div
+            className="pt-6 text-center text-xs"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            <p>Secure passphrase-based authentication</p>
+            <p className="mt-1">No username. No password. Just your phrase.</p>
+          </div>
+        </form>
+      </div>
+
+      {/* RIGHT: Fluid Blob Canvas (50%) */}
+      <div
+        className="flex-1 relative overflow-hidden hidden md:block"
+        style={{
+          background: 'radial-gradient(ellipse at 40% 40%, #1a1f35 0%, var(--color-bg-base) 70%)',
+        }}
+      >
+        <FluidBlobCanvas />
+        {/* Gradient overlay for smooth edge transition */}
         <div
-          className="mt-12 text-center text-sm"
-          style={{ color: 'var(--color-text-tertiary)' }}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 130% 130% at center, transparent 35%, rgba(12, 15, 26, 0.5) 100%)',
+          }}
+        />
+        {/* Hint text */}
+        <div
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs pointer-events-none"
+          style={{ color: 'rgba(148, 163, 184, 0.5)' }}
         >
-          <p>Secure passphrase-based authentication</p>
-          <p className="mt-1">No username. No password. Just your phrase.</p>
+          Move your cursor to interact
         </div>
       </div>
     </div>

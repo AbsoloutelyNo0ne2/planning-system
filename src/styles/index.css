@@ -27,17 +27,17 @@
 * NEUTRAL SCALE (60% of UI)
 * Slate dark backgrounds using standard CSS hex colors
 */
---color-bg-base: #0f172a;
---color-bg-surface: #1e293b;
---color-bg-elevated: #334155;
---color-bg-input: #1e293b;
---color-bg-hover: #475569;
---color-bg-active: #64748b;
+--color-bg-base: #0c0f1a;
+--color-bg-surface: #121625;
+--color-bg-elevated: #1a1f30;
+--color-bg-input: #0a0d18;
+--color-bg-hover: #1e2438;
+--color-bg-active: #252b3d;
 
 /* Border colors - subtle separators */
---color-border-subtle: #334155;
---color-border-default: #475569;
---color-border-focus: #64748b;
+--color-border-subtle: #172033;
+--color-border-default: #1e293b;
+--color-border-focus: #a855f7;
 
 /*
 * TEXT HIERARCHY
@@ -55,16 +55,17 @@
 * Lower chroma teal for primary interactions
 * Hue 173° (teal), chroma 0.08-0.15 for muted, professional appearance
 */
---color-accent-50: oklch(97% 0.01 173);
---color-accent-100: oklch(94% 0.03 173);
---color-accent-200: oklch(88% 0.06 173);
---color-accent-300: oklch(80% 0.10 173);
---color-accent-400: oklch(70% 0.13 173);
---color-accent-500: oklch(60% 0.15 173);
---color-accent-600: oklch(52% 0.14 173);
---color-accent-700: oklch(44% 0.12 173);
---color-accent-800: oklch(36% 0.10 173);
---color-accent-900: oklch(28% 0.08 173);
+/* Blue/Purple Accent (hue 280) */
+--color-accent-50: oklch(97% 0.02 280);
+--color-accent-100: oklch(94% 0.05 280);
+--color-accent-200: oklch(88% 0.10 280);
+--color-accent-300: oklch(80% 0.14 288); /* Warm tint #d8b4fe */
+--color-accent-400: oklch(70% 0.16 280); /* #c084fc */
+--color-accent-500: oklch(60% 0.18 280); /* Purple base #a855f7 */
+--color-accent-600: oklch(52% 0.16 280); /* #8b5cf6 */
+--color-accent-700: oklch(44% 0.14 265); /* Cool tint #7c3aed */
+--color-accent-800: oklch(36% 0.12 260);
+--color-accent-900: oklch(28% 0.10 255);
 
 /*
 * SECONDARY: NEUTRAL GRAY (10% of UI)
@@ -79,14 +80,19 @@
 --color-secondary-500: oklch(60% 0.05 260);
 --color-secondary-600: oklch(52% 0.04 260);
 --color-secondary-700: oklch(44% 0.04 260);
---color-secondary-800: oklch(36% 0.03 260);
---color-secondary-900: oklch(28% 0.02 260);
+  --color-secondary-800: oklch(36% 0.03 260);
+  --color-secondary-900: oklch(28% 0.02 260);
 
-/*
-* SEMANTIC COLORS
-* For status indicators, badges, alerts
-*/
---color-success-bg: oklch(18% 0.03 145);
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /*
+  * SEMANTIC COLORS
+  * For status indicators, badges, alerts
+  */
+  --color-success-bg: oklch(18% 0.03 145);
 --color-success-text: oklch(70% 0.14 145);
 --color-success-border: oklch(30% 0.06 145);
 
@@ -231,11 +237,10 @@
   .vesper-input {
     background-color: var(--color-bg-input);
     border: 1px solid var(--color-border-default);
-    border-radius: 3px;
+    border-radius: 4px;
     color: var(--color-text-primary);
     padding: var(--space-3) var(--space-4);
-    transition: border-color var(--duration-fast) var(--easing-default),
-      box-shadow var(--duration-fast) var(--easing-default);
+  transition: border-color var(--duration-fast) var(--easing-default);
   }
 
   .vesper-input:hover {
