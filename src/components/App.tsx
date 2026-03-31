@@ -177,7 +177,7 @@ backgroundColor: 'var(--color-bg-surface)'
 >
       {/* Fluid blob background */}
       <div className="absolute inset-0 overflow-hidden">
-        <FluidBlobCanvas scale={0.6} offsetY={150} />
+        <FluidBlobCanvas offsetY={150} />
         {/* Dark overlay for readability */}
         <div
           className="absolute inset-0 pointer-events-none"
