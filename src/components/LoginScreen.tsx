@@ -74,30 +74,14 @@ export function LoginScreen(): JSX.Element {
         style={{ backgroundColor: 'var(--color-bg-base)' }}
       >
         <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-10">
-            <div
-              className="w-10 h-10 rounded-[10px]"
-              style={{
-                background: 'linear-gradient(135deg, var(--color-accent-500), #d8b4fe)',
-              }}
-            />
-            <span
-              className="text-xl font-semibold"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              Planner
-            </span>
-          </div>
-
-          {/* Title */}
-          <div className="mb-8">
-            <h1
-              className="text-2xl font-semibold mb-1"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              Welcome back
-            </h1>
+        {/* Title */}
+        <div className="mb-8">
+          <h1
+            className="text-7xl font-bold mb-1"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            Welcome back
+          </h1>
             <p
               className="text-sm"
               style={{ color: 'var(--color-text-muted)' }}
@@ -151,9 +135,9 @@ export function LoginScreen(): JSX.Element {
                 onClick={() => setShowPassphrase(!showPassphrase)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-medium transition-colors duration-150"
                 style={{
-                  backgroundColor: 'var(--color-bg-elevated)',
+                  background: 'transparent',
                   color: 'var(--color-text-muted)',
-                  border: '1px solid var(--color-border-subtle)',
+                  border: 'none',
                   borderRadius: '4px',
                 }}
               >
