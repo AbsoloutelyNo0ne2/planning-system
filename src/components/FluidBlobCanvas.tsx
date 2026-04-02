@@ -304,9 +304,9 @@ const CONFIG: Config = {
     strength: 0.02,
     maxDistance: 600,
   },
-  // Color shift: hue shifts ±5°, saturation shifts ±5% based on speed (subtle effect)
-  hueShiftRange: 5,
-  saturationShiftRange: 5,
+  // Color shift: hue shifts ±8.2°, saturation shifts ±8.2% based on speed (1.64x from 5°/5%)
+  hueShiftRange: 8.2,
+  saturationShiftRange: 8.2,
 };
 
 // Blob position presets

@@ -318,14 +318,17 @@ style={{ backgroundColor: 'var(--color-bg-elevated)' }}
               onClick={() => setViewMode('plan')}
               className="px-4 py-2 rounded font-medium transition-all"
               style={{
-                backgroundColor: 'var(--color-mint-700)',
-                color: 'var(--color-bg-base)'
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-secondary)',
+                border: '1px solid var(--color-border-default)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-mint-600)';
+                e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+                e.currentTarget.style.color = 'var(--color-text-primary)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-mint-700)';
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--color-text-secondary)';
               }}
             >
               Cancel New task
