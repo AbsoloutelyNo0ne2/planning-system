@@ -160,11 +160,11 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
   />
   <button
     onClick={logout}
-    className="px-3 py-1.5 text-sm rounded font-medium transition-all"
+    className="radial-glow px-3 py-1.5 text-sm rounded font-medium transition-colors duration-300 relative overflow-hidden"
     style={{
       backgroundColor: 'transparent',
       color: 'var(--color-text-secondary)',
-      border: '1px solid var(--color-border-default)'
+      border: '1px solid var(--color-border-default)',
     }}
     onMouseEnter={(e) => {
       e.currentTarget.style.color = 'var(--color-error-text)';
@@ -173,6 +173,13 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
     onMouseLeave={(e) => {
       e.currentTarget.style.color = 'var(--color-text-secondary)';
       e.currentTarget.style.borderColor = 'var(--color-border-default)';
+    }}
+    onMouseMove={(e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      e.currentTarget.style.setProperty('--x', x + '%');
+      e.currentTarget.style.setProperty('--y', y + '%');
     }}
   >
     Logout

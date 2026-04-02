@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effect 6: Aurora</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --color-bg-base: #0a0a0f;
+  --color-border-default: #2a2a3e;
+  --color-text-secondary: #94a3b8;
+  --color-text-primary: #f1f5f9;
+  --color-accent-500: #8b5cf6;
+}
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+h1 { font-size: 1.5rem; color: var(--color-text-secondary); }
+.btn-aurora {
+  position: relative;
+  padding: 12px 32px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+.btn-aurora::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 300px;
+  height: 150px;
+  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(168, 85, 247, 0.15) 40%, transparent 70%);
+  transform: translate(-50%, -50%) rotate(-10deg);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  filter: blur(20px);
+}
+.btn-aurora:hover::before { opacity: 1; }
+.btn-aurora:hover { color: var(--color-text-primary); border-color: var(--color-accent-500); }
+.back { color: var(--color-text-secondary); text-decoration: none; font-size: 0.85rem; }
+.back:hover { color: var(--color-accent-500); }
+</style>
+</head>
+<body>
+<a href="index.html" class="back">← Back</a>
+<h1>Effect 6: Aurora Gradient</h1>
+<button class="btn-aurora">Logout</button>
+<script>
+document.querySelectorAll('.btn-aurora').forEach(btn => {
+  btn.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    btn.style.setProperty('--x', x + '%');
+    btn.style.setProperty('--y', y + '%');
+  });
+});
+</script>
+</body>
+</html>

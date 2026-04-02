@@ -565,6 +565,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Radial Glow Effect for buttons (Effect 1 - Logout button) */
+button.radial-glow::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+button.radial-glow:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
 /* Notification styles - Technical Precision */
 .notification-container {
   position: fixed;

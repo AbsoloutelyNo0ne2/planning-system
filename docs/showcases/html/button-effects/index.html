@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Button Effects Showcase</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0a0f;
+  color: #f1f5f9;
+  padding: 60px 40px;
+}
+h1 { text-align: center; margin-bottom: 40px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.card {
+  background: #12121a;
+  border: 1px solid #2a2a3e;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+}
+.card a {
+  display: block;
+  color: #a78bfa;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+.card a:hover { text-decoration: underline; }
+.card p { font-size: 0.75rem; color: #64748b; }
+</style>
+</head>
+<body>
+<h1>Button Glare Effects</h1>
+<div class="grid">
+  <div class="card">
+    <a href="effect-01-radial.html">1. Radial Glow</a>
+    <p>Soft glow from cursor</p>
+  </div>
+  <div class="card">
+    <a href="effect-02-edge.html">2. Edge Glow</a>
+    <p>Light along border</p>
+  </div>
+  <div class="card">
+    <a href="effect-03-shimmer.html">3. Shimmer</a>
+    <p>Diagonal shimmer band</p>
+  </div>
+  <div class="card">
+    <a href="effect-04-spotlight.html">4. Spotlight</a>
+    <p>Circular fill from cursor</p>
+  </div>
+  <div class="card">
+    <a href="effect-05-border-draw.html">5. Border Draw</a>
+    <p>Rotating gradient border</p>
+  </div>
+  <div class="card">
+    <a href="effect-06-aurora.html">6. Aurora</a>
+    <p>Soft aurora gradient</p>
+  </div>
+  <div class="card">
+    <a href="effect-07-particle.html">7. Particle</a>
+    <p>Particle trail</p>
+  </div>
+  <div class="card">
+    <a href="effect-08-scanline.html">8. Scanline</a>
+    <p>Horizontal scanline</p>
+  </div>
+  <div class="card">
+    <a href="effect-09-corner.html">9. Corner Glow</a>
+    <p>Glow from corner</p>
+  </div>
+  <div class="card">
+    <a href="effect-10-liquid.html">10. Liquid Fill</a>
+    <p>Liquid fill from cursor</p>
+  </div>
+</div>
+</body>
+</html>

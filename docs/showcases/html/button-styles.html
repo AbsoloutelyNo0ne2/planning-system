@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prios Button Exploration</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg-base: #0a0a0f;
+  --color-bg-surface: #12121a;
+  --color-bg-elevated: #1a1a2e;
+  --color-bg-hover: #2a2a3e;
+  --color-border-default: #2a2a3e;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-accent-700: #6d28d9;
+  --color-error-text: #f87171;
+  --color-error-border: #be123c;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  padding: 40px 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
+}
+
+.section {
+  max-width: 900px;
+  margin: 0 auto 60px;
+}
+
+.section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.card h3 {
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  color: var(--color-text-secondary);
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   DIRECTION 1: Gradient Edge Glow
+   ============================================ */
+.btn-glow-primary {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600));
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.btn-glow-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-glow-secondary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-glow-secondary:hover {
+  border-color: var(--color-accent-500);
+  background: var(--color-bg-hover);
+}
+
+/* ============================================
+   DIRECTION 2: Layered Depth
+   ============================================ */
+.btn-depth-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: var(--color-accent-600);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 
+    0 1px 2px rgba(0,0,0,0.3),
+    0 2px 4px rgba(0,0,0,0.2),
+    0 4px 8px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+
+.btn-depth-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.3),
+    0 4px 8px rgba(0,0,0,0.2),
+    0 8px 16px rgba(0,0,0,0.15);
+}
+
+.btn-depth-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+/* ============================================
+   DIRECTION 3: Neon Accent
+   ============================================ */
+.btn-neon-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: var(--color-accent-600);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid var(--color-accent-400);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-neon-primary:hover {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* ============================================
+   DIRECTION 4: Glassmorphism
+   ============================================ */
+.btn-glass-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: rgba(139, 92, 246, 0.8);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-glass-primary:hover {
+  background: rgba(139, 92, 246, 0.95);
+}
+
+/* ============================================
+   DIRECTION 5: Minimalist Refined
+   ============================================ */
+.btn-minimal-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: var(--color-accent-600);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-minimal-primary:hover {
+  background: var(--color-accent-500);
+}
+
+.btn-minimal-secondary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-minimal-secondary:hover {
+  border-color: var(--color-accent-500);
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   DIRECTION 6: Animated Border
+   ============================================ */
+.btn-border-animated {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: var(--color-accent-600);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-border-animated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--color-accent-400), var(--color-accent-600));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.btn-border-animated:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+}
+
+/* ============================================
+   DIRECTION 7: Pill Shape
+   ============================================ */
+.btn-pill-primary {
+  padding: 10px 24px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600));
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-pill-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* ============================================
+   DIRECTION 8: Split Gradient
+   ============================================ */
+.btn-split-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-accent-700) 100%);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-split-primary:hover {
+  background: linear-gradient(145deg, var(--color-accent-500) 0%, var(--color-accent-700) 100%);
+  filter: brightness(1.1);
+}
+
+/* ============================================
+   DIRECTION 9: Outline + Fill
+   ============================================ */
+.btn-fill-primary {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-accent-500);
+  border: 1px solid var(--color-accent-500);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-fill-primary::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--color-accent-500);
+  transition: height 0.3s ease;
+  z-index: -1;
+}
+
+.btn-fill-primary:hover::before {
+  height: 100%;
+}
+
+.btn-fill-primary:hover {
+  color: #fff;
+}
+
+/* ============================================
+   DIRECTION 10: Textured
+   ============================================ */
+.btn-texture-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: 
+    linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600)),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitch='scale'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  background-blend-mode: overlay;
+}
+
+.btn-texture-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Danger button variant */
+.btn-danger {
+  padding: 10px 20px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-border);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: var(--color-error-bg);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+</style>
+</head>
+<body>
+<h1>Prios Button Exploration</h1>
+
+<!-- Direction 1 -->
+<div class="section">
+  <h2>Direction 1: Gradient Edge Glow</h2>
+  <div class="card">
+    <h3>Primary + Secondary</h3>
+    <div class="button-row">
+      <button class="btn-glow-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+      <button class="btn-danger">Danger</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 2 -->
+<div class="section">
+  <h2>Direction 2: Layered Depth</h2>
+  <div class="card">
+    <h3>3D Shadow Effect</h3>
+    <div class="button-row">
+      <button class="btn-depth-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 3 -->
+<div class="section">
+  <h2>Direction 3: Neon Accent</h2>
+  <div class="card">
+    <h3>Cyberpunk Glow</h3>
+    <div class="button-row">
+      <button class="btn-neon-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 4 -->
+<div class="section">
+  <h2>Direction 4: Glassmorphism</h2>
+  <div class="card">
+    <h3>Frosted Glass</h3>
+    <div class="button-row">
+      <button class="btn-glass-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 5 -->
+<div class="section">
+  <h2>Direction 5: Minimalist Refined</h2>
+  <div class="card">
+    <h3>Clean & Simple</h3>
+    <div class="button-row">
+      <button class="btn-minimal-primary">Primary Button</button>
+      <button class="btn-minimal-secondary">Secondary</button>
+      <button class="btn-danger">Danger</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 6 -->
+<div class="section">
+  <h2>Direction 6: Animated Border</h2>
+  <div class="card">
+    <h3>Gradient Border Animation</h3>
+    <div class="button-row">
+      <button class="btn-border-animated">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 7 -->
+<div class="section">
+  <h2>Direction 7: Pill Shape</h2>
+  <div class="card">
+    <h3>Full Rounded Pills</h3>
+    <div class="button-row">
+      <button class="btn-pill-primary">● Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 8 -->
+<div class="section">
+  <h2>Direction 8: Split Gradient</h2>
+  <div class="card">
+    <h3>Two-Tone Gradient</h3>
+    <div class="button-row">
+      <button class="btn-split-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 9 -->
+<div class="section">
+  <h2>Direction 9: Outline + Fill</h2>
+  <div class="card">
+    <h3>Fill on Hover</h3>
+    <div class="button-row">
+      <button class="btn-fill-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+<!-- Direction 10 -->
+<div class="section">
+  <h2>Direction 10: Textured</h2>
+  <div class="card">
+    <h3>Noise Overlay</h3>
+    <div class="button-row">
+      <button class="btn-texture-primary">Primary Button</button>
+      <button class="btn-glow-secondary">Secondary</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

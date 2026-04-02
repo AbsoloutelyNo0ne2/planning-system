@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Button Glare Effects</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg-base: #0a0a0f;
+  --color-bg-surface: #12121a;
+  --color-border-default: #2a2a3e;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-error-text: #f87171;
+  --color-error-border: #be123c;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  padding: 60px 40px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 60px;
+  font-size: 2rem;
+}
+
+.section {
+  max-width: 900px;
+  margin: 0 auto 80px;
+}
+
+.section h2 {
+  font-size: 1rem;
+  margin-bottom: 24px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+.card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.card h3 {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+p.desc {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+/* ============================================
+  VARIATION 1: Radial Gradient Follow
+  Subtle glow that follows cursor
+  ============================================ */
+.btn-radial-glow {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-radial-glow::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.btn-radial-glow:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.btn-radial-glow:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 2: Edge Glow Follow
+  Light follows cursor along border
+  ============================================ */
+.btn-edge-glow {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-edge-glow::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 0);
+  left: var(--x, 0);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.btn-edge-glow:hover::before {
+  opacity: 1;
+}
+
+.btn-edge-glow:hover {
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+  VARIATION 3: Shimmer Sweep
+  Diagonal shimmer follows cursor
+  ============================================ */
+.btn-shimmer {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(139, 92, 246, 0.2) 45%,
+    rgba(139, 92, 246, 0.4) 50%,
+    rgba(139, 92, 246, 0.2) 55%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: var(--shimmer-pos, 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease, background-position 0.1s ease;
+  pointer-events: none;
+}
+
+.btn-shimmer:hover::before {
+  opacity: 1;
+}
+
+.btn-shimmer:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 4: Spotlight Fill
+  Circular fill that expands from cursor
+  ============================================ */
+.btn-spotlight {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-spotlight::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  pointer-events: none;
+}
+
+.btn-spotlight:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-spotlight:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 5: Border Draw + Glow
+  Border draws from cursor position
+  ============================================ */
+.btn-border-draw {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-border-draw::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 8px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0%,
+    transparent 80%,
+    rgba(139, 92, 246, 0.8) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.btn-border-draw:hover::before {
+  opacity: 1;
+}
+
+.btn-border-draw:hover {
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+  VARIATION 6: Aurora Gradient
+  Soft aurora-like gradient follows cursor
+  ============================================ */
+.btn-aurora {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-aurora::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 300px;
+  height: 150px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(139, 92, 246, 0.3) 0%,
+    rgba(168, 85, 247, 0.15) 40%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%) rotate(-10deg);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  filter: blur(20px);
+}
+
+.btn-aurora:hover::before {
+  opacity: 1;
+}
+
+.btn-aurora:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 7: Particle Trail
+  Small particles follow cursor
+  ============================================ */
+.btn-particle {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-particle::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, transparent 60%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  filter: blur(4px);
+}
+
+.btn-particle:hover::before {
+  opacity: 1;
+}
+
+.btn-particle:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 8: Scanline Sweep
+  Horizontal scanline follows cursor
+  ============================================ */
+.btn-scanline {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-scanline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--x, 0%);
+  width: 100px%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 92, 246, 0.1) 45%,
+    rgba(139, 92, 246, 0.3) 50%,
+    rgba(139, 92, 246, 0.1) 55%,
+    transparent 100%
+  );
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.btn-scanline:hover::before {
+  opacity: 1;
+  left: var(--x, 0%);
+}
+
+.btn-scanline:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 9: Corner Glow
+  Glow emanates from corner cursor is near
+  ============================================ */
+.btn-corner-glow {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-corner-glow::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 0);
+  left: var(--x, 0);
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.btn-corner-glow:hover::before {
+  opacity: 1;
+}
+
+.btn-corner-glow:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* ============================================
+  VARIATION 10: Liquid Fill
+  Button fills with liquid from cursor position
+  ============================================ */
+.btn-liquid {
+  position: relative;
+  padding: 10px 24px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.4s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+
+.btn-liquid::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 80%);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.btn-liquid:hover::before {
+  width: 400px;
+  height: 400px;
+}
+
+.btn-liquid:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent-500);
+}
+
+/* Script for interactivity */
+<script>
+function initGlareEffect(btnClass, effectType) {
+  document.querySelectorAll(btnClass).forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const xPercent = (x / rect.width) * 100;
+      const yPercent = (y / rect.height) * 100;
+      
+      btn.style.setProperty('--x', `${xPercent}%`);
+      btn.style.setProperty('--y', `${yPercent}%`);
+      
+      if (effectType === 'scanline') {
+        btn.style.setProperty('--x', `${xPercent}%`);
+      }
+      
+      if (effectType === 'border-draw') {
+        const angle = Math.atan2(y - rect.height/2, x - rect.width/2) * 180 / Math.PI + 180;
+        btn.style.setProperty('--angle', `${angle}deg`);
+      }
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+      btn.style.setProperty('--x', '50%');
+      btn.style.setProperty('--y', '50%');
+    });
+  });
+}
+
+// Initialize all effects
+initGlareEffect('.btn-radial-glow', 'radial');
+initGlareEffect('.btn-edge-glow', 'edge');
+initGlareEffect('.btn-shimmer', 'shimmer');
+initGlareEffect('.btn-spotlight', 'spotlight');
+initGlareEffect('.btn-border-draw', 'border-draw');
+initGlareEffect('.btn-aurora', 'aurora');
+initGlareEffect('.btn-particle', 'particle');
+initGlareEffect('.btn-scanline', 'scanline');
+initGlareEffect('.btn-corner-glow', 'corner');
+initGlareEffect('.btn-liquid', 'liquid');
+</script>
+</head>
+<body>
+<h1>Button Glare Effects — Cursor Following</h1>
+
+<div class="section">
+  <h2>Radial Gradient Follow</h2>
+  <p class="desc">Subtle glow expands from cursor position</p>
+  <div class="card">
+    <button class="btn-radial-glow">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Edge Glow Follow</h2>
+  <p class="desc">Light follows cursor along border edge</p>
+  <div class="card">
+    <button class="btn-edge-glow">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Shimmer Sweep</h2>
+  <p class="desc">Diagonal shimmer band follows cursor</p>
+  <div class="card">
+    <button class="btn-shimmer">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Spotlight Fill</h2>
+  <p class="desc">Circular fill expands from cursor</p>
+  <div class="card">
+    <button class="btn-spotlight">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Border Draw + Rotate</h2>
+  <p class="desc">Border draws with rotating gradient</p>
+  <div class="card">
+    <button class="btn-border-draw">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Aurora Gradient</h2>
+  <p class="desc">Soft aurora-like gradient follows cursor</p>
+  <div class="card">
+    <button class="btn-aurora">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Particle Trail</h2>
+  <p class="desc">Soft particle follows cursor</p>
+  <div class="card">
+    <button class="btn-particle">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Scanline Sweep</h2>
+  <p class="desc">Horizontal scanline follows cursor</p>
+  <div class="card">
+    <button class="btn-scanline">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Corner Glow</h2>
+  <p class="desc">Glow emanates from corner near cursor</p>
+  <div class="card">
+    <button class="btn-corner-glow">Logout</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Liquid Fill</h2>
+  <p class="desc">Button fills with liquid from cursor</p>
+  <div class="card">
+    <button class="btn-liquid">Logout</button>
+  </div>
+</div>
+
+</body>
+</html>
