@@ -28,8 +28,6 @@ interface Config {
   wobbleSpeed: number;
   morphSpeed: number;
   baseHue: number;
-  slowTint: number;
-  fastTint: number;
   baseSaturation: number;
   baseLightness: number;
   blurRadius: number;
@@ -39,6 +37,9 @@ interface Config {
   depthDriftSpeed: number;
   depthOscillation: number;
   blobRepulsion: BlobRepulsionConfig;
+  // Color shift parameters for dynamic coloring
+  hueShiftRange: number; // How much hue can shift based on speed (e.g., 15 = ±15°)
+  lightnessShiftRange: number; // How much lightness can shift (e.g., 10 = ±10%)
 }
 
 // Offset configuration for wobble effect
@@ -58,8 +59,6 @@ class FluidBlob {
   vy: number;
   radius: number;
   points: number;
-  hue: number;
-  targetHue: number;
   driftX: number;
   driftY: number;
   rotationSpeed: number;
@@ -85,12 +84,10 @@ class FluidBlob {
     this.originY = y;
     this.vx = 0;
     this.vy = 0;
-    this.radius = radius;
-    this.points = config.pointsPerBlob;
-    this.hue = config.baseHue;
-    this.targetHue = config.baseHue;
+  this.radius = radius;
+  this.points = config.pointsPerBlob;
 
-    // Drift motion for organic movement
+  // Drift motion for organic movement
     this.driftX = (Math.random() - 0.5) * 0.06;
     this.driftY = (Math.random() - 0.5) * 0.06;
 
@@ -117,15 +114,9 @@ class FluidBlob {
     this.baseDepth = this.depth;
   }
 
-  update(time: number): void {
-    const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-
-    // Update color based on speed
-    this.targetHue = this.mapSpeedToTint(speed);
-    this.hue = this.hue + (this.targetHue - this.hue) * 0.03;
-
-    // Depth drift - blobs slowly oscillate in Z-space
-    this.depthPhase += this.config.depthDriftSpeed;
+update(time: number): void {
+  // Depth drift - blobs slowly oscillate in Z-space
+  this.depthPhase += this.config.depthDriftSpeed;
     const depthOscillation = Math.sin(this.depthPhase) * this.config.depthOscillation;
     this.depth = Math.max(0, Math.min(1, this.baseDepth + depthOscillation));
 
@@ -160,21 +151,38 @@ class FluidBlob {
     this.y += this.vy;
   }
 
-  private mapSpeedToTint(speed: number): number {
-    if (speed < 0.5) {
-      return this.config.baseHue + this.config.slowTint;
-    } else if (speed < 2) {
-      const t = (speed - 0.5) / 1.5;
-      return this.config.baseHue + this.config.slowTint - this.config.slowTint * t;
-    } else {
-      const t = Math.min((speed - 2) / 4, 1);
-      return this.config.baseHue + this.config.fastTint * t;
-    }
-  }
+  // Calculate dynamic hue based on blob speed
+  // Faster movement = hue shifts toward warmer colors (red/orange range)
+  private calculateDynamicHue(speed: number, maxSpeed: number = 3): number {
+  // Normalize speed to 0-1 range
+  const normalizedSpeed = Math.min(speed / maxSpeed, 1);
+  
+  // Shift hue: faster = more shift (up to hueShiftRange)
+  // Positive shift moves toward warmer colors
+  const hueShift = normalizedSpeed * this.config.hueShiftRange;
+  
+  return this.config.baseHue + hueShift;
+}
 
-  draw(ctx: CanvasRenderingContext2D, time: number): void {
-    const normalizedHue = ((this.hue % 360) + 360) % 360;
-    const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+// Calculate dynamic lightness based on blob speed
+// Faster movement = brighter (higher lightness)
+private calculateDynamicLightness(speed: number, maxSpeed: number = 3): number {
+  // Normalize speed to 0-1 range
+  const normalizedSpeed = Math.min(speed / maxSpeed, 1);
+  
+  // Shift lightness: faster = brighter (up to lightnessShiftRange)
+  const lightnessShift = normalizedSpeed * this.config.lightnessShiftRange;
+  
+  return this.config.baseLightness + lightnessShift;
+}
+
+draw(ctx: CanvasRenderingContext2D, time: number): void {
+  const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+  
+  // Calculate dynamic hue and lightness based on speed
+  const dynamicHue = this.calculateDynamicHue(speed);
+  const dynamicLightness = this.calculateDynamicLightness(speed);
+  const normalizedHue = ((dynamicHue % 360) + 360) % 360;
 
     // Dynamic blur calculation
     const depthBlur = this.config.minBlur + this.depth * (this.config.maxBlur - this.config.minBlur);
@@ -229,32 +237,33 @@ class FluidBlob {
 
     ctx.closePath();
 
-    // Radial gradient for soft, fluid look
-    const gradient = ctx.createRadialGradient(
-      this.x,
-      this.y,
-      0,
-      this.x,
-      this.y,
-      this.radius * 2
-    );
+// Radial gradient for soft, fluid look
+const gradient = ctx.createRadialGradient(
+  this.x,
+  this.y,
+  0,
+  this.x,
+  this.y,
+  this.radius * 2
+);
 
-    gradient.addColorStop(
-      0,
-      `hsla(${normalizedHue}, ${this.config.baseSaturation + 15}%, ${this.config.baseLightness + 15}%, 0.9)`
-    );
-    gradient.addColorStop(
-      0.3,
-      `hsla(${normalizedHue}, ${this.config.baseSaturation + 5}%, ${this.config.baseLightness + 5}%, 0.65)`
-    );
-    gradient.addColorStop(
-      0.6,
-      `hsla(${normalizedHue}, ${this.config.baseSaturation}%, ${this.config.baseLightness}%, 0.35)`
-    );
-    gradient.addColorStop(
-      1,
-      `hsla(${normalizedHue}, ${this.config.baseSaturation - 10}%, ${this.config.baseLightness - 10}%, 0)`
-    );
+// Use dynamic lightness for core, static offsets for gradient layers
+gradient.addColorStop(
+  0,
+  `hsla(${normalizedHue}, ${this.config.baseSaturation + 15}%, ${dynamicLightness + 15}%, 0.9)`
+);
+gradient.addColorStop(
+  0.3,
+  `hsla(${normalizedHue}, ${this.config.baseSaturation + 5}%, ${dynamicLightness + 5}%, 0.65)`
+);
+gradient.addColorStop(
+  0.6,
+  `hsla(${normalizedHue}, ${this.config.baseSaturation}%, ${dynamicLightness}%, 0.35)`
+);
+gradient.addColorStop(
+  1,
+  `hsla(${normalizedHue}, ${this.config.baseSaturation - 10}%, ${dynamicLightness - 10}%, 0)`
+);
 
     ctx.fillStyle = gradient;
     ctx.fill();
@@ -281,13 +290,11 @@ const CONFIG: Config = {
   wobbleSpeed: 0.0001,
   morphSpeed: 0.00004,
   baseHue: 280,
-    slowTint: -15,
-    fastTint: 8,
   baseSaturation: 60,
   baseLightness: 55,
   blurRadius: 30,
-    minBlur: 25,
-    maxBlur: 100,
+  minBlur: 25,
+  maxBlur: 100,
   motionBlurFactor: 8,
   depthDriftSpeed: 0.00008,
   depthOscillation: 0.15,
@@ -297,6 +304,9 @@ const CONFIG: Config = {
     strength: 0.02,
     maxDistance: 600,
   },
+  // Color shift: hue shifts ±15°, lightness shifts ±10% based on speed
+  hueShiftRange: 15,
+  lightnessShiftRange: 10,
 };
 
 // Blob position presets

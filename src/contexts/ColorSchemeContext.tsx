@@ -33,6 +33,11 @@ interface ColorScheme {
     accent400: string;
     accentSoft: string;
   };
+  blob: {
+    baseHue: number; // Hue for blob (0-360)
+    hueShiftRange: number; // How much hue shifts with speed (± degrees)
+    lightnessShiftRange: number; // How much lightness shifts with speed (± %)
+  };
 }
 
 const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
@@ -57,6 +62,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent400: '#22d3ee',
       accentSoft: 'rgba(6, 182, 212, 0.15)',
     },
+    blob: {
+      baseHue: 185, // Cyan
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
+    },
   },
   'forest-mist': {
     id: 'forest-mist',
@@ -78,6 +88,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent700: '#047857',
       accent400: '#34d399',
       accentSoft: 'rgba(16, 185, 129, 0.15)',
+    },
+    blob: {
+      baseHue: 145, // Green
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
     },
   },
   'amber-glow': {
@@ -101,6 +116,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent400: '#fbbf24',
       accentSoft: 'rgba(245, 158, 11, 0.15)',
     },
+    blob: {
+      baseHue: 38, // Amber
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
+    },
   },
   'midnight-violet': {
     id: 'midnight-violet',
@@ -122,6 +142,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent700: '#6d28d9',
       accent400: '#a78bfa',
       accentSoft: 'rgba(139, 92, 246, 0.15)',
+    },
+    blob: {
+      baseHue: 280, // Purple
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
     },
   },
   'deep-ocean': {
@@ -145,6 +170,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent400: '#60a5fa',
       accentSoft: 'rgba(59, 130, 246, 0.15)',
     },
+    blob: {
+      baseHue: 215, // Blue
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
+    },
   },
   'slate-storm': {
     id: 'slate-storm',
@@ -166,6 +196,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent700: '#334155',
       accent400: '#94a3b8',
       accentSoft: 'rgba(100, 116, 139, 0.15)',
+    },
+    blob: {
+      baseHue: 220, // Slate blue
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
     },
   },
   'rose-quartz': {
@@ -189,6 +224,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent400: '#fb7185',
       accentSoft: 'rgba(244, 63, 94, 0.15)',
     },
+    blob: {
+      baseHue: 350, // Rose
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
+    },
   },
   'purple-haze': {
     id: 'purple-haze',
@@ -210,6 +250,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent700: '#7c3aed',
       accent400: '#c084fc',
       accentSoft: 'rgba(168, 85, 247, 0.15)',
+    },
+    blob: {
+      baseHue: 300, // Purple
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
     },
   },
   'crimson-tide': {
@@ -233,6 +278,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent400: '#f87171',
       accentSoft: 'rgba(220, 38, 38, 0.15)',
     },
+    blob: {
+      baseHue: 0, // Red
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
+    },
   },
   'copper-wire': {
     id: 'copper-wire',
@@ -254,6 +304,11 @@ const COLOR_SCHEMES: Record<ColorSchemeId, ColorScheme> = {
       accent700: '#7c2d12',
       accent400: '#ea580c',
       accentSoft: 'rgba(194, 65, 12, 0.15)',
+    },
+    blob: {
+      baseHue: 20, // Orange
+      hueShiftRange: 15,
+      lightnessShiftRange: 10,
     },
   },
 };
