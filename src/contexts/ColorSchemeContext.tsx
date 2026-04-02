@@ -366,6 +366,8 @@ function StyleVars({ scheme }: { scheme: ColorScheme }) {
         --color-accent-600: ${scheme.colors.accent600};
         --color-accent-700: ${scheme.colors.accent700};
         --color-accent-400: ${scheme.colors.accent400};
+        /* High-speed color for button glow effect */
+        --glow-color: ${scheme.colors.accent600};
       }
     `}</style>
   );

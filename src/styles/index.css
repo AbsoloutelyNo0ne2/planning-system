@@ -565,7 +565,8 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Radial Glow Effect for buttons (Effect 1 - Logout button) */
+/* Radial Glow Effect for buttons (cursor-following glow)
+   Uses theme's accent color for the glow */
 button.radial-glow::before {
   content: '';
   position: absolute;
@@ -573,7 +574,7 @@ button.radial-glow::before {
   left: var(--x, 50%);
   width: 150px;
   height: 150px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--glow-color, rgba(139, 92, 246, 0.15)) 0%, transparent 70%);
   transform: translate(-50%, -50%) scale(0);
   transition: transform 0.4s ease;
   z-index: -1;
