@@ -184,18 +184,18 @@ export function LoginScreen(): JSX.Element {
             </div>
           )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading || !passphrase.trim()}
-            className="w-full py-3 px-6 font-medium text-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block hover:-translate-y-px"
-            style={{
-              background: 'linear-gradient(135deg, var(--color-accent-500), #9333ea)',
-              color: '#ffffff',
-              borderRadius: '4px',
-              boxShadow: isLoading || !passphrase.trim() ? 'none' : '0 4px 20px rgba(168, 85, 247, 0.3)',
-            }}
-          >
+{/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading || !passphrase.trim()}
+          className="w-full py-3 px-6 font-medium text-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block hover:-translate-y-px"
+          style={{
+            background: `linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600))`,
+            color: '#ffffff',
+            borderRadius: '4px',
+            boxShadow: isLoading || !passphrase.trim() ? 'none' : `0 4px 20px ${scheme?.colors.accentSoft || 'rgba(168, 85, 247, 0.3)'}`,
+          }}
+        >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -221,31 +221,31 @@ export function LoginScreen(): JSX.Element {
             )}
           </button>
 
-          {/* Mobile Touch-Friendly Buttons */}
-          <div className="flex gap-4 sm:hidden">
-            <button
-              type="button"
-              onClick={() => setPassphrase('')}
-              className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150"
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--color-text-muted)',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '4px',
-              }}
-            >
-              Clear
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading || !passphrase.trim()}
-              className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                background: 'linear-gradient(135deg, var(--color-accent-500), #9333ea)',
-                color: '#ffffff',
-                borderRadius: '4px',
-              }}
-            >
+{/* Mobile Touch-Friendly Buttons */}
+        <div className="flex gap-4 sm:hidden">
+          <button
+            type="button"
+            onClick={() => setPassphrase('')}
+            className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-muted)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '4px',
+            }}
+          >
+            Clear
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading || !passphrase.trim()}
+            className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              background: `linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600))`,
+              color: '#ffffff',
+              borderRadius: '4px',
+            }}
+          >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">

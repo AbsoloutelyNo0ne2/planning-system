@@ -200,19 +200,19 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
           />
         </div>
 
-        {/* Content on top - pointer events enabled for interactive elements */}
-        <div className="relative z-10 pointer-events-auto">
-<div className="flex items-center justify-between mb-4">
-<h2
-className="text-sm font-medium"
-style={{ color: 'var(--color-text-secondary)' }}
->
-Agents
-</h2>
-<div className="flex gap-1">
-<button
-onClick={handleAddActor}
-className="px-2 py-1 text-xs rounded font-medium transition-all"
+{/* Content on top - pointer events none by default, interactive elements have pointer-events-auto */}
+        <div className="relative z-10 pointer-events-none">
+          <div className="flex items-center justify-between mb-4">
+            <h2
+              className="text-sm font-medium"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              Agents
+            </h2>
+            <div className="flex gap-1">
+              <button
+                onClick={handleAddActor}
+                className="px-2 py-1 text-xs rounded font-medium transition-all pointer-events-auto"
 style={{
 backgroundColor: 'var(--color-bg-elevated)',
 color: 'var(--color-text-primary)',
@@ -225,11 +225,11 @@ onMouseLeave={(e) => {
 e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
 }}
 >
-+Add
-</button>
-<button
-onClick={handleRemoveActor}
-className="px-2 py-1 text-xs rounded font-medium transition-all"
+              +Add
+              </button>
+              <button
+                onClick={handleRemoveActor}
+                className="px-2 py-1 text-xs rounded font-medium transition-all pointer-events-auto"
 style={{
 backgroundColor: 'var(--color-bg-elevated)',
 color: 'var(--color-error-text)',
