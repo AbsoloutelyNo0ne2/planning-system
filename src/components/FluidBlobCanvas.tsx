@@ -5,6 +5,7 @@ interface FluidBlobCanvasProps {
   scale?: number; // Zoom factor (e.g., 0.6 = 60% size)
   offsetY?: number; // Offset in pixels (e.g., 150 = shift down 150px)
   positionsPreset?: 'default' | 'agents'; // Which blob positions to use
+  baseHue?: number; // Base hue for blob colors (0-360)
 }
 
 // Configuration types
@@ -39,7 +40,7 @@ interface Config {
   blobRepulsion: BlobRepulsionConfig;
   // Color shift parameters for dynamic coloring
   hueShiftRange: number; // How much hue can shift based on speed (e.g., 15 = ±15°)
-  lightnessShiftRange: number; // How much lightness can shift (e.g., 10 = ±10%)
+  saturationShiftRange: number; // How much saturation can shift based on speed
 }
 
 // Offset configuration for wobble effect
@@ -151,37 +152,36 @@ update(time: number): void {
     this.y += this.vy;
   }
 
-  // Calculate dynamic hue based on blob speed
-  // Faster movement = hue shifts toward warmer colors (red/orange range)
-  private calculateDynamicHue(speed: number, maxSpeed: number = 3): number {
+// Calculate dynamic hue based on blob speed
+// Faster movement = hue shifts slightly (warmer)
+private calculateDynamicHue(speed: number, maxSpeed: number = 3): number {
   // Normalize speed to 0-1 range
   const normalizedSpeed = Math.min(speed / maxSpeed, 1);
   
   // Shift hue: faster = more shift (up to hueShiftRange)
-  // Positive shift moves toward warmer colors
   const hueShift = normalizedSpeed * this.config.hueShiftRange;
   
   return this.config.baseHue + hueShift;
 }
 
-// Calculate dynamic lightness based on blob speed
-// Faster movement = brighter (higher lightness)
-private calculateDynamicLightness(speed: number, maxSpeed: number = 3): number {
+// Calculate dynamic saturation based on blob speed
+// Faster movement = more saturated (vibrant)
+private calculateDynamicSaturation(speed: number, maxSpeed: number = 3): number {
   // Normalize speed to 0-1 range
   const normalizedSpeed = Math.min(speed / maxSpeed, 1);
   
-  // Shift lightness: faster = brighter (up to lightnessShiftRange)
-  const lightnessShift = normalizedSpeed * this.config.lightnessShiftRange;
+  // Shift saturation: faster = more saturated (up to saturationShiftRange)
+  const saturationShift = normalizedSpeed * this.config.saturationShiftRange;
   
-  return this.config.baseLightness + lightnessShift;
+  return this.config.baseSaturation + saturationShift;
 }
 
 draw(ctx: CanvasRenderingContext2D, time: number): void {
   const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
   
-  // Calculate dynamic hue and lightness based on speed
+  // Calculate dynamic hue and saturation based on speed
   const dynamicHue = this.calculateDynamicHue(speed);
-  const dynamicLightness = this.calculateDynamicLightness(speed);
+  const dynamicSaturation = this.calculateDynamicSaturation(speed);
   const normalizedHue = ((dynamicHue % 360) + 360) % 360;
 
     // Dynamic blur calculation
@@ -247,22 +247,22 @@ const gradient = ctx.createRadialGradient(
   this.radius * 2
 );
 
-// Use dynamic lightness for core, static offsets for gradient layers
+// Use dynamic saturation for the blob color
 gradient.addColorStop(
   0,
-  `hsla(${normalizedHue}, ${this.config.baseSaturation + 15}%, ${dynamicLightness + 15}%, 0.9)`
+  `hsla(${normalizedHue}, ${dynamicSaturation + 15}%, ${this.config.baseLightness + 15}%, 0.9)`
 );
 gradient.addColorStop(
   0.3,
-  `hsla(${normalizedHue}, ${this.config.baseSaturation + 5}%, ${dynamicLightness + 5}%, 0.65)`
+  `hsla(${normalizedHue}, ${dynamicSaturation + 5}%, ${this.config.baseLightness + 5}%, 0.65)`
 );
 gradient.addColorStop(
   0.6,
-  `hsla(${normalizedHue}, ${this.config.baseSaturation}%, ${dynamicLightness}%, 0.35)`
+  `hsla(${normalizedHue}, ${dynamicSaturation}%, ${this.config.baseLightness}%, 0.35)`
 );
 gradient.addColorStop(
   1,
-  `hsla(${normalizedHue}, ${this.config.baseSaturation - 10}%, ${dynamicLightness - 10}%, 0)`
+  `hsla(${normalizedHue}, ${dynamicSaturation - 10}%, ${this.config.baseLightness - 10}%, 0)`
 );
 
     ctx.fillStyle = gradient;
@@ -304,9 +304,9 @@ const CONFIG: Config = {
     strength: 0.02,
     maxDistance: 600,
   },
-  // Color shift: hue shifts ±15°, lightness shifts ±10% based on speed
+  // Color shift: hue shifts ±15°, saturation shifts ±10% based on speed
   hueShiftRange: 15,
-  lightnessShiftRange: 10,
+  saturationShiftRange: 10,
 };
 
 // Blob position presets
@@ -327,7 +327,7 @@ const BLOB_POSITIONS_AGENTS = [
   { radius: 280, x: 0.35, y: 1.00 },
 ];
 
-const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1, offsetY = 0, positionsPreset = 'default' }) => {
+const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1, offsetY = 0, positionsPreset = 'default', baseHue }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const blobsRef = useRef<FluidBlob[]>([]);
   const cursorRef = useRef({
@@ -345,12 +345,19 @@ const FluidBlobCanvas: React.FC<FluidBlobCanvasProps> = ({ className, scale = 1,
   // Initialize blobs
   const initBlobs = useCallback((width: number, height: number) => {
     const positions = positionsPreset === 'agents' ? BLOB_POSITIONS_AGENTS : BLOB_POSITIONS_DEFAULT;
+    
+    // Create config with the theme's baseHue
+    const blobConfig: Config = {
+      ...CONFIG,
+      baseHue: baseHue ?? CONFIG.baseHue,
+    };
+    
     blobsRef.current = positions.map((pos) => {
       const x = pos.x * width;
       const y = pos.y * height;
-      return new FluidBlob(x, y, pos.radius, CONFIG, width, height);
+      return new FluidBlob(x, y, pos.radius, blobConfig, width, height);
     });
-  }, [positionsPreset]);
+  }, [positionsPreset, baseHue]);
 
   // Apply cursor force to blobs
   const applyCursorForce = useCallback(() => {

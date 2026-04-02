@@ -25,7 +25,7 @@ import { useAuth } from '../contexts/AuthContext';
 import type { UserType } from '../types/auth';
 import FluidBlobCanvas from './FluidBlobCanvas';
 import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
-import { useColorScheme } from '../contexts/ColorSchemeContext';
+import { useColorScheme, COLOR_SCHEMES } from '../contexts/ColorSchemeContext';
 
 export type ViewMode = 'input' | 'plan';
 
@@ -34,12 +34,16 @@ export interface AppProps {
 }
 
 export function App({ userType }: AppProps): JSX.Element {
-const { logout } = useAuth();
-const { currentScheme, setScheme } = useColorScheme();
-const [viewMode, setViewMode] = useState<ViewMode>('input');
-const [editingTask, setEditingTask] = useState<Task | null>(null);
-const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
+  const { logout } = useAuth();
+  const { currentScheme, setScheme } = useColorScheme();
+  const [viewMode, setViewMode] = useState<ViewMode>('input');
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
+
+  // Get the base hue from the current color scheme
+  const scheme = COLOR_SCHEMES[currentScheme.id as keyof typeof COLOR_SCHEMES];
+  const baseHue = scheme?.blob?.baseHue ?? 280;
 
 const { loadFromStorage, updateTask, markTaskSent, setUserType, getSortedTasks } = useTaskStore();
 
@@ -186,9 +190,9 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
           backgroundColor: 'var(--color-bg-surface)'
         }}
       >
-      {/* Fluid blob background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <FluidBlobCanvas positionsPreset="agents" />
+{/* Fluid blob background */}
+<div className="absolute inset-0 overflow-hidden">
+  <FluidBlobCanvas positionsPreset="agents" baseHue={baseHue} />
         {/* Dark overlay for readability */}
         <div
           className="absolute inset-0 pointer-events-none"
