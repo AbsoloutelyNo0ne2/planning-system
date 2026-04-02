@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blob Canvas - Color Schemes</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, sans-serif;
+  background: #0a0a0f;
+  color: #f1f5f9;
+  padding: 40px 20px;
+}
+h1 { text-align: center; margin-bottom: 40px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #2a2a3e;
+}
+.card-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid;
+}
+.card-header h3 { font-size: 1rem; }
+.select-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 15, 26, 0.5);
+  pointer-events: none;
+}
+.swatches {
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid;
+}
+.swatch {
+  flex: 1;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+</style>
+</head>
+<body>
+<h1>Blob Canvas — 10 Color Schemes</h1>
+<div class="grid" id="grid"></div>
+
+<script>
+// Color schemes with blob colors
+const SCHEMES = [
+  {
+    id: 'cyan-night',
+    name: 'Cyan Night',
+    bg: '#050a0f',
+    surface: '#0a141c',
+    border: '#1f3d4a',
+    text: '#ecfeff',
+    primary: '#06b6d4',
+    primarySoft: 'rgba(6, 182, 212, 0.15)',
+    blobHue: 185, // Cyan
+    blobSlowTint: -10,
+    blobFastTint: 10,
+  },
+  {
+    id: 'forest-mist',
+    name: 'Forest Mist',
+    bg: '#050a08',
+    surface: '#0a1410',
+    border: '#1f3d2e',
+    text: '#ecfdf5',
+    primary: '#10b981',
+    primarySoft: 'rgba(16, 185, 129, 0.15)',
+    blobHue: 145, // Green
+    blobSlowTint: -15,
+    blobFastTint: 8,
+  },
+  {
+    id: 'amber-glow',
+    name: 'Amber Glow',
+    bg: '#0a0805',
+    surface: '#14100a',
+    border: '#3d2e1f',
+    text: '#fffbeb',
+    primary: '#f59e0b',
+    primarySoft: 'rgba(245, 158, 11, 0.15)',
+    blobHue: 38, // Amber
+    blobSlowTint: -8,
+    blobFastTint: 12,
+  },
+  {
+    id: 'midnight-violet',
+    name: 'Midnight Violet',
+    bg: '#0a0a0f',
+    surface: '#12121a',
+    border: '#2a2a3e',
+    text: '#f1f5f9',
+    primary: '#8b5cf6',
+    primarySoft: 'rgba(139, 92, 246, 0.15)',
+    blobHue: 280, // Purple
+    blobSlowTint: -15,
+    blobFastTint: 8,
+  },
+  {
+    id: 'deep-ocean',
+    name: 'Deep Ocean',
+    bg: '#050a14',
+    surface: '#0a1424',
+    border: '#1e3a5f',
+    text: '#e2e8f0',
+    primary: '#3b82f6',
+    primarySoft: 'rgba(59, 130, 246, 0.15)',
+    blobHue: 215, // Blue
+    blobSlowTint: -10,
+    blobFastTint: 5,
+  },
+  {
+    id: 'slate-storm',
+    name: 'Slate Storm',
+    bg: '#0a0c0f',
+    surface: '#12161c',
+    border: '#2d3748',
+    text: '#f1f5f9',
+    primary: '#64748b',
+    primarySoft: 'rgba(100, 116, 139, 0.15)',
+    blobHue: 220, // Slate blue
+    blobSlowTint: -5,
+    blobFastTint: 0,
+  },
+  {
+    id: 'rose-quartz',
+    name: 'Rose Quartz',
+    bg: '#0a0508',
+    surface: '#140a11',
+    border: '#3d1f2a',
+    text: '#fff1f3',
+    primary: '#f43f5e',
+    primarySoft: 'rgba(244, 63, 94, 0.15)',
+    blobHue: 350, // Rose
+    blobSlowTint: -5,
+    blobFastTint: 15,
+  },
+  {
+    id: 'purple-haze',
+    name: 'Purple Haze',
+    bg: '#0a0514',
+    surface: '#120a1c',
+    border: '#3d1f4a',
+    text: '#faf5ff',
+    primary: '#a855f7',
+    primarySoft: 'rgba(168, 85, 247, 0.15)',
+    blobHue: 300, // Purple
+    blobSlowTint: -12,
+    blobFastTint: 10,
+  },
+  {
+    id: 'crimson-tide',
+    name: 'Crimson Tide',
+    bg: '#0a0505',
+    surface: '#140a0a',
+    border: '#3d1f1f',
+    text: '#fef2f2',
+    primary: '#dc2626',
+    primarySoft: 'rgba(220, 38, 38, 0.15)',
+    blobHue: 0, // Red
+    blobSlowTint: 0,
+    blobFastTint: 20,
+  },
+  {
+    id: 'copper-wire',
+    name: 'Copper Wire',
+    bg: '#0a0806',
+    surface: '#14100a',
+    border: '#3d2a1f',
+    text: '#fffbf5',
+    primary: '#c2410c',
+    primarySoft: 'rgba(194, 65, 12, 0.15)',
+    blobHue: 20, // Orange
+    blobSlowTint: 5,
+    blobFastTint: 15,
+  },
+];
+
+const BLOB_POSITIONS = [
+  { radius: 350, x: 0.25, y: 0.65 },
+  { radius: 450, x: 0.65, y: 0.93 },
+  { radius: 300, x: 0.40, y: 0.77 },
+  { radius: 400, x: 0.75, y: 1.00 },
+  { radius: 280, x: 0.35, y: 1.00 },
+];
+
+class FluidBlob {
+  constructor(x, y, radius, config) {
+    this.x = x;
+    this.y = y;
+    this.originX = x;
+    this.originY = y;
+    this.vx = 0;
+    this.vy = 0;
+    this.radius = radius;
+    this.points = config.pointsPerBlob;
+    this.hue = config.baseHue;
+    this.depth = Math.random();
+    this.depthPhase = Math.random() * Math.PI * 2;
+    this.baseDepth = this.depth;
+
+    this.offsets = [];
+    for (let i = 0; i < this.points; i++) {
+      this.offsets.push({
+        amplitude: Math.random() * 40 + 20,
+        frequency: Math.random() * 0.005 + 0.0025,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    this.rotationSpeed = (Math.random() - 0.5) * 0.00006;
+    this.phase = Math.random() * Math.PI * 2;
+    this.morphPhase = Math.random() * Math.PI * 2;
+  }
+
+  draw(ctx, time, config) {
+    const depthBlur = config.minBlur + this.depth * (config.maxBlur - config.minBlur);
+
+    ctx.save();
+    ctx.filter = `blur(${depthBlur}px)`;
+
+    ctx.beginPath();
+
+    for (let i = 0; i <= this.points; i++) {
+      const angle = (i / this.points) * Math.PI * 2 + time * this.rotationSpeed;
+      const offset = this.offsets[i % this.points];
+
+      const wobble1 = Math.sin(time * offset.frequency + offset.phase) * offset.amplitude;
+      const wobble2 = Math.cos(time * offset.frequency * 0.8 + offset.phase * 0.7) * offset.amplitude * 0.3;
+      const morphWobble = Math.sin(time * config.morphSpeed + this.morphPhase + i * 0.5) * 15;
+
+      const r = this.radius + wobble1 + wobble2 + morphWobble;
+      const x = this.x + Math.cos(angle) * r;
+      const y = this.y + Math.sin(angle) * r;
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        const prevAngle = ((i - 1) / this.points) * Math.PI * 2 + time * this.rotationSpeed;
+        const prevOffset = this.offsets[(i - 1) % this.points];
+        const prevWobble1 = Math.sin(time * prevOffset.frequency + prevOffset.phase) * prevOffset.amplitude;
+        const prevWobble2 = Math.cos(time * prevOffset.frequency * 0.8 + prevOffset.phase * 0.7) * prevOffset.amplitude * 0.3;
+        const prevMorphWobble = Math.sin(time * config.morphSpeed + this.morphPhase + (i - 1) * 0.5) * 15;
+        const prevR = this.radius + prevWobble1 + prevWobble2 + prevMorphWobble;
+
+        const cp1x = this.x + Math.cos(prevAngle + 0.3) * prevR * 1.1;
+        const cp1y = this.y + Math.sin(prevAngle + 0.3) * prevR * 1.1;
+
+        ctx.quadraticCurveTo(cp1x, cp1y, x, y);
+      }
+    }
+
+    ctx.closePath();
+
+    const gradient = ctx.createRadialGradient(
+      this.x, this.y, 0,
+      this.x, this.y, this.radius * 2
+    );
+
+    const normalizedHue = ((this.hue % 360) + 360) % 360;
+    gradient.addColorStop(0, `hsla(${normalizedHue}, ${config.baseSaturation + 15}%, ${config.baseLightness + 15}%, 0.9)`);
+    gradient.addColorStop(0.3, `hsla(${normalizedHue}, ${config.baseSaturation + 5}%, ${config.baseLightness + 5}%, 0.65)`);
+    gradient.addColorStop(0.6, `hsla(${normalizedHue}, ${config.baseSaturation}%, ${config.baseLightness}%, 0.35)`);
+    gradient.addColorStop(1, `hsla(${normalizedHue}, ${config.baseSaturation - 10}%, ${config.baseLightness - 10}%, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function initBlobCanvas(canvasId, scheme) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const blobs = [];
+
+  // Resize canvas
+  const container = canvas.parentElement;
+  canvas.width = container.offsetWidth;
+  canvas.height = container.offsetHeight;
+
+  // Config for this scheme
+  const CONFIG = {
+    numBlobs: 5,
+    pointsPerBlob: 8,
+    minRadius: 200,
+    maxRadius: 500,
+    baseHue: scheme.blobHue,
+    slowTint: scheme.blobSlowTint,
+    fastTint: scheme.blobFastTint,
+    baseSaturation: 60,
+    baseLightness: 55,
+    minBlur: 25,
+    maxBlur: 100,
+    wobbleSpeed: 0.0001,
+    morphSpeed: 0.00004,
+    interactionRadius: 150,
+    friction: 0.92,
+    returnForce: 0.996,
+    cursorInfluence: 0.05,
+    repulsionStrength: 0.3,
+  };
+
+  // Initialize blobs
+  BLOB_POSITIONS.forEach(pos => {
+    const x = pos.x * canvas.width;
+    const y = pos.y * canvas.height;
+    blobs.push(new FluidBlob(x, y, pos.radius, CONFIG));
+  });
+
+  // Animation
+  function animate(time) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    blobs.forEach(blob => blob.draw(ctx, time, CONFIG));
+    requestAnimationFrame(animate);
+  }
+  animate(0);
+}
+
+// Render grid
+const grid = document.getElementById('grid');
+SCHEMES.forEach((scheme, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.borderColor = scheme.border;
+  card.innerHTML = `
+    <div class="card-header" style="background: ${scheme.surface}; border-color: ${scheme.border}">
+      <h3 style="color: ${scheme.text}">${i + 1}. ${scheme.name}</h3>
+      <button class="select-btn" style="border-color: ${scheme.border}; color: ${scheme.primary}" onclick="selectScheme('${scheme.id}')">Select</button>
+    </div>
+    <div class="canvas-container" style="background: ${scheme.bg}">
+      <canvas id="canvas-${i}"></canvas>
+      <div class="overlay"></div>
+    </div>
+    <div class="swatches" style="background: ${scheme.surface}; border-color: ${scheme.border}">
+      <div class="swatch" style="background: ${scheme.primary}"></div>
+      <div class="swatch" style="background: ${scheme.bg}"></div>
+      <div class="swatch" style="background: ${scheme.surface}"></div>
+      <div class="swatch" style="background: ${scheme.text}; opacity: 0.5"></div>
+    </div>
+  `;
+  grid.appendChild(card);
+
+  // Init canvas after DOM is ready
+  setTimeout(() => {
+    initBlobCanvas(`canvas-${i}`, scheme);
+  }, i * 100);
+});
+
+function selectScheme(id) {
+  console.log('Selected:', id);
+  // In production, this would set localStorage
+  localStorage.setItem('color-scheme', id);
+  alert(`Selected: ${id}. Refresh main app to apply.`);
+}
+</script>
+</body>
+</html>

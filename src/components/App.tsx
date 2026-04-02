@@ -41,11 +41,13 @@ const [editingTask, setEditingTask] = useState<Task | null>(null);
 const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
 
-  const { tasks, loadFromStorage, updateTask, markTaskSent, setUserType } = useTaskStore();
+const { loadFromStorage, updateTask, markTaskSent, setUserType, getSortedTasks } = useTaskStore();
 
-  const agenticTasks = tasks.filter(t => t.type === 'agentic');
-  const nonAgenticTasks = tasks.filter(t => t.type === 'non-agentic');
-  const hybridTasks = tasks.filter(t => t.type === 'hybrid');
+// Sort all tasks first, then filter by type
+const sortedTasks = getSortedTasks();
+const agenticTasks = sortedTasks.filter(t => t.type === 'agentic');
+const nonAgenticTasks = sortedTasks.filter(t => t.type === 'non-agentic');
+const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
   const { actors, addActor, removeActor, loadFromStorage: loadActors } = useActorStore();
   const { trajectory, setTrajectory, updateTrajectory, loadFromStorage: loadTrajectory, setUserType: setTrajectoryUserType } = useTrajectoryStore();
   const { loadFromStorage: loadLimit } = useLimitStore();
