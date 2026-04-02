@@ -204,20 +204,22 @@ body {
   `;
   controlsContainer.appendChild(globalGroup);
 
-  // Handle slider changes
-  controlsContainer.addEventListener('input', (e) => {
-    if (e.target.type === 'range') {
-      const blobIndex = e.target.dataset.blob;
-      const prop = e.target.dataset.prop;
-      
-      if (blobIndex !== undefined) {
-        positions[blobIndex][prop] = parseFloat(e.target.value);
-        document.getElementById(`blob-${blobIndex}-${prop}`).textContent = parseFloat(e.target.value).toFixed(2);
-      }
-      
-      updateValuesOutput();
-    }
-  });
+ // Handle slider changes
+ controlsContainer.addEventListener('input', (e) => {
+ if (e.target.type === 'range') {
+ const blobIndex = e.target.dataset.blob;
+ const prop = e.target.dataset.prop;
+
+ if (blobIndex !== undefined) {
+ positions[blobIndex][prop] = parseFloat(e.target.value);
+ document.getElementById(`blob-${blobIndex}-${prop}`).textContent = parseFloat(e.target.value).toFixed(2);
+ // Re-initialize blobs with new positions
+ initBlobs();
+ }
+
+ updateValuesOutput();
+ }
+ });
 
   // Global Y offset
   document.getElementById('global-y-offset').addEventListener('input', (e) => {
@@ -229,21 +231,23 @@ body {
       pos.y = Math.min(1, pos.y + offset);
     });
     
-    // Update individual sliders
-    positions.forEach((pos, i) => {
-      const xSlider = document.querySelector(`input[data-blob="${i}"][data-prop="x"]`);
-      const ySlider = document.querySelector(`input[data-blob="${i}"][data-prop="y"]`);
-      const xSpan = document.getElementById(`blob-${i}-x`);
-      const ySpan = document.getElementById(`blob-${i}-y`);
-      
-      if (ySlider) {
-        ySlider.value = pos.y;
-        ySpan.textContent = pos.y.toFixed(2);
-      }
-    });
-    
-    updateValuesOutput();
-  });
+ // Update individual sliders
+ positions.forEach((pos, i) => {
+ const xSlider = document.querySelector(`input[data-blob="${i}"][data-prop="x"]`);
+ const ySlider = document.querySelector(`input[data-blob="${i}"][data-prop="y"]`);
+ const xSpan = document.getElementById(`blob-${i}-x`);
+ const ySpan = document.getElementById(`blob-${i}-y`);
+
+ if (ySlider) {
+ ySlider.value = pos.y;
+ ySpan.textContent = pos.y.toFixed(2);
+ }
+ });
+
+ // Re-initialize blobs with new positions
+ initBlobs();
+ updateValuesOutput();
+ });
 
   function updateValuesOutput() {
     const lines = positions.map((pos, i) => 

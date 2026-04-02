@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prios Color Schemes - 10 Options</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0a0f;
+  color: #f1f5f9;
+  padding: 40px 20px;
+}
+h1 { text-align: center; margin-bottom: 40px; font-size: 2rem; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.option {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid;
+}
+.preview {
+  padding: 20px;
+  min-height: 200px;
+}
+.preview h3 {
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.swatch {
+  height: 48px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.sample-ui {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+.input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid;
+  font-size: 0.85rem;
+  width: 100%;
+}
+/* === COLOR SCHEMES === */
+/* Option 1: Midnight Violet */
+.opt-1 {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --elevated: #1a1a2e;
+  --primary: #8b5cf6;
+  --primary-soft: rgba(139, 92, 246, 0.15);
+  --border: #2a2a3e;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent: #a78bfa;
+}
+/* Option 2: Deep Ocean */
+.opt-2 {
+  --bg: #050a14;
+  --surface: #0a1424;
+  --elevated: #111f3a;
+  --primary: #3b82f6;
+  --primary-soft: rgba(59, 130, 246, 0.15);
+  --border: #1e3a5f;
+  --text: #e2e8f0;
+  --text-secondary: #64748b;
+  --accent: #60a5fa;
+}
+/* Option 3: Crimson Tide */
+.opt-3 {
+  --bg: #0a0505;
+  --surface: #140a0a;
+  --elevated: #241111;
+  --primary: #dc2626;
+  --primary-soft: rgba(220, 38, 38, 0.15);
+  --border: #3d1f1f;
+  --text: #fef2f2;
+  --text-secondary: #a87474;
+  --accent: #f87171;
+}
+/* Option 4: Forest Mist */
+.opt-4 {
+  --bg: #050a08;
+  --surface: #0a1410;
+  --elevated: #112418;
+  --primary: #10b981;
+  --primary-soft: rgba(16, 185, 129, 0.15);
+  --border: #1f3d2e;
+  --text: #ecfdf5;
+  --text-secondary: #6d9c8a;
+  --accent: #34d399;
+}
+/* Option 5: Amber Glow */
+.opt-5 {
+  --bg: #0a0805;
+  --surface: #14100a;
+  --elevated: #241811;
+  --primary: #f59e0b;
+  --primary-soft: rgba(245, 158, 11, 0.15);
+  --border: #3d2e1f;
+  --text: #fffbeb;
+  --text-secondary: #a89474;
+  --accent: #fbbf24;
+}
+/* Option 6: Slate Storm */
+.opt-6 {
+  --bg: #0a0c0f;
+  --surface: #12161c;
+  --elevated: #1c222b;
+  --primary: #64748b;
+  --primary-soft: rgba(100, 116, 139, 0.15);
+  --border: #2d3748;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent: #94a3b8;
+}
+/* Option 7: Rose Quartz */
+.opt-7 {
+  --bg: #0a0508;
+  --surface: #140a11;
+  --elevated: #24111c;
+  --primary: #f43f5e;
+  --primary-soft: rgba(244, 63, 94, 0.15);
+  --border: #3d1f2a;
+  --text: #fff1f3;
+  --text-secondary: #a8748a;
+  --accent: #fb7185;
+}
+/* Option 8: Cyan Night */
+.opt-8 {
+  --bg: #050a0f;
+  --surface: #0a141c;
+  --elevated: #11222e;
+  --primary: #06b6d4;
+  --primary-soft: rgba(6, 182, 212, 0.15);
+  --border: #1f3d4a;
+  --text: #ecfeff;
+  --text-secondary: #6d9ca8;
+  --accent: #22d3ee;
+}
+/* Option 9: Purple Haze */
+.opt-9 {
+  --bg: #0a0514;
+  --surface: #120a1c;
+  --elevated: #1f112e;
+  --primary: #a855f7;
+  --primary-soft: rgba(168, 85, 247, 0.15);
+  --border: #3d1f4a;
+  --text: #faf5ff;
+  --text-secondary: #a874c7;
+  --accent: #c084fc;
+}
+/* Option 10: Copper Wire */
+.opt-10 {
+  --bg: #0a0806;
+  --surface: #14100a;
+  --elevated: #241811;
+  --primary: #c2410c;
+  --primary-soft: rgba(194, 65, 12, 0.15);
+  --border: #3d2a1f;
+  --text: #fffbf5;
+  --text-secondary: #a88a74;
+  --accent: #ea580c;
+}
+</style>
+</head>
+<body>
+<h1>Prios Color Schemes — 10 Options</h1>
+<div class="grid">
+<!-- Option 1: Midnight Violet -->
+<div class="option opt-1">
+<div class="preview">
+<h3>1. Midnight Violet</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 2: Deep Ocean -->
+<div class="option opt-2">
+<div class="preview">
+<h3>2. Deep Ocean</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 3: Crimson Tide -->
+<div class="option opt-3">
+<div class="preview">
+<h3>3. Crimson Tide</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 4: Forest Mist -->
+<div class="option opt-4">
+<div class="preview">
+<h3>4. Forest Mist</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 5: Amber Glow -->
+<div class="option opt-5">
+<div class="preview">
+<h3>5. Amber Glow</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 6: Slate Storm -->
+<div class="option opt-6">
+<div class="preview">
+<h3>6. Slate Storm</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 7: Rose Quartz -->
+<div class="option opt-7">
+<div class="preview">
+<h3>7. Rose Quartz</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 8: Cyan Night -->
+<div class="option opt-8">
+<div class="preview">
+<h3>8. Cyan Night</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 9: Purple Haze -->
+<div class="option opt-9">
+<div class="preview">
+<h3>9. Purple Haze</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+<!-- Option 10: Copper Wire -->
+<div class="option opt-10">
+<div class="preview">
+<h3>10. Copper Wire</h3>
+<div class="swatches">
+<div class="swatch" style="background: var(--primary)"></div>
+<div class="swatch" style="background: var(--surface)"></div>
+<div class="swatch" style="background: var(--elevated)"></div>
+</div>
+<div class="sample-ui">
+<span class="badge" style="background: var(--primary-soft); color: var(--primary)">Primary</span>
+<button class="btn" style="background: var(--primary); color: #fff">Button</button>
+<input class="input" style="background: var(--surface); border-color: var(--border); color: var(--text)" value="Input field">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

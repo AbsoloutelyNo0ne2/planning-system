@@ -12,6 +12,7 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { AuthProvider } from './contexts/AuthContext';
+import { ColorSchemeProvider } from './contexts/ColorSchemeContext';
 import { ProtectedApp } from './components/ProtectedApp';
 import './styles/index.css';
 
@@ -27,9 +28,11 @@ const root = createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <ProtectedApp />
-    </AuthProvider>
+    <ColorSchemeProvider>
+      <AuthProvider>
+        <ProtectedApp />
+      </AuthProvider>
+    </ColorSchemeProvider>
   </React.StrictMode>
 );
 

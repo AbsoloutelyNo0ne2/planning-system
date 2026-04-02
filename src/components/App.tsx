@@ -24,6 +24,8 @@ import { Task } from '../types/task';
 import { useAuth } from '../contexts/AuthContext';
 import type { UserType } from '../types/auth';
 import FluidBlobCanvas from './FluidBlobCanvas';
+import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
+import { useColorScheme } from '../contexts/ColorSchemeContext';
 
 export type ViewMode = 'input' | 'plan';
 
@@ -32,11 +34,12 @@ export interface AppProps {
 }
 
 export function App({ userType }: AppProps): JSX.Element {
-  const { logout } = useAuth();
-  const [viewMode, setViewMode] = useState<ViewMode>('input');
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
+const { logout } = useAuth();
+const { currentScheme, setScheme } = useColorScheme();
+const [viewMode, setViewMode] = useState<ViewMode>('input');
+const [editingTask, setEditingTask] = useState<Task | null>(null);
+const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
 
   const { tasks, loadFromStorage, updateTask, markTaskSent, setUserType } = useTaskStore();
 
@@ -143,41 +146,47 @@ export function App({ userType }: AppProps): JSX.Element {
           </span>
         </button>
 
-        {/* Logout Button */}
-        <button
-          onClick={logout}
-          className="px-3 py-1.5 text-sm rounded font-medium transition-all"
-          style={{
-            backgroundColor: 'transparent',
-            color: 'var(--color-text-secondary)',
-            border: '1px solid var(--color-border-default)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = 'var(--color-error-text)';
-            e.currentTarget.style.borderColor = 'var(--color-error-border)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'var(--color-text-secondary)';
-            e.currentTarget.style.borderColor = 'var(--color-border-default)';
-          }}
-        >
-          Logout
-        </button>
-      </header>
+{/* Color Scheme Switcher + Logout */}
+<div className="flex items-center gap-2">
+  <ColorSchemeSwitcher
+    currentSchemeId={currentScheme.id}
+    onSchemeChange={(scheme) => setScheme(scheme.id as any)}
+  />
+  <button
+    onClick={logout}
+    className="px-3 py-1.5 text-sm rounded font-medium transition-all"
+    style={{
+      backgroundColor: 'transparent',
+      color: 'var(--color-text-secondary)',
+      border: '1px solid var(--color-border-default)'
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.color = 'var(--color-error-text)';
+      e.currentTarget.style.borderColor = 'var(--color-error-border)';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.color = 'var(--color-text-secondary)';
+      e.currentTarget.style.borderColor = 'var(--color-border-default)';
+    }}
+  >
+    Logout
+  </button>
+</div>
+</header>
 
       {/* Main content - permanent 1/3 + 2/3 split */}
       <main className="flex-1 grid grid-cols-1 md:grid-cols-3">
 {/* LEFT: Agents Panel (1/3) */}
-<div
-className="md:col-span-1 border-r p-4 md:sticky md:top-0 md:h-screen overflow-auto relative"
-style={{
-borderColor: 'var(--color-border-default)',
-backgroundColor: 'var(--color-bg-surface)'
-}}
->
+      <div
+        className="md:col-span-1 border-r p-4 md:sticky md:top-[52px] md:h-[calc(100vh-52px)] overflow-auto relative"
+        style={{
+          borderColor: 'var(--color-border-default)',
+          backgroundColor: 'var(--color-bg-surface)'
+        }}
+      >
       {/* Fluid blob background */}
       <div className="absolute inset-0 overflow-hidden">
-        <FluidBlobCanvas scale={0.6} offsetY={150} positionsPreset="agents" />
+        <FluidBlobCanvas positionsPreset="agents" />
         {/* Dark overlay for readability */}
         <div
           className="absolute inset-0 pointer-events-none"
