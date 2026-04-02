@@ -184,24 +184,24 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
       <main className="flex-1 grid grid-cols-1 md:grid-cols-3">
 {/* LEFT: Agents Panel (1/3) */}
       <div
-        className="md:col-span-1 border-r p-4 md:sticky md:top-[52px] md:h-[calc(100vh-52px)] overflow-auto relative"
+        className="md:col-span-1 border-r p-4 md:sticky md:top-[52px] md:h-[calc(100vh-52px)] overflow-auto relative pointer-events-none"
         style={{
           borderColor: 'var(--color-border-default)',
           backgroundColor: 'var(--color-bg-surface)'
         }}
       >
-{/* Fluid blob background */}
-<div className="absolute inset-0 overflow-hidden">
-  <FluidBlobCanvas positionsPreset="agents" baseHue={baseHue} />
-        {/* Dark overlay for readability */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'rgba(12, 15, 26, 0.6)' }}
-        />
-      </div>
+        {/* Fluid blob background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-auto">
+          <FluidBlobCanvas positionsPreset="agents" baseHue={baseHue} />
+          {/* Dark overlay for readability */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'rgba(12, 15, 26, 0.6)' }}
+          />
+        </div>
 
-{/* Content on top */}
-<div className="relative z-10">
+        {/* Content on top - pointer events enabled for interactive elements */}
+        <div className="relative z-10 pointer-events-auto">
 <div className="flex items-center justify-between mb-4">
 <h2
 className="text-sm font-medium"

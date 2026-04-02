@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import FluidBlobCanvas from './FluidBlobCanvas';
+import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
+import { useColorScheme, COLOR_SCHEMES } from '../contexts/ColorSchemeContext';
 
 const MIN_SWIPE_DISTANCE = 50;
 
@@ -12,6 +14,11 @@ export function LoginScreen(): JSX.Element {
   const [swipeFeedback, setSwipeFeedback] = useState<'submit' | 'clear' | null>(null);
   const touchStartX = useRef<number | null>(null);
   const { login } = useAuth();
+  const { currentScheme, setScheme } = useColorScheme();
+
+  // Get the base hue from the current color scheme
+  const scheme = COLOR_SCHEMES[currentScheme.id as keyof typeof COLOR_SCHEMES];
+  const baseHue = scheme?.blob?.baseHue ?? 185; // Default to cyan for login
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -70,9 +77,17 @@ export function LoginScreen(): JSX.Element {
     >
       {/* LEFT: Login Form (50%) */}
       <div
-        className="flex-1 flex items-center justify-center p-8"
+        className="flex-1 flex items-center justify-center p-8 relative"
         style={{ backgroundColor: 'var(--color-bg-base)' }}
       >
+        {/* Theme Picker - Top Right */}
+        <div className="absolute top-6 right-6">
+          <ColorSchemeSwitcher
+            currentSchemeId={currentScheme.id}
+            onSchemeChange={(scheme) => setScheme(scheme.id as any)}
+          />
+        </div>
+
         <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
         {/* Title */}
         <div className="mb-8">
@@ -268,14 +283,14 @@ export function LoginScreen(): JSX.Element {
         </form>
       </div>
 
-      {/* RIGHT: Fluid Blob Canvas (50%) */}
-      <div
-        className="flex-1 relative overflow-hidden hidden md:block"
-        style={{
-          background: 'radial-gradient(ellipse at 40% 40%, #1a1f35 0%, var(--color-bg-base) 70%)',
-        }}
-      >
-        <FluidBlobCanvas />
+{/* RIGHT: Fluid Blob Canvas (50%) */}
+        <div
+          className="flex-1 relative overflow-hidden hidden md:block"
+          style={{
+            background: 'radial-gradient(ellipse at 40% 40%, #1a1f35 0%, var(--color-bg-base) 70%)',
+          }}
+        >
+          <FluidBlobCanvas baseHue={baseHue} />
         {/* Gradient overlay for smooth edge transition */}
         <div
           className="absolute inset-0 pointer-events-none"
