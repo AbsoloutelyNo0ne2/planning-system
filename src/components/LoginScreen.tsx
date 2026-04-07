@@ -188,12 +188,22 @@ export function LoginScreen(): JSX.Element {
         <button
           type="submit"
           disabled={isLoading || !passphrase.trim()}
-          className="radial-glow w-full py-3 px-6 font-medium text-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block hover:-translate-y-px"
+          className="radial-glow w-full py-3 px-6 font-medium text-sm transition-colors duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
           style={{
-            background: `linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600))`,
-            color: '#ffffff',
+            backgroundColor: 'transparent',
+            color: 'var(--color-accent-500)',
+            border: '1px solid var(--color-accent-500)',
             borderRadius: '4px',
-            boxShadow: isLoading || !passphrase.trim() ? 'none' : `0 4px 20px ${scheme?.colors.accentSoft || 'rgba(168, 85, 247, 0.3)'}`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#ffffff';
+            e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+            e.currentTarget.style.borderColor = 'var(--color-accent-600)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--color-accent-500)';
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.borderColor = 'var(--color-accent-500)';
           }}
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
@@ -246,11 +256,22 @@ export function LoginScreen(): JSX.Element {
           <button
             type="submit"
             disabled={isLoading || !passphrase.trim()}
-            className="radial-glow flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="radial-glow flex-1 py-3 px-6 font-medium text-sm transition-colors duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              background: `linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600))`,
-              color: '#ffffff',
+              backgroundColor: 'transparent',
+              color: 'var(--color-accent-500)',
+              border: '1px solid var(--color-accent-500)',
               borderRadius: '4px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#ffffff';
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+              e.currentTarget.style.borderColor = 'var(--color-accent-600)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-accent-500)';
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.borderColor = 'var(--color-accent-500)';
             }}
             onMouseMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
