@@ -188,12 +188,19 @@ export function LoginScreen(): JSX.Element {
         <button
           type="submit"
           disabled={isLoading || !passphrase.trim()}
-          className="w-full py-3 px-6 font-medium text-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block hover:-translate-y-px"
+          className="radial-glow w-full py-3 px-6 font-medium text-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block hover:-translate-y-px"
           style={{
             background: `linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600))`,
             color: '#ffffff',
             borderRadius: '4px',
             boxShadow: isLoading || !passphrase.trim() ? 'none' : `0 4px 20px ${scheme?.colors.accentSoft || 'rgba(168, 85, 247, 0.3)'}`,
+          }}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            e.currentTarget.style.setProperty('--x', x + '%');
+            e.currentTarget.style.setProperty('--y', y + '%');
           }}
         >
             {isLoading ? (
@@ -239,11 +246,18 @@ export function LoginScreen(): JSX.Element {
           <button
             type="submit"
             disabled={isLoading || !passphrase.trim()}
-            className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="radial-glow flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: `linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600))`,
               color: '#ffffff',
               borderRadius: '4px',
+            }}
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = ((e.clientX - rect.left) / rect.width) * 100;
+              const y = ((e.clientY - rect.top) / rect.height) * 100;
+              e.currentTarget.style.setProperty('--x', x + '%');
+              e.currentTarget.style.setProperty('--y', y + '%');
             }}
           >
               {isLoading ? (
