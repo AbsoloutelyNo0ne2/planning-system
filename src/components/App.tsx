@@ -158,22 +158,32 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
     currentSchemeId={currentScheme.id}
     onSchemeChange={(scheme) => setScheme(scheme.id as any)}
   />
-        <button
-          onClick={logout}
-          className="btn-glow btn-glow--ghost px-3 py-1.5 text-sm rounded"
-          style={{
-            '--glow-color': 'rgba(220, 38, 38, 0.2)',
-          } as React.CSSProperties}
-          onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            e.currentTarget.style.setProperty('--x', x + '%');
-            e.currentTarget.style.setProperty('--y', y + '%');
-          }}
-        >
-          Logout
-        </button>
+  <button
+    onClick={logout}
+    className="radial-glow px-3 py-1.5 text-sm rounded font-medium transition-colors duration-300 relative overflow-hidden"
+    style={{
+      backgroundColor: 'transparent',
+      color: 'var(--color-text-secondary)',
+      border: '1px solid var(--color-border-default)',
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.color = 'var(--color-error-text)';
+      e.currentTarget.style.borderColor = 'var(--color-error-border)';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.color = 'var(--color-text-secondary)';
+      e.currentTarget.style.borderColor = 'var(--color-border-default)';
+    }}
+    onMouseMove={(e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      e.currentTarget.style.setProperty('--x', x + '%');
+      e.currentTarget.style.setProperty('--y', y + '%');
+    }}
+  >
+    Logout
+  </button>
 </div>
 </header>
 
@@ -207,38 +217,54 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
               Agents
             </h2>
 <div className="flex gap-1">
-            <button
-              onClick={handleAddActor}
-              className="btn-glow btn-glow--ghost px-2 py-1 text-xs rounded pointer-events-auto"
-              style={{
-                '--glow-color': 'rgba(139, 92, 246, 0.15)',
-              } as React.CSSProperties}
-              onMouseMove={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                e.currentTarget.style.setProperty('--x', x + '%');
-                e.currentTarget.style.setProperty('--y', y + '%');
-              }}
-            >
-              +Add
-            </button>
-            <button
-              onClick={handleRemoveActor}
-              className="btn-glow btn-glow--danger px-2 py-1 text-xs rounded pointer-events-auto"
-              style={{
-                '--glow-color': 'rgba(220, 38, 38, 0.25)',
-              } as React.CSSProperties}
-              onMouseMove={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                e.currentTarget.style.setProperty('--x', x + '%');
-                e.currentTarget.style.setProperty('--y', y + '%');
-              }}
-            >
-              -Remove
-            </button>
+              <button
+                onClick={handleAddActor}
+                className="radial-glow px-2 py-1 text-xs rounded font-medium transition-all pointer-events-auto"
+                style={{
+                  backgroundColor: 'var(--color-bg-elevated)',
+                  color: 'var(--color-text-primary)',
+                  border: '1px solid var(--color-border-default)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+                }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+                  e.currentTarget.style.setProperty('--x', x + '%');
+                  e.currentTarget.style.setProperty('--y', y + '%');
+                }}
+>
+                +Add
+              </button>
+              <button
+                onClick={handleRemoveActor}
+                className="radial-glow px-2 py-1 text-xs rounded font-medium transition-all pointer-events-auto"
+                style={{
+                  backgroundColor: 'var(--color-bg-elevated)',
+                  color: 'var(--color-error-text)',
+                  border: '1px solid var(--color-error-border)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-error-bg)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+                }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+                  e.currentTarget.style.setProperty('--x', x + '%');
+                  e.currentTarget.style.setProperty('--y', y + '%');
+                }}
+              >
+-Remove
+</button>
 </div>
 </div>
 
@@ -291,14 +317,21 @@ style={{ backgroundColor: 'var(--color-bg-elevated)' }}
             onSentClick={handleSentClick}
           />
 
-        {/* Bottom Actions */}
+{/* Bottom Actions */}
         <div className="mt-6 flex gap-2 justify-center flex-wrap">
           <button
             onClick={() => setViewMode('input')}
-            className="btn-glow btn-glow--primary px-4 py-2 rounded"
+            className="radial-glow px-4 py-2 rounded font-medium transition-all"
             style={{
-              '--glow-color': 'rgba(139, 92, 246, 0.3)',
-            } as React.CSSProperties}
+              backgroundColor: 'var(--color-accent-600)',
+              color: 'var(--color-bg-base)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
+            }}
             onMouseMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -311,10 +344,20 @@ style={{ backgroundColor: 'var(--color-bg-elevated)' }}
           </button>
           <button
             onClick={() => setViewMode('plan')}
-            className="btn-glow btn-glow--ghost px-4 py-2 rounded"
+            className="radial-glow px-4 py-2 rounded font-medium transition-all"
             style={{
-              '--glow-color': 'rgba(139, 92, 246, 0.15)',
-            } as React.CSSProperties}
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-secondary)',
+              border: '1px solid var(--color-border-default)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+              e.currentTarget.style.color = 'var(--color-text-primary)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'var(--color-text-secondary)';
+            }}
             onMouseMove={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -323,7 +366,7 @@ style={{ backgroundColor: 'var(--color-bg-elevated)' }}
               e.currentTarget.style.setProperty('--y', y + '%');
             }}
           >
-            Cancel
+            Cancel New task
           </button>
         </div>
         </div>

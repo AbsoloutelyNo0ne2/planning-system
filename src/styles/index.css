@@ -565,229 +565,24 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ============================================
-   GLOW BUTTON - CSS Radial Gradient Technique
-   Performant cursor-following glow
-   Based on: Frontend Masters glow effect
-   ============================================ */
-.btn-glow {
-  position: relative;
-  padding: 12px 32px;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border-default);
-  font-weight: 500;
-  font-size: 0.9rem;
-  cursor: pointer;
-  overflow: hidden;
-  transition: color 0.3s ease, border-color 0.3s ease;
-  z-index: 1;
-}
-
-/* Glow layer using radial gradient */
-.btn-glow::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 6px;
-  background: radial-gradient(
-    150px 150px at var(--x, 50%) var(--y, 50%),
-    var(--glow-color, rgba(139, 92, 246, 0.15)) 0%,
-    transparent 50%
-  );
-  opacity: var(--glow-opacity, 0);
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.btn-glow:hover::before {
-  opacity: 1;
-}
-
-.btn-glow:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-accent-500);
-}
-
-/* Primary variant */
-.btn-glow--primary {
-  background: var(--color-accent-600);
-  color: #fff;
-  border-color: var(--color-accent-600);
-  --glow-color: rgba(139, 92, 246, 0.3);
-}
-
-.btn-glow--primary:hover {
-  background: var(--color-accent-700);
-  border-color: var(--color-accent-700);
-}
-
-/* Secondary variant */
-.btn-glow--secondary {
-  background: transparent;
-  color: var(--color-accent-500);
-  border-color: var(--color-accent-500);
-  --glow-color: rgba(139, 92, 246, 0.2);
-}
-
-.btn-glow--secondary:hover {
-  background: var(--color-accent-600);
-  color: #fff;
-}
-
-/* Ghost variant */
-.btn-glow--ghost {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border-color: var(--color-border-default);
-  --glow-color: rgba(139, 92, 246, 0.15);
-}
-
-.btn-glow--ghost:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-accent-500);
-}
-
-/* Danger variant */
-.btn-glow--danger {
-  background: #dc2626;
-  color: #fff;
-  border-color: #dc2626;
-  --glow-color: rgba(220, 38, 38, 0.25);
-}
-
-.btn-glow--danger:hover {
-  background: #b91c1c;
-  border-color: #b91c1c;
-}
-
-/* Legacy support */
-button.radial-glow {
-  position: relative;
-  overflow: hidden;
-}
-
+/* Radial Glow Effect for buttons (cursor-following glow)
+   Uses button's own accent color via --glow-color or falls back to theme accent600 */
 button.radial-glow::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    150px 150px at var(--x, 50%) var(--y, 50%),
-    var(--glow-color, rgba(139, 92, 246, 0.15)) 0%,
-    transparent 50%
-  );
-  opacity: var(--glow-opacity, 0);
-  transition: opacity 0.4s ease;
-  pointer-events: none;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, var(--glow-color, var(--color-accent-600)) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
   z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
 }
 
 button.radial-glow:hover::before {
-  opacity: 1;
-}
-
-.btn-radial::before {
-  content: '';
-  position: absolute;
-  top: var(--y, 50%);
-  left: var(--x, 50%);
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, var(--glow-color, var(--color-accent-600)) 0%, transparent 70%);
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.3s ease;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.btn-radial:hover::before {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.btn-radial:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-accent-500);
-}
-
-/* Primary variant - solid accent background */
-.btn-radial--primary {
-  background: var(--color-accent-600);
-  color: #fff;
-  border-color: var(--color-accent-600);
-  --glow-color: var(--color-accent-600);
-}
-
-.btn-radial--primary:hover {
-  background: var(--color-accent-700);
-  border-color: var(--color-accent-700);
-}
-
-/* Secondary variant - outline with accent text */
-.btn-radial--secondary {
-  background: transparent;
-  color: var(--color-accent-500);
-  border-color: var(--color-accent-500);
-  --glow-color: var(--color-accent-600);
-}
-
-.btn-radial--secondary:hover {
-  background: var(--color-accent-600);
-  color: #fff;
-}
-
-/* Ghost variant - subtle border */
-.btn-radial--ghost {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border-color: var(--color-border-default);
-  --glow-color: var(--color-accent-600);
-}
-
-.btn-radial--ghost:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-accent-500);
-}
-
-/* Danger variant - red theme */
-.btn-radial--danger {
-  background: #dc2626;
-  color: #fff;
-  border-color: #dc2626;
-  --glow-color: rgba(220, 38, 38, 0.3);
-}
-
-.btn-radial--danger:hover {
-  background: #b91c1c;
-  border-color: #b91c1c;
-}
-
-/* Legacy support: radial-glow class */
-button.radial-glow,
-.btn-radial-legacy {
-  position: relative;
-  overflow: hidden;
-}
-
-button.radial-glow::before,
-.btn-radial-legacy::before {
-  content: '';
-  position: absolute;
-  top: var(--y, 50%);
-  left: var(--x, 50%);
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, var(--glow-color, var(--color-accent-600)) 0%, transparent 70%);
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.3s ease;
-  z-index: -1;
-  pointer-events: none;
-}
-
-button.radial-glow:hover::before,
-.btn-radial-legacy:hover::before {
   transform: translate(-50%, -50%) scale(1);
 }
 
