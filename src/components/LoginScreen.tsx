@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import FluidBlobCanvas from './FluidBlobCanvas';
 import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
 import { useColorScheme, COLOR_SCHEMES } from '../contexts/ColorSchemeContext';
+import { GlowButton } from './ui/GlowButton';
 
 const MIN_SWIPE_DISTANCE = 50;
 
@@ -184,35 +185,60 @@ export function LoginScreen(): JSX.Element {
             </div>
           )}
 
-{/* Submit Button */}
-        <button
+        {/* Submit Button - Desktop */}
+        <GlowButton
           type="submit"
           disabled={isLoading || !passphrase.trim()}
-          className="radial-glow w-full py-3 px-6 font-medium text-sm transition-colors duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
-          style={{
-            backgroundColor: 'transparent',
-            color: 'var(--color-accent-500)',
-            border: '1px solid var(--color-accent-500)',
-            borderRadius: '4px',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#ffffff';
-            e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-            e.currentTarget.style.borderColor = 'var(--color-accent-600)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'var(--color-accent-500)';
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-          }}
-          onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            e.currentTarget.style.setProperty('--x', x + '%');
-            e.currentTarget.style.setProperty('--y', y + '%');
-          }}
+          color={scheme.colors.accent600}
+          hueShift={19}
+          className="w-full py-3 px-6 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
         >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Verifying...
+            </span>
+          ) : (
+            'Sign in'
+          )}
+        </GlowButton>
+
+        {/* Mobile Touch-Friendly Buttons */}
+        <div className="flex gap-4 sm:hidden">
+          <button
+            type="button"
+            onClick={() => setPassphrase('')}
+            className="flex-1 py-3 px-6 text-sm font-medium rounded border transition-colors duration-150"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-muted)',
+              borderColor: 'var(--color-border-default)',
+            }}
+          >
+            Clear
+          </button>
+          <GlowButton
+            type="submit"
+            disabled={isLoading || !passphrase.trim()}
+            color={scheme.colors.accent600}
+            hueShift={19}
+            className="flex-1 py-3 px-6 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -236,76 +262,8 @@ export function LoginScreen(): JSX.Element {
             ) : (
               'Sign in'
             )}
-          </button>
-
-{/* Mobile Touch-Friendly Buttons */}
-        <div className="flex gap-4 sm:hidden">
-          <button
-            type="button"
-            onClick={() => setPassphrase('')}
-            className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150"
-            style={{
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-muted)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '4px',
-            }}
-          >
-            Clear
-          </button>
-          <button
-            type="submit"
-            disabled={isLoading || !passphrase.trim()}
-            className="radial-glow flex-1 py-3 px-6 font-medium text-sm transition-colors duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: 'transparent',
-              color: 'var(--color-accent-500)',
-              border: '1px solid var(--color-accent-500)',
-              borderRadius: '4px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-              e.currentTarget.style.borderColor = 'var(--color-accent-600)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-accent-500)';
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-            }}
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              const y = ((e.clientY - rect.top) / rect.height) * 100;
-              e.currentTarget.style.setProperty('--x', x + '%');
-              e.currentTarget.style.setProperty('--y', y + '%');
-            }}
-          >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Verifying...
-                </span>
-              ) : (
-                'Sign in'
-              )}
-            </button>
-          </div>
+          </GlowButton>
+        </div>
 
           {/* Footer */}
           <div
