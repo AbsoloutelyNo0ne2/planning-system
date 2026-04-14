@@ -18,6 +18,7 @@ export interface TaskItemProps {
   onClick: (task: Task) => void;
   onCopy: (task: Task) => void;
   onSent: (task: Task) => Promise<void>;
+  isLowPriority?: boolean; // Auto-fade for lower-priority tasks (WCAG AA compliant)
 }
 
 function ActorNotesDisplay({ actorNotes }: { actorNotes: Record<string, string> }): JSX.Element | null {
@@ -62,7 +63,7 @@ function ActorNotesDisplay({ actorNotes }: { actorNotes: Record<string, string> 
 }
 
 export function TaskItem(props: TaskItemProps): JSX.Element {
-  const { task, isLimitReached, remainingCount, onClick, onCopy, onSent } = props;
+  const { task, isLimitReached, remainingCount, onClick, onCopy, onSent, isLowPriority = false } = props;
 
   const handleClick = (): void => {
     if (!isLimitReached) onClick(task);
@@ -71,31 +72,35 @@ export function TaskItem(props: TaskItemProps): JSX.Element {
   const showRemaining = task.type !== TaskType.AGENTIC && remainingCount < Infinity;
   const isUnlimited = task.type === TaskType.AGENTIC;
 
-	return (
-	<div
-		className="task-item flex flex-col p-3 mb-2 cursor-pointer transition-colors"
-		style={{
-			backgroundColor: 'var(--color-bg-surface)',
-			border: '1px solid var(--color-border-default)',
-			borderRadius: '4px',
-			opacity: isLimitReached ? 0.5 : 1
-		}}
-		onClick={handleClick}
-		onMouseEnter={(e) => {
-			if (!isLimitReached) {
-				e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
-				e.currentTarget.style.borderColor = 'var(--color-accent-600)';
-			}
-		}}
-		onMouseLeave={(e) => {
-			e.currentTarget.style.backgroundColor = 'var(--color-bg-surface)';
-			e.currentTarget.style.borderColor = 'var(--color-border-default)';
-		}}
-	>
+  return (
+    <div
+      className="task-item flex flex-col p-3 mb-2 cursor-pointer transition-colors"
+      style={{
+        backgroundColor: 'var(--color-bg-surface)',
+        border: '1px solid var(--color-border-default)',
+        borderRadius: '4px',
+        opacity: isLimitReached ? 0.5 : 1
+      }}
+      onClick={handleClick}
+      onMouseEnter={(e) => {
+        if (!isLimitReached) {
+          e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
+          e.currentTarget.style.borderColor = 'var(--color-accent-600)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'var(--color-bg-surface)';
+        e.currentTarget.style.borderColor = 'var(--color-border-default)';
+      }}
+    >
       <div className="flex items-center justify-between w-full">
-        <span 
+        <span
           className="task-description flex-1 pr-4 break-all overflow-wrap-anywhere"
-          style={{ color: 'var(--color-text-primary)' }}
+          // FIX 3: Auto-fade for lower-priority tasks (WCAG AA compliant)
+          style={{ 
+            color: isLowPriority ? 'var(--color-text-secondary)' : 'var(--color-text-primary)',
+            opacity: isLowPriority ? 0.7 : 1
+          }}
         >
           {task.description}
         </span>
@@ -103,7 +108,7 @@ export function TaskItem(props: TaskItemProps): JSX.Element {
         <div className="flex items-center gap-3 shrink-0">
           {showRemaining && <RemainingBadge count={remainingCount} isLimitReached={isLimitReached} />}
           {isUnlimited && <UnlimitedBadge />}
-          
+
           <div className="flex gap-2">
             <CopyButton task={task} onCopy={onCopy} disabled={isLimitReached} />
             <SentButton onClick={() => onSent(task)} disabled={isLimitReached} />

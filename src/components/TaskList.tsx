@@ -7,9 +7,23 @@
  */
 
 import type { JSX } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Task } from '../types/task';
 import { TaskItem } from './TaskItem';
 import { useLimitStore } from '../stores/limitStore';
+
+// Spring animation for task insertion - high stiffness for precision feel
+const taskSpring = {
+  initial: { opacity: 0, y: -20, scale: 0.95 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: 20, scale: 0.95 },
+  transition: {
+    type: 'spring',
+    stiffness: 500,
+    damping: 30,
+    mass: 0.8,
+  },
+};
 
 export interface TaskListProps {
   agenticTasks: Task[];
@@ -88,42 +102,52 @@ function AgenticSection({
 }): JSX.Element {
   if (tasks.length === 0) return <EmptyAgenticState />;
 
-	return (
-	<section className="agentic-section space-y-3" aria-label="Agentic tasks">
-		<div className="flex items-center justify-between">
-			<h2
-				className="text-lg font-semibold uppercase tracking-wide"
-				style={{ color: 'var(--color-accent-400)' }}
-			>
-				AGENTIC TASKS
-			</h2>
-			<span
-				className="text-xs font-medium px-2 py-1"
-				style={{
-					backgroundColor: 'var(--color-bg-elevated)',
-					color: 'var(--color-accent-500)',
-					border: '1px solid var(--color-accent-600)',
-					borderRadius: '2px'
-				}}
-			>
-				Unlimited
-			</span>
-		</div>
-		<div className="grid gap-3">
-			{tasks.map(task => (
-				<TaskItem
-					key={task.id}
-					task={task}
-					isLimitReached={isLimitReached}
-					remainingCount={remainingCount}
-					onClick={() => onTaskClick(task)}
-					onCopy={() => onCopyClick(task)}
-					onSent={() => onSentClick(task)}
-				/>
-			))}
-		</div>
-	</section>
-);
+  return (
+    <section className="agentic-section space-y-3" aria-label="Agentic tasks">
+      <div className="flex items-center justify-between">
+        <h2
+          className="text-lg font-semibold uppercase tracking-wide"
+          style={{ color: 'var(--color-accent-400)' }}
+        >
+          AGENTIC TASKS
+        </h2>
+        <span
+          className="text-xs font-medium px-2 py-1"
+          style={{
+            backgroundColor: 'var(--color-bg-elevated)',
+            color: 'var(--color-accent-500)',
+            border: '1px solid var(--color-accent-600)',
+            borderRadius: '2px'
+          }}
+        >
+          Unlimited
+        </span>
+      </div>
+      <AnimatePresence>
+        <div className="grid gap-3">
+          {tasks.map((task, index) => (
+            <motion.div
+              key={task.id}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={taskSpring}
+            >
+              <TaskItem
+                task={task}
+                isLimitReached={isLimitReached}
+                remainingCount={remainingCount}
+                onClick={() => onTaskClick(task)}
+                onCopy={() => onCopyClick(task)}
+                onSent={() => onSentClick(task)}
+                isLowPriority={index > 2} // Auto-fade after top 3
+              />
+            </motion.div>
+          ))}
+        </div>
+      </AnimatePresence>
+    </section>
+  );
 }
 
 function NonAgenticSection({
@@ -143,32 +167,42 @@ function NonAgenticSection({
 }): JSX.Element {
   if (tasks.length === 0) return <EmptyNonAgenticState />;
 
-	return (
-	<section className="non-agentic-section space-y-3" aria-label="Non-agentic tasks">
-		<div className="flex items-center justify-between">
-			<h2
-				className="text-lg font-semibold uppercase tracking-wide"
-				style={{ color: 'var(--color-text-secondary)' }}
-			>
-				NON-AGENTIC TASKS
-			</h2>
-			<RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
-		</div>
-		<div style={{ display: 'grid', gap: '0.75rem' }}>
-			{tasks.map(task => (
-				<TaskItem
-					key={task.id}
-					task={task}
-					isLimitReached={isLimitReached}
-					remainingCount={remainingCount}
-					onClick={() => onTaskClick(task)}
-					onCopy={() => onCopyClick(task)}
-					onSent={() => onSentClick(task)}
-				/>
-			))}
-		</div>
-	</section>
-);
+  return (
+    <section className="non-agentic-section space-y-3" aria-label="Non-agentic tasks">
+      <div className="flex items-center justify-between">
+        <h2
+          className="text-lg font-semibold uppercase tracking-wide"
+          style={{ color: 'var(--color-text-secondary)' }}
+        >
+          NON-AGENTIC TASKS
+        </h2>
+        <RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
+      </div>
+      <AnimatePresence>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          {tasks.map((task, index) => (
+            <motion.div
+              key={task.id}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={taskSpring}
+            >
+              <TaskItem
+                task={task}
+                isLimitReached={isLimitReached}
+                remainingCount={remainingCount}
+                onClick={() => onTaskClick(task)}
+                onCopy={() => onCopyClick(task)}
+                onSent={() => onSentClick(task)}
+                isLowPriority={index > 2} // Auto-fade after top 3
+              />
+            </motion.div>
+          ))}
+        </div>
+      </AnimatePresence>
+    </section>
+  );
 }
 
 function HybridSection({
@@ -188,32 +222,42 @@ function HybridSection({
 }): JSX.Element {
   if (tasks.length === 0) return <EmptyHybridState />;
 
-	return (
-	<section className="hybrid-section space-y-3" aria-label="Hybrid tasks">
-		<div className="flex items-center justify-between">
-			<h2
-				className="text-lg font-semibold uppercase tracking-wide"
-				style={{ color: 'var(--color-accent-500)' }}
-			>
-				HYBRID TASKS
-			</h2>
-			<RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
-		</div>
-		<div style={{ display: 'grid', gap: '0.75rem' }}>
-			{tasks.map(task => (
-				<TaskItem
-					key={task.id}
-					task={task}
-					isLimitReached={isLimitReached}
-					remainingCount={remainingCount}
-					onClick={() => onTaskClick(task)}
-					onCopy={() => onCopyClick(task)}
-					onSent={() => onSentClick(task)}
-				/>
-			))}
-		</div>
-	</section>
-);
+  return (
+    <section className="hybrid-section space-y-3" aria-label="Hybrid tasks">
+      <div className="flex items-center justify-between">
+        <h2
+          className="text-lg font-semibold uppercase tracking-wide"
+          style={{ color: 'var(--color-accent-500)' }}
+        >
+          HYBRID TASKS
+        </h2>
+        <RemainingHeader count={remainingCount} isLimitReached={isLimitReached} />
+      </div>
+      <AnimatePresence>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          {tasks.map((task, index) => (
+            <motion.div
+              key={task.id}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={taskSpring}
+            >
+              <TaskItem
+                task={task}
+                isLimitReached={isLimitReached}
+                remainingCount={remainingCount}
+                onClick={() => onTaskClick(task)}
+                onCopy={() => onCopyClick(task)}
+                onSent={() => onSentClick(task)}
+                isLowPriority={index > 2} // Auto-fade after top 3
+              />
+            </motion.div>
+          ))}
+        </div>
+      </AnimatePresence>
+    </section>
+  );
 }
 
 function RemainingHeader({ count, isLimitReached }: { count: number; isLimitReached: boolean }): JSX.Element {

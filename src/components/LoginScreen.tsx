@@ -1,9 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import FluidBlobCanvas from './FluidBlobCanvas';
-import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
 import { useColorScheme, COLOR_SCHEMES } from '../contexts/ColorSchemeContext';
-import { GlowButton } from './ui/GlowButton';
 
 const MIN_SWIPE_DISTANCE = 50;
 
@@ -15,7 +13,7 @@ export function LoginScreen(): JSX.Element {
   const [swipeFeedback, setSwipeFeedback] = useState<'submit' | 'clear' | null>(null);
   const touchStartX = useRef<number | null>(null);
   const { login } = useAuth();
-  const { currentScheme, setScheme } = useColorScheme();
+  const { currentScheme } = useColorScheme();
 
   // Get the base hue from the current color scheme
   const scheme = COLOR_SCHEMES[currentScheme.id as keyof typeof COLOR_SCHEMES];
@@ -79,19 +77,11 @@ export function LoginScreen(): JSX.Element {
       onTouchEnd={handleTouchEnd}
     >
       {/* LEFT: Login Form (50%) */}
-      <div
-        className="flex-1 flex items-center justify-center p-8 relative"
-        style={{ backgroundColor: 'var(--color-bg-base)' }}
-      >
-        {/* Theme Picker - Top Right */}
-        <div className="absolute top-6 right-6">
-          <ColorSchemeSwitcher
-            currentSchemeId={currentScheme.id}
-            onSchemeChange={(scheme) => setScheme(scheme.id as any)}
-          />
-        </div>
-
-        <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
+        <div
+          className="flex-1 flex items-center justify-center p-8 relative"
+          style={{ backgroundColor: 'var(--color-bg-base)' }}
+        >
+          <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
         {/* Title */}
         <div className="mb-8">
           <h1
@@ -201,56 +191,16 @@ export function LoginScreen(): JSX.Element {
         </div>
 
         {/* Submit Button - Desktop */}
-        <GlowButton
+        <button
           type="submit"
           disabled={isLoading || !passphrase.trim()}
-          color={scheme.colors.accent500}
-          className="w-full py-3 px-6 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
-        >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              {isLoading ? 'Authenticating...' : 'Sign in'}
-            </span>
-          ) : (
-            'Sign in'
-          )}
-        </GlowButton>
-
-        {/* Mobile Touch-Friendly Buttons */}
-        <div className="flex gap-4 sm:hidden">
-          <button
-            type="button"
-            onClick={() => setPassphrase('')}
-            className="flex-1 py-3 px-6 text-sm font-medium rounded border transition-colors duration-150"
-            style={{
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-muted)',
-              borderColor: 'var(--color-border-default)',
-            }}
-          >
-            Clear
-          </button>
-        <GlowButton
-          type="submit"
-          disabled={isLoading || !passphrase.trim()}
-          color={scheme.colors.accent500}
-          className="flex-1 py-3 px-6 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 px-6 text-sm font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
+          style={{
+            backgroundColor: isLoading ? 'var(--color-bg-elevated)' : 'var(--color-accent-600)',
+            color: isLoading ? 'var(--color-text-muted)' : '#ffffff',
+            border: 'none',
+            transition: 'all 200ms ease',
+          }}
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
@@ -275,7 +225,57 @@ export function LoginScreen(): JSX.Element {
           ) : (
             'Sign in'
           )}
-        </GlowButton>
+        </button>
+
+        {/* Mobile Touch-Friendly Buttons */}
+        <div className="flex gap-4 sm:hidden">
+          <button
+            type="button"
+            onClick={() => setPassphrase('')}
+            className="flex-1 py-3 px-6 text-sm font-medium rounded border transition-colors duration-150"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-muted)',
+              borderColor: 'var(--color-border-default)',
+            }}
+          >
+            Clear
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading || !passphrase.trim()}
+            className="flex-1 py-3 px-6 text-sm font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: isLoading ? 'var(--color-bg-elevated)' : 'var(--color-accent-600)',
+              color: isLoading ? 'var(--color-text-muted)' : '#ffffff',
+              border: 'none',
+              transition: 'all 200ms ease',
+            }}
+          >
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Authenticating...
+              </span>
+            ) : (
+              'Sign in'
+            )}
+          </button>
         </div>
 
           {/* Footer */}

@@ -12,7 +12,7 @@
 */
 
 import { useState, useEffect } from 'react';
-import { TaskInput } from './TaskInput';
+import { CommandInput } from './CommandInput';
 import { TaskList } from './TaskList';
 import { TaskEditModal } from './TaskEditModal';
 import { TrajectoryEditor } from './TrajectoryEditor';
@@ -24,10 +24,6 @@ import { Task } from '../types/task';
 import { useAuth } from '../contexts/AuthContext';
 import type { UserType } from '../types/auth';
 import FluidBlobCanvas from './FluidBlobCanvas';
-import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
-import { useColorScheme, COLOR_SCHEMES } from '../contexts/ColorSchemeContext';
-
-export type ViewMode = 'input' | 'plan';
 
 export interface AppProps {
   userType: UserType | null;
@@ -35,15 +31,12 @@ export interface AppProps {
 
 export function App({ userType }: AppProps): JSX.Element {
   const { logout } = useAuth();
-  const { currentScheme, setScheme } = useColorScheme();
-  const [viewMode, setViewMode] = useState<ViewMode>('input');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTrajectoryEditorOpen, setIsTrajectoryEditorOpen] = useState(false);
 
   // Get the base hue from the current color scheme
-  const scheme = COLOR_SCHEMES[currentScheme.id as keyof typeof COLOR_SCHEMES];
-  const baseHue = scheme?.blob?.baseHue ?? 280;
+  const baseHue = 280; // Default purple hue
 
 const { loadFromStorage, updateTask, markTaskSent, setUserType, getSortedTasks } = useTaskStore();
 
@@ -67,7 +60,9 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
     loadLimit();
   }, [userType]);
 
-  const handleTaskCreated = () => setViewMode('plan');
+  const handleTaskCreated = () => {
+    // Task created - could trigger notification or refresh
+  };
 
   const handleTaskClick = (task: Task) => {
     setEditingTask(task);
@@ -152,38 +147,27 @@ const hybridTasks = sortedTasks.filter(t => t.type === 'hybrid');
           </span>
         </button>
 
-{/* Color Scheme Switcher + Logout */}
-<div className="flex items-center gap-2">
-  <ColorSchemeSwitcher
-    currentSchemeId={currentScheme.id}
-    onSchemeChange={(scheme) => setScheme(scheme.id as any)}
-  />
-  <button
-    onClick={logout}
-    className="radial-glow px-3 py-1.5 text-sm rounded font-medium transition-colors duration-300 relative overflow-hidden"
-    style={{
-      backgroundColor: 'transparent',
-      color: 'var(--color-text-secondary)',
-      border: '1px solid var(--color-border-default)',
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.color = 'var(--color-error-text)';
-      e.currentTarget.style.borderColor = 'var(--color-error-border)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.color = 'var(--color-text-secondary)';
-      e.currentTarget.style.borderColor = 'var(--color-border-default)';
-    }}
-    onMouseMove={(e) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      e.currentTarget.style.setProperty('--x', x + '%');
-      e.currentTarget.style.setProperty('--y', y + '%');
-    }}
-  >
-    Logout
-  </button>
+        {/* Logout */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={logout}
+            className="px-3 py-1.5 text-sm rounded font-medium transition-colors"
+            style={{
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-secondary)',
+              border: '1px solid var(--color-border-default)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-error-text)';
+              e.currentTarget.style.borderColor = 'var(--color-error-border)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-text-secondary)';
+              e.currentTarget.style.borderColor = 'var(--color-border-default)';
+            }}
+          >
+            Logout
+          </button>
 </div>
 </header>
 
@@ -300,12 +284,10 @@ style={{ backgroundColor: 'var(--color-bg-elevated)' }}
           className="md:col-span-2 p-6"
           style={{ backgroundColor: 'var(--color-bg-base)' }}
         >
-          {/* Task Input */}
-          {viewMode === 'input' && (
-            <div className="mb-6">
-              <TaskInput onTaskCreated={handleTaskCreated} />
-            </div>
-          )}
+      {/* Task Input - Single Command Entry */}
+      <div className="mb-6">
+        <CommandInput onTaskCreated={handleTaskCreated} />
+      </div>
 
           {/* Task List */}
           <TaskList
@@ -315,61 +297,8 @@ style={{ backgroundColor: 'var(--color-bg-elevated)' }}
             onTaskClick={handleTaskClick}
             onCopyClick={handleCopyClick}
             onSentClick={handleSentClick}
-          />
-
-{/* Bottom Actions */}
-        <div className="mt-6 flex gap-2 justify-center flex-wrap">
-          <button
-            onClick={() => setViewMode('input')}
-            className="radial-glow px-4 py-2 rounded font-medium transition-all"
-            style={{
-              backgroundColor: 'var(--color-accent-600)',
-              color: 'var(--color-bg-base)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-accent-500)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-            }}
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              const y = ((e.clientY - rect.top) / rect.height) * 100;
-              e.currentTarget.style.setProperty('--x', x + '%');
-              e.currentTarget.style.setProperty('--y', y + '%');
-            }}
-          >
-            New task
-          </button>
-          <button
-            onClick={() => setViewMode('plan')}
-            className="radial-glow px-4 py-2 rounded font-medium transition-all"
-            style={{
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-secondary)',
-              border: '1px solid var(--color-border-default)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-bg-elevated)';
-              e.currentTarget.style.color = 'var(--color-text-primary)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--color-text-secondary)';
-            }}
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              const y = ((e.clientY - rect.top) / rect.height) * 100;
-              e.currentTarget.style.setProperty('--x', x + '%');
-              e.currentTarget.style.setProperty('--y', y + '%');
-            }}
-          >
-            Cancel New task
-          </button>
-        </div>
-        </div>
+      />
+    </div>
       </main>
 
       {/* Modals */}
