@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import FluidBlobCanvas from './FluidBlobCanvas';
 import { ColorSchemeSwitcher } from './ColorSchemeSwitcher';
 import { useColorScheme, COLOR_SCHEMES } from '../contexts/ColorSchemeContext';
+import { GlowButton } from './ui/GlowButton';
 
 const MIN_SWIPE_DISTANCE = 50;
 
@@ -28,16 +29,18 @@ export function LoginScreen(): JSX.Element {
       return;
     }
 
+    // Tactile state mutation: disable button, show loading
     setIsLoading(true);
     setError(null);
 
     const result = await login(passphrase);
 
     if (!result.success) {
+      // Tactile error: stylized error message
       setError(result.error || 'Invalid passphrase');
+      // Reset loading state after error
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -115,50 +118,61 @@ export function LoginScreen(): JSX.Element {
               Passphrase
             </label>
 
-            <div className="relative">
-              <input
-                id="passphrase"
-                type={showPassphrase ? 'text' : 'password'}
-                value={passphrase}
-                onChange={(e) => setPassphrase(e.target.value)}
-                placeholder="Enter your passphrase..."
-                className="w-full px-4 py-3 text-sm transition-colors duration-150"
-                style={{
-                  backgroundColor: 'var(--color-bg-surface)',
-                  color: 'var(--color-text-primary)',
-                  border: swipeFeedback
-                    ? swipeFeedback === 'submit'
-                      ? '2px solid var(--color-accent-500)'
-                      : '2px solid var(--color-error-border)'
-                    : '1px solid var(--color-border-default)',
-                  borderRadius: '4px',
-                  outline: 'none',
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--color-accent-500)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'var(--color-border-default)';
-                }}
-                disabled={isLoading}
-                autoComplete="current-password"
-              />
+        <div className="relative">
+          <input
+            id="passphrase"
+            type={showPassphrase ? 'text' : 'password'}
+            value={passphrase}
+            onChange={(e) => setPassphrase(e.target.value)}
+            placeholder="Enter your passphrase..."
+            className="w-full px-4 py-3 text-sm transition-colors duration-150"
+            style={{
+              // Fix 1: Input Occlusion - padding-right exceeds "Hide" button width (~40px + margin)
+              paddingRight: '3.5rem',
+              // Fix 2: Soft Text Boundary - horizontal fade for graceful text dissolve
+              maskImage: 'linear-gradient(to right, black 85%, transparent 95%)',
+              WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent 95%)',
+              backgroundColor: isLoading ? 'var(--color-bg-elevated)' : 'var(--color-bg-surface)',
+              color: isLoading ? 'var(--color-text-muted)' : 'var(--color-text-primary)',
+              border: swipeFeedback
+                ? swipeFeedback === 'submit'
+                  ? '2px solid var(--color-accent-500)'
+                  : '2px solid var(--color-error-border)'
+                : '1px solid var(--color-border-default)',
+              borderRadius: '4px',
+              outline: 'none',
+              // Input overflow: horizontal scroll for long passphrases
+              overflowX: 'auto',
+              whiteSpace: 'nowrap' as const,
+              textOverflow: 'clip',
+              opacity: isLoading ? 0.5 : 1,
+              transition: 'opacity 300ms ease, background-color 300ms ease, color 300ms ease',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = 'var(--color-accent-500)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'var(--color-border-default)';
+            }}
+            disabled={isLoading}
+            autoComplete="current-password"
+          />
 
-              {/* Show/Hide Toggle */}
-              <button
-                type="button"
-                onClick={() => setShowPassphrase(!showPassphrase)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-medium transition-colors duration-150"
-                style={{
-                  background: 'transparent',
-                  color: 'var(--color-text-muted)',
-                  border: 'none',
-                  borderRadius: '4px',
-                }}
-              >
-                {showPassphrase ? 'Hide' : 'Show'}
-              </button>
-            </div>
+          {/* Show/Hide Toggle */}
+          <button
+            type="button"
+            onClick={() => setShowPassphrase(!showPassphrase)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-medium transition-colors duration-150"
+            style={{
+              background: 'transparent',
+              color: 'var(--color-text-muted)',
+              border: 'none',
+              borderRadius: '4px',
+            }}
+          >
+            {showPassphrase ? 'Hide' : 'Show'}
+          </button>
+        </div>
 
             {/* Helper Text */}
             <p
@@ -169,7 +183,8 @@ export function LoginScreen(): JSX.Element {
             </p>
           </div>
 
-          {/* Error Message */}
+        {/* Error Message - Fix 2: Structural Tremor - reserve spatial volume permanently */}
+        <div className="min-h-[1.5rem]" aria-live="polite">
           {error && (
             <div
               className="p-4 text-sm"
@@ -183,129 +198,85 @@ export function LoginScreen(): JSX.Element {
               {error}
             </div>
           )}
+        </div>
 
-{/* Submit Button */}
-        <button
+        {/* Submit Button - Desktop */}
+        <GlowButton
           type="submit"
           disabled={isLoading || !passphrase.trim()}
-          className="radial-glow w-full py-3 px-6 font-medium text-sm transition-colors duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
-          style={{
-            backgroundColor: 'transparent',
-            color: 'var(--color-accent-500)',
-            border: '1px solid var(--color-accent-500)',
-            borderRadius: '4px',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#ffffff';
-            e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-            e.currentTarget.style.borderColor = 'var(--color-accent-600)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'var(--color-accent-500)';
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-          }}
-          onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            e.currentTarget.style.setProperty('--x', x + '%');
-            e.currentTarget.style.setProperty('--y', y + '%');
-          }}
+          color={scheme.colors.accent500}
+          className="w-full py-3 px-6 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
         >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Verifying...
-              </span>
-            ) : (
-              'Sign in'
-            )}
-          </button>
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              {isLoading ? 'Authenticating...' : 'Sign in'}
+            </span>
+          ) : (
+            'Sign in'
+          )}
+        </GlowButton>
 
-{/* Mobile Touch-Friendly Buttons */}
+        {/* Mobile Touch-Friendly Buttons */}
         <div className="flex gap-4 sm:hidden">
           <button
             type="button"
             onClick={() => setPassphrase('')}
-            className="flex-1 py-3 px-6 font-medium text-sm transition-colors duration-150"
+            className="flex-1 py-3 px-6 text-sm font-medium rounded border transition-colors duration-150"
             style={{
               backgroundColor: 'transparent',
               color: 'var(--color-text-muted)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '4px',
+              borderColor: 'var(--color-border-default)',
             }}
           >
             Clear
           </button>
-          <button
-            type="submit"
-            disabled={isLoading || !passphrase.trim()}
-            className="radial-glow flex-1 py-3 px-6 font-medium text-sm transition-colors duration-300 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: 'transparent',
-              color: 'var(--color-accent-500)',
-              border: '1px solid var(--color-accent-500)',
-              borderRadius: '4px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.backgroundColor = 'var(--color-accent-600)';
-              e.currentTarget.style.borderColor = 'var(--color-accent-600)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-accent-500)';
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = 'var(--color-accent-500)';
-            }}
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              const y = ((e.clientY - rect.top) / rect.height) * 100;
-              e.currentTarget.style.setProperty('--x', x + '%');
-              e.currentTarget.style.setProperty('--y', y + '%');
-            }}
-          >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Verifying...
-                </span>
-              ) : (
-                'Sign in'
-              )}
-            </button>
-          </div>
+        <GlowButton
+          type="submit"
+          disabled={isLoading || !passphrase.trim()}
+          color={scheme.colors.accent500}
+          className="flex-1 py-3 px-6 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Authenticating...
+            </span>
+          ) : (
+            'Sign in'
+          )}
+        </GlowButton>
+        </div>
 
           {/* Footer */}
           <div

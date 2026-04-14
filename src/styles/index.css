@@ -701,6 +701,113 @@ button.radial-glow:hover::before {
   animation: fadeIn var(--duration-moderate) var(--easing-out);
 }
 
+/* ============================================
+   GLOW BUTTON v4 - Border-only glow
+   Only the BORDER glows, face stays dark
+   
+   Technique: Radial gradient at cursor position,
+   masked to show only at edges
+   ============================================ */
+.btn-glow {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  --x: 50%;
+  --y: 50%;
+  /* Dark button face - stays black always */
+  background: #0a0a0a;
+  /* Visible border for resting state */
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: inherit;
+  color: #a3a3a3;
+  transition: color 300ms ease, border-color 300ms ease;
+}
+
+/* Glow layer - radial gradient following cursor */
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(
+    12rem 12rem at var(--x) var(--y),
+    var(--glow-color) 0%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+  /* Clip to border area only using padding-box and content-box mask */
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box, 
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: 
+    linear-gradient(#000 0 0) content-box, 
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 2px;
+}
+
+/* Show glow on hover */
+.btn-glow:hover::before {
+  opacity: 1;
+}
+
+/* Slight border highlight on hover */
+.btn-glow:hover {
+  border-color: var(--glow-color);
+  color: #fff;
+}
+
+/* Button content sits above everything */
+.btn-glow > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glow layer - sits at BOTTOM (z-index: -2) */
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    oklch(from var(--glow-color) calc(l - 0.05) c calc(h - 35)) 0%,
+    var(--glow-color) 50%,
+    oklch(from var(--glow-color) calc(l + 0.1) c calc(h + 35)) 100%
+  );
+  z-index: -2;
+  -webkit-mask: radial-gradient(20rem 20rem at var(--x) var(--y), #000 1%, transparent 50%);
+  mask: radial-gradient(20rem 20rem at var(--x) var(--y), #000 1%, transparent 50%);
+  transition: mask 400ms ease, -webkit-mask 400ms ease, opacity 300ms ease;
+  opacity: var(--glow-opacity, 0);
+  pointer-events: none;
+}
+
+.btn-glow:hover {
+  --glow-opacity: 1;
+}
+
+/* Surface layer - sits ABOVE glow (z-index: -1), BELOW content */
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: #0a0a0a; /* Must match app's dark background color */
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 1; /* Fix: totally solid surface, glow only peeks from 1px edges */
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+/* Fade surface on hover to reveal glow */
+.btn-glow:hover::after {
+  opacity: 0;
+}
+
 /* SECTION MAP:
 * Lines 1-15: Header documentation
 * Lines 16-20: Tailwind directives
@@ -713,4 +820,5 @@ button.radial-glow:hover::before {
 * Lines 212-406: Component classes
 * Lines 408-545: Slider styles
 * Lines 547-602: Legacy and utility classes
+* Lines 603-620: Glow Button v3
 */
